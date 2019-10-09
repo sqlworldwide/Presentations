@@ -1,5 +1,5 @@
 /*
-Script Name: 07_SinglePlanAnalysis.sql
+Script Name: 009_SinglePlanAnalysis.sql
 To save time run 3 section in 3 separate windows
 Demo
 	1. Single Plan Analysis (need new SSMS)
@@ -16,8 +16,16 @@ How to reduce runtime by 90% just by using information exposed in SSMS
 
 USE [AdventureWorks];
 GO
-DECLARE @ProductID TABLE (ProductID INT)
 
+--Changing compatibility level to SQL 2017
+--Demo purpose only
+ALTER DATABASE CURRENT SET COMPATIBILITY_LEVEL = 140; 
+GO
+
+
+USE [AdventureWorks];
+GO
+DECLARE @ProductID TABLE (ProductID INT)
 --populating table variable
 INSERT INTO @ProductID (ProductID)
 SELECT ProductID
@@ -35,6 +43,10 @@ ORDER BY ProductID;
 
 --Turn on Actual Execution Plan (Ctrl+M)
 USE [AdventureWorks];
+GO
+--Changing compatibility level to SQL 2017
+--Demo purpose only
+ALTER DATABASE CURRENT SET COMPATIBILITY_LEVEL = 140; 
 GO
 DECLARE @ProductID TABLE (ProductID INT);
 
@@ -58,7 +70,10 @@ OPTION (RECOMPILE);
 
 USE [AdventureWorks];
 GO
-
+--Changing compatibility level to SQL 2017
+--Demo purpose only
+ALTER DATABASE CURRENT SET COMPATIBILITY_LEVEL = 140; 
+GO
 IF OBJECT_ID('tempdb..#ProductId') IS NOT NULL 
 DROP TABLE #ProductId;
 GO
@@ -77,4 +92,8 @@ ON [dbo].[#ProductID] ([ProductID]);
 SELECT DISTINCT	ProductID FROM #ProductID
 WHERE ProductID>1700
 ORDER BY ProductID;
+GO
+
+--Changing compatibility level to SQL 2019
+ALTER DATABASE CURRENT SET COMPATIBILITY_LEVEL = 150; 
 GO

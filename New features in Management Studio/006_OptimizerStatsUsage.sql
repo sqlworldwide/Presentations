@@ -1,12 +1,13 @@
 /*
-Script Name: 08_OptimizerStatsUsage.sql
+Script Name: 006_OptimizerStatsUsage.sql
 Demo:
-   1.OptimizerStatsUsage
+   1. OptimizerStatsUsage
 	 		Statistics being used 
 			Sampling percent
 			Modification count
 			Actionable insight
 
+Read details: https://blogs.msdn.microsoft.com/sql_server_team/sql-server-2017-showplan-enhancements/ by Pedro Lopes
 Code is copied from 
 --https://github.com/Microsoft/tigertoolbox/blob/master/Sessions/PASS2017/Upgrade-to-SQL-Server-2017-Intelligent-Diagnostics-Just-Built-in/Demo-Showplan-Stats-info.zip
 */
@@ -47,7 +48,6 @@ GO
 
 -- Start demo
 --Turn on Actual Execution Plan (Ctrl+M)
-
 EXEC CustomersByStatus 0;
 GO
 
@@ -62,12 +62,26 @@ Actual: 100
 -- Get name of used stat
 -- dm_db_stats_histogram- new in SQL2016 SP1 CU2
 -- Details here https://blogs.msdn.microsoft.com/sql_server_team/easy-way-to-get-statistics-histogram-programmatically/
+SELECT
+    stats_name = S.[name], 
+    DDSP.stats_id,
+    DDSP.[rows],
+    DDSP.modification_counter
+FROM sys.stats AS S
+CROSS APPLY sys.dm_db_stats_properties(S.object_id, S.stats_id) AS DDSP
+WHERE
+    S.[object_id] = OBJECT_ID(N'dbo.CustomersStatus', N'U');
+GO
+
 SELECT hist.*
 FROM sys.stats AS s
 CROSS APPLY sys.dm_db_stats_histogram(s.[object_id], s.stats_id) AS hist
 WHERE s.[name] = N'IX_CustomersStatus'
 AND CAST(range_high_key AS varchar) = 0;
+GO
 
+DBCC SHOW_STATISTICS ('CustomersStatus','IX_CustomersStatus');
+GO
 
 -- Shows 19773 eq rows - so that's clearly the histogram. 
 -- So why are estimates vs actuals so off?

@@ -1,5 +1,5 @@
 /*
-Script Name: 06_CompareShowplan.sql
+Script Name: 010_CompareShowplan.sql
 
 Demo: 
 	New Icon(SSMS 17.4)
@@ -7,6 +7,10 @@ Demo:
 */
 
 USE [AdventureWorks];
+GO
+--making sure it is reverted from previous demo
+--Changing compatibility level to SQL 2019
+ALTER DATABASE CURRENT SET COMPATIBILITY_LEVEL = 150; 
 GO
 --Create a stored procedure 
 DROP PROCEDURE IF EXISTS Sales.SalesFromDate;

@@ -1,5 +1,5 @@
 /*
-Script Name: 09_EstimateRowsWithoutRowGoal 
+Script Name: 012_EstimateRowsWithoutRowGoal 
 Demo-Row Goal (SQL2016 SP2, need new SSMS)
 Common Scenarios you can introduce Row Goal:
 	TOP clause 

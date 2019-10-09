@@ -1,5 +1,5 @@
 /*
-Script Name: 04_XEModfiedQuickSessionStandard.sql
+Script Name: 008_XEModfiedQuickSessionStandard.sql
 Demo: Xevent Profiler (SQL2012, need new SSMS)
 	TSQL is subset of Standard
 	You can modify the template and not change the name, modified version will run
@@ -32,10 +32,10 @@ ADD EVENT sqlserver.sql_batch_completed(
     WHERE ([package0].[equal_boolean]([sqlserver].[is_system],(0)))),
 ADD EVENT sqlserver.sql_batch_starting(
     ACTION(package0.event_sequence,sqlserver.client_app_name,sqlserver.client_pid,sqlserver.database_id,sqlserver.database_name,sqlserver.nt_username,sqlserver.query_hash,sqlserver.server_principal_name,sqlserver.session_id)
-     WHERE ([package0].[equal_boolean]([sqlserver].[is_system],(0))))
+    WHERE ([package0].[equal_boolean]([sqlserver].[is_system],(0))))
 --Following was added to standard definition
 ADD TARGET package0.event_file(SET filename=N'C:\QuickSessionStandard')
-WITH (MAX_MEMORY=8192 KB,EVENT_RETENTION_MODE=ALLOW_SINGLE_EVENT_LOSS,MAX_DISPATCH_LATENCY=5 SECONDS,MAX_EVENT_SIZE=0 KB,MEMORY_PARTITION_MODE=PER_CPU,TRACK_CAUSALITY=ON,STARTUP_STATE=OFF)
+WITH (MAX_MEMORY=16384 KB,EVENT_RETENTION_MODE=ALLOW_SINGLE_EVENT_LOSS,MAX_DISPATCH_LATENCY=5 SECONDS,MAX_EVENT_SIZE=0 KB,MEMORY_PARTITION_MODE=PER_CPU,TRACK_CAUSALITY=ON,STARTUP_STATE=OFF)
 GO
 
 /*
@@ -69,6 +69,6 @@ ADD EVENT sqlserver.sql_batch_starting(
     WHERE ([package0].[equal_boolean]([sqlserver].[is_system],(0))))
 --added new target
 ADD TARGET package0.event_file(SET filename=N'C:\ModifiedQuickSessionStandard')
-WITH (MAX_MEMORY=8192 KB,EVENT_RETENTION_MODE=ALLOW_SINGLE_EVENT_LOSS,MAX_DISPATCH_LATENCY=5 SECONDS,MAX_EVENT_SIZE=0 KB,MEMORY_PARTITION_MODE=PER_CPU,TRACK_CAUSALITY=ON,STARTUP_STATE=OFF)
+WITH (MAX_MEMORY=16384 KB,EVENT_RETENTION_MODE=ALLOW_SINGLE_EVENT_LOSS,MAX_DISPATCH_LATENCY=5 SECONDS,MAX_EVENT_SIZE=0 KB,MEMORY_PARTITION_MODE=PER_CPU,TRACK_CAUSALITY=ON,STARTUP_STATE=OFF)
 GO
 

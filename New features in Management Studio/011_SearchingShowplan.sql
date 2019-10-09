@@ -1,13 +1,30 @@
 /*
-Script Name: 11_SearchingShowplan.sql
+Script Name: 011_SearchingShowplan.sql
 Demo
 	Searching in Showplan (SQL2008, need new SSMS)
 	Query_thread_profile new XE event (SQL2014 SP2, SQL2016)
+	per-operator level performance stats
 
-Run this in another window and start the trace
+Until 2014
+<RunTimeInformation>
+   <RunTimeCountersPerThread Thread="0" ActualRows="8001" ActualEndOfScans="1" 
+   ActualExecutions="1" />
+</RunTimeInformation>
+
+2016 RC0
+<RunTimeInformation>
+   <RunTimeCountersPerThread Thread="0" ActualRows="8001" ActualRowsRead="10000000" 
+   Batches="0" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" 
+   ActualElapsedms="965" ActualCPUms="965" ActualScans="1" ActualLogicalReads="26073" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" />
+</RunTimeInformation>
+
+How can I caputure the same information to Analyze later on?
+
+Details below about Query_thread_profile
 https://blogs.msdn.microsoft.com/sql_server_team/added-per-operator-level-performance-stats-for-query-processing/
 */
 
+--Run this in another window and start the trace
 IF EXISTS(SELECT * FROM sys.server_event_sessions WHERE name='PerfStats_XE')  
     DROP EVENT session [PerfStats_XE] ON SERVER;  
 GO
