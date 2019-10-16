@@ -1,8 +1,6 @@
 /*
 Script Name:002_NewAttributes.sql
-DEMO:
- Query store
-   new Query Wait Statistics report
+DEMO: 
  Time Query Finished
  Per Node
    Actual Time Elapsed
@@ -16,11 +14,13 @@ DEMO:
    Actual Elapsed CPU time
    Actual Elapse time ms
  Estimated Number of Rows Read
+ Edit Query Button Tooltip(need new SSMS)
+ Query store
+   new Query Wait Statistics report
 */
 
 /*
 Run this to show 
- New Query Wait Statistics report(SQL 2017, need new SSMS)
  Time Query Finished (SQL 2012, need new SSMS)
  Per Node
    Actual Time Elapsed (SQL 2012, need new SSMS)
@@ -33,6 +33,7 @@ Run this to show
    Actual Number of Rows Read (SQL2016, need new SSMS)
    Estimated Number of Rows Read SQL2016 SP1, need new SSMS)
  Edit Query Button Tooltip(need new SSMS)
+ New Query Wait Statistics report(SQL 2017, need new SSMS)
 Open 2014plan.sqlplan and show that above features did not exist
 */
 
