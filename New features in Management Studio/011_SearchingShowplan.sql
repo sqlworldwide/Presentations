@@ -3,7 +3,7 @@ Script Name: 011_SearchingShowplan.sql
 Demo
 	Searching in Showplan (SQL2008, need new SSMS)
 	Query_thread_profile new XE event (SQL2014 SP2, SQL2016)
-	per-operator level performance stats
+	per-operator and thread level performance stats
 
 Until 2014
 <RunTimeInformation>

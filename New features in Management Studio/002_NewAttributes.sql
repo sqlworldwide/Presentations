@@ -16,7 +16,9 @@ DEMO:
  Estimated Number of Rows Read
  Edit Query Button Tooltip(need new SSMS)
  Query store
-   new Query Wait Statistics report
+   New Query Wait Statistics report
+   Max Plan per query value in the dialog properties
+   New Custom Capture Policies
 */
 
 /*
@@ -34,7 +36,9 @@ Run this to show
    Estimated Number of Rows Read SQL2016 SP1, need new SSMS)
  Edit Query Button Tooltip(need new SSMS)
  New Query Wait Statistics report(SQL 2017, need new SSMS)
-Open 2014plan.sqlplan and show that above features did not exist
+ Max Plan per query value in the dialog properties
+ New Custom Capture Policies
+ Open 2014plan.sqlplan and show that above features did not exist
 */
 
 --Turn on Actual Execution Plan (Ctrl+M)

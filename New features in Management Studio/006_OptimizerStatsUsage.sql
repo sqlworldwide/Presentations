@@ -59,7 +59,7 @@ Actual: 100
 
 -- ANSWER: a little thing called statistics.
 -- Look at OptimizerStatsUsage in root node of showplan
--- Get name of used stat
+-- Get name of used statistics
 -- dm_db_stats_histogram- new in SQL2016 SP1 CU2
 -- Details here https://blogs.msdn.microsoft.com/sql_server_team/easy-way-to-get-statistics-histogram-programmatically/
 SELECT

@@ -7,6 +7,9 @@ Demo: Xevent Profiler (SQL2012, need new SSMS)
 	Minimum permission required
 	 - ALTER ANY EVENT SESSION
 	 - VIEW SERVER STATE
+
+SSMS 18.4 
+Added error_reported event to XEvent Profiler sessions
 */
 --This script is a modified version of default script
 --Adding a file location as target
@@ -18,6 +21,10 @@ CREATE EVENT SESSION [QuickSessionStandard] ON SERVER
 ADD EVENT sqlserver.attention(
     ACTION(package0.event_sequence,sqlserver.client_app_name,sqlserver.client_pid,sqlserver.database_id,sqlserver.database_name,sqlserver.nt_username,sqlserver.query_hash,sqlserver.server_principal_name,sqlserver.session_id)
     WHERE ([package0].[equal_boolean]([sqlserver].[is_system],(0)))),
+--added in SSMS 18.4
+ADD EVENT sqlserver.error_reported(
+    ACTION(package0.callstack,sqlserver.database_id,sqlserver.session_id,sqlserver.sql_text,sqlserver.tsql_stack)
+    WHERE ([severity]>=(20) OR ([error_number]=(17803) OR [error_number]=(701) OR [error_number]=(802) OR [error_number]=(8645) OR [error_number]=(8651) OR [error_number]=(8657) OR [error_number]=(8902) OR [error_number]=(41354) OR [error_number]=(41355) OR [error_number]=(41367) OR [error_number]=(41384) OR [error_number]=(41336) OR [error_number]=(41309) OR [error_number]=(41312) OR [error_number]=(41313)))),
 ADD EVENT sqlserver.existing_connection(SET collect_options_text=(1)
     ACTION(package0.event_sequence,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.client_pid,sqlserver.nt_username,sqlserver.server_principal_name,sqlserver.session_id)),
 ADD EVENT sqlserver.login(SET collect_options_text=(1)
@@ -51,6 +58,10 @@ CREATE EVENT SESSION [ModifiedQuickSessionStandard] ON SERVER
 ADD EVENT sqlserver.attention(
     ACTION(package0.event_sequence,sqlserver.client_app_name,sqlserver.client_pid,sqlserver.database_id,sqlserver.database_name,sqlserver.nt_username,sqlserver.query_hash,sqlserver.server_principal_name,sqlserver.session_id)
     WHERE ([package0].[equal_boolean]([sqlserver].[is_system],(0)))),
+--added in SSMS 18.4
+ADD EVENT sqlserver.error_reported(
+    ACTION(package0.callstack,sqlserver.database_id,sqlserver.session_id,sqlserver.sql_text,sqlserver.tsql_stack)
+    WHERE ([severity]>=(20) OR ([error_number]=(17803) OR [error_number]=(701) OR [error_number]=(802) OR [error_number]=(8645) OR [error_number]=(8651) OR [error_number]=(8657) OR [error_number]=(8902) OR [error_number]=(41354) OR [error_number]=(41355) OR [error_number]=(41367) OR [error_number]=(41384) OR [error_number]=(41336) OR [error_number]=(41309) OR [error_number]=(41312) OR [error_number]=(41313)))),
 ADD EVENT sqlserver.existing_connection(SET collect_options_text=(1)
     ACTION(package0.event_sequence,sqlserver.client_app_name,sqlserver.client_hostname,sqlserver.client_pid,sqlserver.nt_username,sqlserver.server_principal_name,sqlserver.session_id)),
 ADD EVENT sqlserver.login(SET collect_options_text=(1)

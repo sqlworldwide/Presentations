@@ -13,5 +13,7 @@ SSMS 18.1 SSBDIAGNOSE.EXE	The SQL Server Diagnose (command line tool)
 SSMS 18.2 Added a new attribute in QueryPlan when inline scalar UDF feature is enabled 
           (ContainsInlineScalarTsqludfs)
 SSMS 18.3 Added data classificaiton information to column properties UI
-
+SSMS 18.4 Added the Max Plan per query value in the dialog properties
+SSMS 18.4 Added support for the new Custom Capture Policies
+SSMS 18.4 Added error_reported event to XEvent Profiler sessions
 */

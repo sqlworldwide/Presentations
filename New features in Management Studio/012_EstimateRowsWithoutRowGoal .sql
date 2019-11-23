@@ -8,7 +8,7 @@ Common Scenarios you can introduce Row Goal:
 	SET ROWCOUNT { number | @number_var } 
 https://blogs.msdn.microsoft.com/sql_server_team/more-showplan-enhancements-row-goal/
 https://support.microsoft.com/en-us/help/4051361/optimizer-row-goal-information-in-query-execution-plan-added-in-sql-se
-http://sqlblog.com/blogs/paul_white/archive/2010/08/18/inside-the-optimiser-row-goals-in-depth.aspx
+https://www.sql.kiwi/2010/08/inside-the-optimiser-row-goals-in-depth.html
 */
 
 --Turn on Actual Execution Plan (Ctrl+M)
