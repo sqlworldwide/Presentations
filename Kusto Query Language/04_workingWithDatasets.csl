@@ -3,9 +3,7 @@
 // Written by Taiob M Ali
 //------------------------------------------------------------------------------
 // Go to: https://aka.ms/LADemo
-// Select Demo database (loosely speaking)
 //------------------------------------------------------------------------------
-
 
 //------------------------------------------------------------------------------
 // let (https://docs.microsoft.com/en-us/azure/kusto/query/letstatement)
@@ -112,7 +110,7 @@ let startTime = ago(1d);
 let endTime = now();
 Perf 
 | where TimeGenerated between (startTime .. endTime)
-| where Computer == "retailEUS6"
+| where Computer == "ContosoJbFwJb"
 | where CounterName == "% Processor Time"
 | where ObjectName == "Processor"
 | where InstanceName == "_Total"

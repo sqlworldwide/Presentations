@@ -21,6 +21,9 @@
 // --Grouping
 // --Query Explorer
 // --Visualization
+// AzureMetrics
+// | summarize countResource= count() by Resource
+// | order by countResource  
 //------------------------------------------------------------------------------
 
 // To retrieve data, you can simply enter the table name and hit the

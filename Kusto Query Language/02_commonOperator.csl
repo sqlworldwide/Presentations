@@ -3,7 +3,7 @@
 // Written by Taiob M Ali
 //------------------------------------------------------------------------------
 // Go to: https://aka.ms/LADemo
-// Select Demo database (loosely speaking)
+// Will mostly use LogManagement/AzureMetrics table (loosely speaking)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -25,10 +25,6 @@ AzureMetrics
 // where as below query will exclude those records
 AzureMetrics
 | search kind=case_sensitive "CPU"
-
-// Differnet syntax but same query
-// AzureMetrics | search "cpu"
-// search in (AzureMetrics) "cpu"
 
 // Restricting search to one column in a table
 // "cpu" anywhere in the column
@@ -123,8 +119,8 @@ AzureMetrics
 // Summarize (https://docs.microsoft.com/en-us/azure/kusto/query/summarizeoperator)
 //------------------------------------------------------------------------------
 
-// Summariaze allows you count number of rows by column using the count()
-// aggregation function
+// Summariaze allows you to aggregate by function
+// Here we are aggregating by counting number of rows by column (MetricName) using the count() function
 AzureMetrics 
 | summarize count() by MetricName
 
@@ -459,3 +455,4 @@ Event
                          )
 | extend YearMonth = strcat( MonthName, " - ", YearNumber) 
 | project YearMonth, EventCount 
+| render barchart 
