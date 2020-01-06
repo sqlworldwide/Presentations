@@ -1,5 +1,5 @@
 /*
-Script Name: 03_SelectStatement.sql
+Script Name: 02_Every4th
 Written by Taiob M Ali
 SqlWorldWide.com
 

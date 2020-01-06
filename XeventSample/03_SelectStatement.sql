@@ -7,7 +7,9 @@ This script will run 100 Select statement
 You can run this in any database
 */
 
-
+--prevents the message about the number of rows affected from being displayed
+SET NOCOUNT ON; 
+GO
 SELECT 'This is the 1 statement'
 GO
 SELECT 'This is the 2 statement'
