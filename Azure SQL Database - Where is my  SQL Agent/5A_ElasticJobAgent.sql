@@ -42,7 +42,7 @@ CREATE DATABASE SCOPED CREDENTIAL elasticJobTargetCredential WITH IDENTITY = 'el
 GO
 CREATE DATABASE SCOPED CREDENTIAL elasticJobMasterCredential WITH IDENTITY = 'elasticJobMaster',  SECRET ='Pa$$w0rd123'; 
 GO
-----Create User in dbawarehouse
+--Create User in dbawarehouse
 --USE dbawarehouse
 CREATE USER elasticJobMaster FOR LOGIN  elasticJobMaster WITH DEFAULT_SCHEMA =dbo;
 GO

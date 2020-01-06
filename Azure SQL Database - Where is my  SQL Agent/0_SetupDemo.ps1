@@ -23,7 +23,6 @@ https://gallery.technet.microsoft.com/scriptcenter/Get-ExternalPublic-IP-c1b601b
 # visit https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-windows-powershell?view=powershell-6#upgrading-existing-windows-powershell.
 
 $PSVersionTable.PSVersion
-
 Import-Module Az 
 
 # Sign in to Azure
