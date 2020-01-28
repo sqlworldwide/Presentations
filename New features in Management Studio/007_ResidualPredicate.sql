@@ -17,7 +17,7 @@ INCLUDE ([TransactionDate], [TransactionType], [Quantity], [ActualCost]);
 GO
 
 --Turn on Actual Execution Plan (Ctrl+M)
---Looking at the plan looks perfect, index see only
+--Looking at the plan looks perfect, index seek only
 USE [AdventureWorks];
 GO
 SELECT 
@@ -45,7 +45,7 @@ GO
 --with difference of 'Actual number of rows' vs 'Number of rows read'
 
 
---Creat index
+--Drop index
 USE [AdventureWorks];
 GO
 DROP INDEX IF EXISTS [NCI_TransactionHistory_ProductID_included] ON [Production].[TransactionHistory];

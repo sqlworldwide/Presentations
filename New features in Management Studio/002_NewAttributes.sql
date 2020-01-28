@@ -8,8 +8,8 @@ DEMO:
    Percent of Actual rows
  QueryTimeStats
  WaitStats
-   Trace Flag
-   Actual I/O Statistics
+ Trace Flag
+ Actual I/O Statistics
  Actual Time Statistics
    Actual Elapsed CPU time
    Actual Elapse time ms

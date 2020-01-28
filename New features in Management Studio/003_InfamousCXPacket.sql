@@ -1,7 +1,7 @@
 /*
 Script Name:003_InfamousCXPacket.sql
 	Infamous CXPacket
-		CXCONSUMER Waittype (SQL2017 CU3, SQL2016 SP2) 
+	CXCONSUMER Waittype (SQL2017 CU3, SQL2016 SP2) 
 */
 
 --Changing MaxDOP to 0
