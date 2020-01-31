@@ -1,0 +1,83 @@
+//------------------------------------------------------------------------------
+// 03_aggregations.csl
+// Written by Taiob M Ali
+//------------------------------------------------------------------------------
+// Go to: https://aka.ms/LADemo
+// Will mostly use LogManagement/AzureMetrics table (loosely speaking)
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+// arg_max / arg_min
+// https://docs.microsoft.com/en-us/azure/kusto/query/arg-max-aggfunction
+// https://docs.microsoft.com/en-us/azure/kusto/query/arg-min-aggfunction
+//------------------------------------------------------------------------------
+
+// arg_max finds the maximum value for the column being summarized on, and 
+// returns the row where that maximum value was found
+// The second parameter indicates which columns to return. * means all.
+// By default it always returns the "by" column and the maximized value.
+AzureMetrics
+| where MetricName =='Network Out Total'
+| summarize arg_max(Total, TimeGenerated) by Resource
+| sort by Total
+
+//------------------------------------------------------------------------------
+// Percentiles (https://docs.microsoft.com/en-us/azure/kusto/query/percentiles-aggfunction)
+//------------------------------------------------------------------------------
+
+// Percentiles calculates the value that is greater than x% of the sampleset. 
+// You can rename the default column names with project-rename
+Usage
+| where TimeGenerated > ago(7d)
+| summarize percentiles(Quantity, 50, 95) by DataType
+| project-rename percent50 = percentile_Quantity_50 
+                ,percent95 = percentile_Quantity_95 
+
+//------------------------------------------------------------------------------
+// countif (https://docs.microsoft.com/en-us/azure/kusto/query/countif-aggfunction)
+//------------------------------------------------------------------------------
+
+// Returns a count of rows for which Predicate evaluates to true
+// looking at computer availability based on heartbeat
+// Query was modified from https://docs.microsoft.com/en-us/azure/azure-monitor/log-query/examples#server-availability-rate
+Heartbeat
+| where TimeGenerated > (startofday(datetime("2019-08-01"))) and TimeGenerated < now()
+| summarize heartbeat_per_hour=count() by bin_at(TimeGenerated, 1h, (startofday(datetime("2018-03-01"))) ), Computer
+| extend available_per_hour=iff(heartbeat_per_hour>0, true, false)
+| summarize total_available_hours=countif(available_per_hour==true) by Computer 
+| extend total_number_of_buckets=round((now()-(startofday(datetime("2019-08-01"))) )/1h)+1
+| extend availability_rate=total_available_hours*100/total_number_of_buckets
+
+//------------------------------------------------------------------------------
+// pivot (https://docs.microsoft.com/en-us/azure/kusto/query/pivotplugin)
+//------------------------------------------------------------------------------
+
+// Rotates a table by turning the unique values from one column in the input table into multiple columns in the output table, 
+// and performs aggregations where they are required on any remaining column values that are wanted in the final output.
+
+//------------------------------------------------------------------------------
+// top-nested (https://docs.microsoft.com/en-us/azure/kusto/query/topnestedoperator)
+//------------------------------------------------------------------------------
+
+// Produces hierarchical top results, where each level is a drill-down based on previous level values 
+// You can add a row for all other records
+
+AzureMetrics
+| top-nested 3 of Resource
+    with others =  'All Other Resource' by ResourceCount = count() 
+, top-nested 3 of MetricName  
+    with others =  'All Other Resource' by MetricNameCount = count() 
+|sort by Resource, ResourceCount
+
+//------------------------------------------------------------------------------
+// any (https://docs.microsoft.com/en-us/azure/kusto/query/any-aggfunction)
+//------------------------------------------------------------------------------
+
+// Returns random non-empty value from the specified expression values 
+AzureMetrics
+| summarize any(*)
+
+// Returns a random row for each distinct value
+AzureMetrics
+| summarize any(*) by MetricName
+| sort by MetricName asc
