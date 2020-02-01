@@ -1,5 +1,7 @@
 /*
 Script Name: SimulateDeadlock.sql
+Written by Taiob M Ali
+SqlWorldWide.com
 */
 
 CREATE TABLE dt_Employees (
@@ -41,11 +43,10 @@ UPDATE dt_Employees
 SET Phone = N'555-9999'
 WHERE EmpId = 1
 
---Go back to previous window and run this
+--Come back to this window and run this
 UPDATE dt_Suppliers
 SET Fax = N'555-1212'
 WHERE SupplierId = 1
-
 
 --You will get a deadlock message in one of the window
 --Commit session 
@@ -61,3 +62,4 @@ AzureDiagnostics
 | where  Category == 'Deadlocks' 
 | where TimeGenerated > ago(30m)
 */
+
