@@ -4,7 +4,8 @@ Written by Taiob M Ali
 SqlWorldWide.com
 
 This code will replace the built in code for Azure function
-
+Please refer to my blog post about setting up a function app
+http://sqlworldwide.com/how-to-use-managed-identity-with-azure-function-app/
 #>
 
 # Input bindings are passed in via param block.
@@ -20,7 +21,15 @@ if ($Timer.IsPastDue) {
 <#
  This function app is using 'Managed Service Identity' to connect to the Azure SQL Database
  In the interest of time I will not show the set up
- I am planning to blog about it in details.
+ Please see details from my blog post:
+ http://sqlworldwide.com/how-to-use-managed-identity-with-azure-function-app/
+ I already ran the code in Azure SQL Server 'ugdemotargetserver.database.windows.net'
+ Database Name:testRunBookDB 
+
+ CREATE USER PassMarathonDemo FROM EXTERNAL PROVIDER
+ GO
+ ALTER  ROLE db_owner ADD MEMBER PassMarathonDemo
+ GO
  Used help from following resources in setting up 'Managed Service Identity'
  https://docs.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-connect-msi
  https://www.azurecorner.com/using-managed-service-identity-in-azure-functions-to-access-azure-sql-database/

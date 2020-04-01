@@ -10,9 +10,8 @@ This script will
     save the result in local server
 ============================================================================
 #>
-
 # Putting my query in a variable
-$databaseQuery  = 
+$databaseQuery = 
 "
 SELECT 
 		GETDATE() AS collectedAT,
@@ -27,9 +26,9 @@ SELECT
 		a.physical_name AS physicalName 
 FROM sys.database_files a
 "
-$localInstanceName='DESKTOP-50O69FS\SQL2019'
-$localDatabaseName='dbadatabase'
-$localTableName='databasesize'
+$localInstanceName = 'LocalInstanceName'
+$localDatabaseName = 'dbadatabase'
+$localTableName = 'databasesize'
 
 # Set an admin login and password for your database
 # The login information for the server
@@ -38,31 +37,30 @@ $adminlogin = "taiob"
 $password = Get-Content "C:\Azure SQL Database - Where is my  SQL Agent\password.txt"
 $password = ConvertTo-SecureString -String $password -AsPlainText -Force
 #$databaseCredentials = Get-Credential -Message "Please provide credentials for $SqlInstance"
-$databaseCredentials =  New-Object System.Management.Automation.PSCredential($adminlogin,$password) 
+$databaseCredentials = New-Object System.Management.Automation.PSCredential($adminlogin, $password) 
 
 #Get all resources type SQL Server, loop through all SQL Server and collect size for each database
-$resources = Get-AzResource | Where-Object{ $_.ResourceType -eq "Microsoft.Sql/servers"  } | Select-Object name
-foreach ($SqlInstance in $resources)
-{ 
-$SqlInstance ="$($SqlInstance.Name).database.windows.net"
-$databases = Invoke-Sqlcmd -Query "select name from sys.databases" -ServerInstance $SqlInstance `
--Username $databaseCredentials.GetNetworkCredential().UserName `
--Password $databaseCredentials.GetNetworkCredential().Password `
--Database 'master'
+$resources = Get-AzResource -ResourceGroupName 'sqlagentdemo' | Where-Object { $_.ResourceType -eq "Microsoft.Sql/servers" } | Select-Object name
+foreach ($SqlInstance in $resources) { 
+    $SqlInstance = "$($SqlInstance.Name).database.windows.net"
+    $databases = Invoke-Sqlcmd -Query "select name from sys.databases" -ServerInstance $SqlInstance `
+        -Username $databaseCredentials.GetNetworkCredential().UserName `
+        -Password $databaseCredentials.GetNetworkCredential().Password `
+        -Database 'master'
 
-    foreach ($databaseName in $databases.name)
-    {
-    Write-Host "Query results for database $databaseName.`n"
-    Invoke-Sqlcmd $databaseQuery -ServerInstance $SqlInstance `
-    -Username $databaseCredentials.GetNetworkCredential().UserName `
-    -Password $databaseCredentials.GetNetworkCredential().Password `
-    -Database $databaseName | `
-    Write-DbaDataTable -SqlInstance $localInstanceName -Database $localDatabaseName -Table $localTableName
+    foreach ($databaseName in $databases.name) {
+        Write-Host "Query results for database $databaseName.`n"
+        Invoke-Sqlcmd $databaseQuery -ServerInstance $SqlInstance `
+            -Username $databaseCredentials.GetNetworkCredential().UserName `
+            -Password $databaseCredentials.GetNetworkCredential().Password `
+            -Database $databaseName | `
+            Write-DbaDataTable -SqlInstance $localInstanceName -Database $localDatabaseName -Table $localTableName
     }
 }
-
+<#
 #See the result
 Invoke-DbaQuery `
     -SqlInstance $localInstanceName `
-    -Query 'SELECT TOP 20 * FROM DbaDatabase.dbo.databasesize ORDER BY collectedAT DESC ;'|Format-Table -AutoSize
+    -Query 'SELECT TOP 20 * FROM DbaDatabase.dbo.databasesize ORDER BY collectedAT DESC ;' | Format-Table -AutoSize
+#>
 

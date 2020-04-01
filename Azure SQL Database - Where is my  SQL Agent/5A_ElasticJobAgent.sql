@@ -139,7 +139,27 @@ EXEC jobs.sp_start_job 'ResultsJob'
 --EXEC jobs.sp_stop_job '87C309CA-A9FC-4121-8D6E-4F31C5661515'
 
 --See job execution details
-SELECT *
+SELECT 
+	[job_execution_id], 
+	[job_name], 	 
+	[step_name], 
+	[lifecycle], 
+	[step_id], 
+	[is_active], 
+	[create_time], 
+	[start_time], 
+	[end_time], 
+	[current_attempts], 
+	[current_attempt_start_time], 
+	[next_attempt_start_time], 
+	[last_message], 
+	[target_type], 
+	[target_id], 
+	[target_subscription_id], 
+	[target_resource_group_name], 
+	[target_server_name], 
+	[target_database_name], 
+	[target_elastic_pool_name]
 FROM [jobs].[job_executions]
 WHERE job_name ='ResultsJob'
 ORDER BY start_time DESC

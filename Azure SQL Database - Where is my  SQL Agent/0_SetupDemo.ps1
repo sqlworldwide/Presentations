@@ -17,7 +17,7 @@ https://gallery.technet.microsoft.com/scriptcenter/Get-ExternalPublic-IP-c1b601b
 #>
 
 
-# Starting with Azure PowerShell version 6.0, Azure PowerShell requires PowerShell version 5.0. 
+# Starting with Azure PowerShell version 7.0, Azure PowerShell requires PowerShell version 5.0. 
 # To check the version of PowerShell running on your machine, run the following command.
 # If you have an outdated version, 
 # visit https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-windows-powershell?view=powershell-6#upgrading-existing-windows-powershell.
@@ -28,14 +28,14 @@ Import-Module Az
 # Sign in to Azure
 #$VerbosePreference = $DebugPreference = "Continue"
 Connect-AzAccount
-$SubscriptionList =Get-AzSubscription
-Set-AzContext -SubscriptionId $SubscriptionList[0].Id
+#Use below code if you have multiple subscription and you want to use a particular one
+Set-AzContext -SubscriptionId 'put your subscription id'
 
 # Declare variables
 # The data center and resource name for your resources
 $resourceGroupName = "sqlagentdemo"
 $primaryLocation = "East US" 
-$elasticPoolName= "sqlagentdemo"
+$elasticPoolName = "sqlagentdemo"
 
 # The logical server name: Use a random value or replace with your own value (do not capitalize)
 $jobServerName = "ugdemojobserver"
@@ -65,15 +65,14 @@ $resGrpChk = Get-AzResourceGroup `
     -ev notPresent `
     -ea 0
 
-if ($resGrpChk)
-  {  
+if ($resGrpChk) {  
     #Delete resource group
     Remove-AzResourceGroup `
         -Name $resourceGroupName -Confirm   
     Write-Host 'Resource group deleted' `
         -fore white `
         -back green
-  }
+}
  
 #Creates new resource group
 New-AzResourceGroup `
@@ -84,12 +83,11 @@ $resGrpChk = Get-AzResourceGroup `
     -Name $resourceGroupName `
     -ev Present `
     -ea 1
-if ($resGrpChk)
-{
-Write-Host 'Resource group created' `
-    -fore white `
-    -back green 
- }  
+if ($resGrpChk) {
+    Write-Host 'Resource group created' `
+        -fore white `
+        -back green 
+}  
   
 #Create job server
 New-AzSqlServer `
@@ -97,10 +95,10 @@ New-AzSqlServer `
     -ServerName $jobServerName `
     -Location $primaryLocation `
     -SqlAdministratorCredentials $(New-Object -TypeName System.Management.Automation.PSCredential `
-    -ArgumentList $adminlogin, $(ConvertTo-SecureString -String $password -AsPlainText -Force))
+        -ArgumentList $adminlogin, $(ConvertTo-SecureString -String $password -AsPlainText -Force))
 
 #Configure a server firewall rule for job server
- New-AzSqlServerFirewallRule `
+New-AzSqlServerFirewallRule `
     -ResourceGroupName $resourceGroupName `
     -ServerName $jobServerName `
     -FirewallRuleName "TaiobDesktop" `
@@ -109,9 +107,9 @@ New-AzSqlServer `
 
 #Set Allow access to Azure services 
 New-AzSqlServerFirewallRule `
--ServerName $jobServerName `
--ResourceGroupName $resourceGroupName  `
--AllowAllAzureIPs
+    -ServerName $jobServerName `
+    -ResourceGroupName $resourceGroupName  `
+    -AllowAllAzureIPs
 
 #Create an empty database to hold job metadata
 New-AzSqlDatabase  -ResourceGroupName $resourceGroupName `
@@ -122,11 +120,11 @@ New-AzSqlDatabase  -ResourceGroupName $resourceGroupName `
     -MaxSizeBytes 10737418240 
 #Create an empty database to hold job output
 New-AzSqlDatabase  -ResourceGroupName $resourceGroupName `
-   -ServerName $jobServerName `
-   -DatabaseName $collectionDatabase `
-   -Edition "Standard" `
-   -RequestedServiceObjectiveName "S0" `
-   -MaxSizeBytes 10737418240 
+    -ServerName $jobServerName `
+    -DatabaseName $collectionDatabase `
+    -Edition "Standard" `
+    -RequestedServiceObjectiveName "S0" `
+    -MaxSizeBytes 10737418240 
 
 
 #Create target server
@@ -135,10 +133,10 @@ New-AzSqlServer `
     -ServerName $targetServerName `
     -Location $primaryLocation `
     -SqlAdministratorCredentials $(New-Object -TypeName System.Management.Automation.PSCredential `
-    -ArgumentList $adminlogin, $(ConvertTo-SecureString -String $password -AsPlainText -Force))
+        -ArgumentList $adminlogin, $(ConvertTo-SecureString -String $password -AsPlainText -Force))
 
 #Configure a server firewall rule for target server
- New-AzSqlServerFirewallRule `
+New-AzSqlServerFirewallRule `
     -ResourceGroupName $resourceGroupName `
     -ServerName $targetServerName `
     -FirewallRuleName "TaiobDesktop" `
@@ -147,9 +145,9 @@ New-AzSqlServer `
 
 #Set Allow access to Azure services 
 New-AzSqlServerFirewallRule `
--ServerName $targetServerName `
--ResourceGroupName $resourceGroupName  `
--AllowAllAzureIPs
+    -ServerName $targetServerName `
+    -ResourceGroupName $resourceGroupName  `
+    -AllowAllAzureIPs
 
 
 #Create a database using adventureworks smaple
@@ -172,7 +170,7 @@ Invoke-WebRequest -Uri $url -OutFile $output
 Set-Location "C:\Program Files (x86)\Microsoft SQL Server\140\DAC\bin\"
 
 .\sqlpackage.exe /a:Import /sf:$output /tsn:"$targetServerName.database.windows.net" `
-/tdn:$databaseName2 /tu:$adminlogin /tp:$password
+    /tdn:$databaseName2 /tu:$adminlogin /tp:$password
 
 
 New-AzSqlElasticPool `
@@ -199,14 +197,14 @@ New-AzSqlDatabase  `
     -Edition "Standard" `
     -RequestedServiceObjectiveName "S0" `
     -MaxSizeBytes 10737418240 `
-   
+
 
 
 #To use Elastic Jobs, register the feature in your Azure subscription by running the following command 
 #(this only needs to be run once in each subscription where you want to use Elastic Jobs):
 Register-AzProviderFeature `
--FeatureName sqldb-JobAccounts `
--ProviderNamespace Microsoft.Sql
+    -FeatureName sqldb-JobAccounts `
+    -ProviderNamespace Microsoft.Sql
 
 #Clean up by removing resource group name
 #Run this command after you are done testing with all other script

@@ -8,22 +8,20 @@ This script will create
     Azure automation account
     Create Credential
     Create Blank runbook (Type PowerShellWorkflow)
-
 ============================================================================
 #>
-
 Import-Module Az 
 
 # Sign in to Azure
 #$VerbosePreference = $DebugPreference = "Continue"
 Connect-AzAccount
-$SubscriptionList =Get-AzSubscription
-Set-AzContext -SubscriptionId $SubscriptionList[0].Id
+#Use below code if you have multiple subscription and you want to use a particular one
+Set-AzContext -SubscriptionId 'your subscription id'
 
 # Declare variables
 # The data center and resource name for your resources
 $resourceGroupName = "sqlagentdemo"
-$primaryLocation = "East US" 
+$primaryLocation = "East US 2" 
 
 # The logical server name: Use a random value or replace with your own value (do not capitalize)
 $automationAccountName = "ugdemo2"
@@ -44,14 +42,14 @@ New-AzAutomationAccount `
     -Name $automationAccountName `
     -Location $primaryLocation
 
-#Creating credentila
+#Creating credential
 New-AzAutomationCredential `
     -AutomationAccountName $automationAccountName `
     -Name $credentialName `
     -Value $credential `
     -ResourceGroupName $resourceGroupName
 
-    #Creating a blank runbook
+#Creating a blank runbook
 New-AzAutomationRunbook `
     -ResourceGroupName $resourceGroupName `
     -AutomationAccountName $automationAccountName `

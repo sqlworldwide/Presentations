@@ -43,11 +43,12 @@ CREATE TABLE [dbo].[databaseSize](
 ) ON [PRIMARY];
 GO
 
---Read the password from text file
+--Read the password from JSON file
+--How did I create this file?
+--https://dba.stackexchange.com/questions/263871/linked-server-from-on-premise-to-azure-sql-database/263881#263881
 DECLARE @password VARCHAR(MAX)
-SELECT  @password = BulkColumn
-FROM    OPENROWSET(BULK 'C:\Azure SQL Database - Where is my  SQL Agent\password.txt', SINGLE_BLOB) AS x   
-
+SELECT  @password = json_value(BulkColumn, '$[0]')
+FROM    OPENROWSET(BULK 'C:\Azure SQL Database - Where is my  SQL Agent\password.json', SINGLE_CLOB) AS x   
 --Drop and create linked server
 IF EXISTS(SELECT * FROM sys.servers WHERE name = N'AzureDB_adventureworks')
 EXEC master.dbo.sp_dropserver @server=N'AzureDB_adventureworks', @droplogins='droplogins';
@@ -61,7 +62,6 @@ EXEC master.dbo.sp_addlinkedserver
 EXEC master.dbo.sp_addlinkedsrvlogin
  @rmtsrvname=N'AzureDB_adventureworks',
  @useself=N'False',
- @locallogin=NULL,
  @rmtuser=N'taiob',@rmtpassword=@password;
 GO
 
@@ -84,17 +84,20 @@ FROM adventureworks.sys.database_files a'
 ) ;
 
 --Look at the result
-SELECT [collectedAT]
-      ,[serverName]
-      ,[databaseName]
-      ,[fileName]
-      ,[fileId]
-      ,[fileSizeMB]
-      ,[spaceUsedMB]
-      ,[freeSpaceMB]
-      ,[percentFree]
-      ,[physicalName]
-  FROM [DbaDatabase].[dbo].[databasesize];
+SELECT 
+  [collectedAT] AS [collectedAtUTC]
+  ,DATEADD(mi, DATEDIFF(mi, GETUTCDATE(), GETDATE()), collectedAT) AS [collectedAtLocalTime]
+  ,[serverName]
+  ,[databaseName]
+  ,[fileName]
+  ,[fileId]
+  ,[fileSizeMB]
+  ,[spaceUsedMB]
+  ,[freeSpaceMB]
+  ,[percentFree]
+  ,[physicalName]
+FROM [DbaDatabase].[dbo].[databasesize]
+  ORDER BY collectedAT DESC;
 
 --If you want to save the result locally in Azure SQL Database
 --Confirm collection table exist
@@ -138,7 +141,8 @@ SELECT *  FROM OPENQUERY
 
 --Connect to ugdemotargetserver.database.windows.net adventureworks database
 --See the result
-SELECT [collectedAT]
+SELECT 
+       [collectedAT] AS [collectedAtUTC]
       ,[serverName]
       ,[databaseName]
       ,[fileName]

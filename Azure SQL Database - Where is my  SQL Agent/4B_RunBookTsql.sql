@@ -13,8 +13,10 @@ This script will
 --replace runbook code with content from '4C_RunBookCode.txt
 --Connect to ugdemotargetserver.database.windows.net
 --Change database context to testRunBookDB as USE statement is not allowed an Azure
+
 SET NOCOUNT ON
-IF NOT EXISTS (SELECT * FROM SYSOBJECTS WHERE NAME='testRebuild' AND XTYPE='U')
+DROP TABLE IF EXISTS dbo.testRebuild 
+GO
 CREATE TABLE dbo.testRebuild 
 (c1 int, c2 char (100), c3 int, c4 varchar(1000))
 GO
@@ -26,7 +28,7 @@ GO
 --Inserting 1000 rows, takes about 8 seconds
 DECLARE @i int
 SELECT @i = 0
-
+SET NOCOUNT ON
 WHILE (@i < 1000)
 BEGIN
 INSERT INTO testRebuild VALUES (@i, 'hello', @i+10000, REPLICATE ('a', 100))
@@ -37,17 +39,18 @@ GO
 --inject fragmentation
 UPDATE testrebuild 
 SET    c4 = Replicate ('b', 1000) 
-
 GO
 
 --Check the fragmentation
-SELECT avg_fragmentation_in_percent, 
-       avg_fragment_size_in_pages, 
-       fragment_count, 
-       avg_page_space_used_in_percent 
-FROM   sys.Dm_db_index_physical_stats (Db_id(), Object_id('testRebuild'), NULL, 
-       NULL, 
-             'DETAILED') 
+SELECT 
+  index_level,
+	page_count,
+	record_count,
+	avg_fragmentation_in_percent, 
+  avg_fragment_size_in_pages, 
+  fragment_count, 
+  avg_page_space_used_in_percent 
+FROM sys.Dm_db_index_physical_stats (Db_id(), Object_id('testRebuild'), NULL, NULL, 'DETAILED') 
 GO
 
 
