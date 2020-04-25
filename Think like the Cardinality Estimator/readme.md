@@ -1,7 +1,8 @@
 ## Title : **Think like the Cardinality Estimator**
 ### Abstract
-You migrate your on-premise SQL Database to cloud, taking advantage of the PaaS offering of Azure SQL Database. You heard the promise of spinning up databases on demand and being able to scale up resources during high peak and scale down when not in use. You also want to make sure you are performing integrity checks, index defragmentation, and statistics updates when necessary. There is no SQL Agent, so how do you automate your jobs? Do you have time to do this manually each time? No. There are different options available to automate these long-running, manual, error-prone, and frequently repeated tasks to increase reliability, efficiency.
+SQL Server uses a phase during query optimization, called cardinality estimation (CE). This process makes estimates bases on the statistics as to how many rows flow from one query plan iterator to the next. Knowing how CE generates these numbers will enable you to write better TSQL code and, in turn, influence the type of physical operations during query execution. 
 
-In this demo intensive session, I will show you different options on how to automate these tasks. Some of these solutions use on-prem infrastructure and services in Azure, which are conveniently encapsulated within the collective Azure portal experience.
+Based on that estimated rows, the query processor decides how to access an object, which physical join to use, how to sort the data. Do you know how the CE generates these numbers? What happens when you have multiple predicates, range predicates, variable values that are 'NOT KNOWN' to the optimizer, or you have predicate values increasing in ascending order? Do you know what will happen if your predicate is using a value that is outside of the histogram range?
 
-At the end of this session, you will have a solid understanding of how to automate SQL Server Maintenance tasks, including replacing SQL Agent functionality with multiple options.
+In this session, I will show you how CE estimates in all these scenarios, and you will walk out better equipped to tackle those nasty, hard to solve query plans.
+
