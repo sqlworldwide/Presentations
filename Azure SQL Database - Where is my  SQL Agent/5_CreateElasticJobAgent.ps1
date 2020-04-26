@@ -11,7 +11,6 @@ https://docs.microsoft.com/en-us/azure/sql-database/elastic-jobs-powershell#crea
 https://docs.microsoft.com/en-us/powershell/module/az.sql/new-azsqlelasticjobagent?view=azps-3.1.0
 #>
 
-Import-Module Az.Sql 
 New-AzSqlElasticJobAgent `
 -ResourceGroupName 'sqlagentdemo' `
 -ServerName 'ugdemojobserver' `

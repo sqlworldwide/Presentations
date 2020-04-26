@@ -42,6 +42,7 @@ CREATE DATABASE SCOPED CREDENTIAL elasticJobTargetCredential WITH IDENTITY = 'el
 GO
 CREATE DATABASE SCOPED CREDENTIAL elasticJobMasterCredential WITH IDENTITY = 'elasticJobMaster',  SECRET ='Pa$$w0rd123'; 
 GO
+
 --Create User in dbawarehouse
 --USE dbawarehouse
 CREATE USER elasticJobMaster FOR LOGIN  elasticJobMaster WITH DEFAULT_SCHEMA =dbo;
@@ -77,7 +78,6 @@ GO
 GRANT VIEW DATABASE STATE TO elasticJobTarget;
 GO
 
-
 --Connect to ugdemojobserver.database.windows.net
 --Change context to jobdatabase
 --Add a target group containing server(s)
@@ -111,7 +111,7 @@ SELECT * FROM [jobs].target_group_members WHERE target_group_name = N'ServerGrou
 -- Add a job to collect perf results
 EXEC jobs.sp_add_job @job_name ='ResultsJob', @description='Collection Performance data from all databases'
 
--- Add a job step w/ schedule to collect results from sys.dm_db_resource_stats
+-- Add a job step w/o schedule to collect results from sys.dm_db_resource_stats
 EXEC jobs.sp_add_jobstep
 @job_name='ResultsJob',
 @command= N' SELECT DB_NAME() DatabaseName, $(job_execution_id) AS job_execution_id, * FROM sys.dm_db_resource_stats WHERE end_time > DATEADD(mi, -20, GETDATE());',
@@ -183,8 +183,6 @@ SELECT [DatabaseName]
       ,[cpu_limit]
       ,[internal_execution_id]
   FROM [dbo].[perfResults]
-
-
   
 --Change context to jobdatabase--Add a target group containing server(s)
 EXEC jobs.sp_add_target_group 'ServerGroup2'
@@ -204,16 +202,15 @@ EXEC [jobs].sp_add_target_group_member
 @server_name='ugdemotargetserver.database.windows.net',
 @database_name =N'master'
 GO
+
 --View the recently created target group and target group members
 SELECT * FROM jobs.target_groups WHERE target_group_name='ServerGroup2';
 SELECT * FROM jobs.target_group_members WHERE target_group_name='ServerGroup2';
 
-
-
 -- Add a job to collect perf results
 EXEC jobs.sp_add_job @job_name ='databaseSize', @description='Collection datafile size from all databases in cloud'
 
--- Add a job step w/ schedule to collect results
+-- Add a job step w/o schedule to collect results
 EXEC jobs.sp_add_jobstep
 @job_name='databaseSize',
 @command= N' 
@@ -237,16 +234,36 @@ FROM sys.database_files a;',
 @output_database_name='dbawarehouse',
 @output_table_name='databaseFileSize'
 
-
 -- Execute the latest version of a job
 EXEC jobs.sp_start_job 'databaseSize'
 
-
 --see job execution details
-SELECT *
-  FROM [jobs].[job_executions]
-  WHERE job_name ='databaseSize'
-  ORDER BY start_time DESC
+
+--See job execution details
+SELECT 
+	[job_execution_id], 
+	[job_name], 	 
+	[step_name], 
+	[lifecycle], 
+	[step_id], 
+	[is_active], 
+	[create_time], 
+	[start_time], 
+	[end_time], 
+	[current_attempts], 
+	[current_attempt_start_time], 
+	[next_attempt_start_time], 
+	[last_message], 
+	[target_type], 
+	[target_id], 
+	[target_subscription_id], 
+	[target_resource_group_name], 
+	[target_server_name], 
+	[target_database_name], 
+	[target_elastic_pool_name]
+FROM [jobs].[job_executions]
+WHERE job_name ='databaseSize'
+ORDER BY start_time DESC
 
 --change context to dbawarehouse
 --See result

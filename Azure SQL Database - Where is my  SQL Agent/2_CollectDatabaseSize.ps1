@@ -26,7 +26,7 @@ SELECT
 		a.physical_name AS physicalName 
 FROM sys.database_files a
 "
-$localInstanceName = 'LocalInstanceName'
+$localInstanceName = 'DESKTOP-50O69FS\SQL2019'
 $localDatabaseName = 'dbadatabase'
 $localTableName = 'databasesize'
 

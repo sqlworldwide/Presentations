@@ -29,7 +29,7 @@ Import-Module Az
 #$VerbosePreference = $DebugPreference = "Continue"
 Connect-AzAccount
 #Use below code if you have multiple subscription and you want to use a particular one
-Set-AzContext -SubscriptionId 'put your subscription id'
+Set-AzContext -SubscriptionId 'bda7bbb8-69a4-4354-818c-416f42c60a58'
 
 # Declare variables
 # The data center and resource name for your resources
