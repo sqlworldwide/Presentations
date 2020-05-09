@@ -34,12 +34,13 @@ GO
 --You will two new attributes 'UdfCpuTime' and 'UdfElapsedTime' 
 USE AdventureWorks
 GO
-SELECT dbo.ufn_CategorizePrice(UnitPrice), 
-    SalesOrderID, SalesOrderDetailID, 
-		CarrierTrackingNumber, OrderQty, 
-		ProductID, SpecialOfferID, 
-		UnitPrice, UnitPriceDiscount, 
-    LineTotal, rowguid, ModifiedDate 
+SELECT 
+  dbo.ufn_CategorizePrice(UnitPrice) AS [AffordAbility], 
+  SalesOrderID, SalesOrderDetailID, 
+  CarrierTrackingNumber, OrderQty, 
+  ProductID, SpecialOfferID, 
+  UnitPrice, UnitPriceDiscount, 
+  LineTotal, rowguid, ModifiedDate 
 FROM Sales.SalesOrderDetail
 GO
 
@@ -54,11 +55,12 @@ GO
 --Rather you will see a new one 'ContainsInlineScalarTsqludfs=True' under Misc
 USE AdventureWorks
 GO
-SELECT dbo.ufn_CategorizePrice(UnitPrice), 
-    SalesOrderID, SalesOrderDetailID, 
-		CarrierTrackingNumber, OrderQty, 
-		ProductID, SpecialOfferID, 
-		UnitPrice, UnitPriceDiscount, 
-    LineTotal, rowguid, ModifiedDate 
+SELECT 
+  dbo.ufn_CategorizePrice(UnitPrice) AS [AffordAbility], 
+  SalesOrderID, SalesOrderDetailID, 
+  CarrierTrackingNumber, OrderQty, 
+  ProductID, SpecialOfferID, 
+  UnitPrice, UnitPriceDiscount, 
+  LineTotal, rowguid, ModifiedDate 
 FROM Sales.SalesOrderDetail
 GO

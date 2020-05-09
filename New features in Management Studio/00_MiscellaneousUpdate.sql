@@ -16,4 +16,11 @@ SSMS 18.3 Added data classificaiton information to column properties UI
 SSMS 18.4 Added the Max Plan per query value in the dialog properties
 SSMS 18.4 Added support for the new Custom Capture Policies
 SSMS 18.4 Added error_reported event to XEvent Profiler sessions
+SSMS 18.5 Added Notebook as a destination for Generate Scripts wizard
+SSMS 18.5 Added support for sensitivity rank in Data Classification
+SSMS 18.5 Improved how SSMS displays estimated row counts for operators with multiple executions: 
+		  (1) Modified Estimated Number of Rows in SSMS to "Estimated Number of Rows Per Execution"; 
+		  (2) Added a new property Estimated Number of Rows for All Executions; 
+		  (3) Modify the property Actual Number of Rows to Actual Number of Rows for All Executions.
+
 */

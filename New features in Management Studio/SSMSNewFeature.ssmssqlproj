@@ -1,0 +1,185 @@
+<?xml version="1.0"?>
+<SqlWorkbenchSqlProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="SSMSNewFeature">
+  <Items>
+    <LogicalFolder Name="Connections" Type="2" Sorted="true">
+      <Items>
+        <ConnectionNode Name="(local)\SQL2019:DESKTOP-50O69FS\taiob">
+          <Created>2020-02-09T16:16:36.4541649-05:00</Created>
+          <Type>SQL</Type>
+          <Server>(local)\SQL2019</Server>
+          <UserName />
+          <Authentication>Windows Authentication</Authentication>
+          <InitialDB />
+          <LoginTimeout>30</LoginTimeout>
+          <ExecutionTimeout>0</ExecutionTimeout>
+          <ConnectionProtocol>NotSpecified</ConnectionProtocol>
+          <ApplicationName>Microsoft SQL Server Management Studio - Query</ApplicationName>
+        </ConnectionNode>
+      </Items>
+    </LogicalFolder>
+    <LogicalFolder Name="Queries" Type="0" Sorted="true">
+      <Items>
+        <FileNode Name="00_MiscellaneousUpdate.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local)\SQL2019:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)\SQL2019</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>00_MiscellaneousUpdate.sql</FullPath>
+        </FileNode>
+        <FileNode Name="001_Setup.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local)\SQL2019:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)\SQL2019</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>001_Setup.sql</FullPath>
+        </FileNode>
+        <FileNode Name="002_NewAttributes.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local)\SQL2019:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)\SQL2019</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>002_NewAttributes.sql</FullPath>
+        </FileNode>
+        <FileNode Name="003_InfamousCXPacket.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local)\SQL2019:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)\SQL2019</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>003_InfamousCXPacket.sql</FullPath>
+        </FileNode>
+        <FileNode Name="004_UdfRunTime.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local)\SQL2019:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)\SQL2019</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>004_UdfRunTime.sql</FullPath>
+        </FileNode>
+        <FileNode Name="005_BatchModeOnRowStoreUsed.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local)\SQL2019:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)\SQL2019</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>005_BatchModeOnRowStoreUsed.sql</FullPath>
+        </FileNode>
+        <FileNode Name="006_OptimizerStatsUsage.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local)\SQL2019:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)\SQL2019</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>006_OptimizerStatsUsage.sql</FullPath>
+        </FileNode>
+        <FileNode Name="007_ResidualPredicate.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local)\SQL2019:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)\SQL2019</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>007_ResidualPredicate.sql</FullPath>
+        </FileNode>
+        <FileNode Name="008_XEModfiedQuickSessionStandard.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local)\SQL2019:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)\SQL2019</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>008_XEModfiedQuickSessionStandard.sql</FullPath>
+        </FileNode>
+        <FileNode Name="009_SinglePlanAnalysis.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local)\SQL2019:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)\SQL2019</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>009_SinglePlanAnalysis.sql</FullPath>
+        </FileNode>
+        <FileNode Name="010_CompareShowplan.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local)\SQL2019:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)\SQL2019</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>010_CompareShowplan.sql</FullPath>
+        </FileNode>
+        <FileNode Name="011_SearchingShowplan.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local)\SQL2019:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)\SQL2019</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>011_SearchingShowplan.sql</FullPath>
+        </FileNode>
+        <FileNode Name="012_EstimateRowsWithoutRowGoal .sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local)\SQL2019:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)\SQL2019</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>012_EstimateRowsWithoutRowGoal .sql</FullPath>
+        </FileNode>
+        <FileNode Name="013_Dashboards.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:(local)\SQL2019:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>(local)\SQL2019</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>013_Dashboards.sql</FullPath>
+        </FileNode>
+        <FileNode Name="XESelectDemo1.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>XESelectDemo1.sql</FullPath>
+        </FileNode>
+        <FileNode Name="XESelectDemo2.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>XESelectDemo2.sql</FullPath>
+        </FileNode>
+        <FileNode Name="XESelectDemo3.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>XESelectDemo3.sql</FullPath>
+        </FileNode>
+        <FileNode Name="XESelectDemo4.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>XESelectDemo4.sql</FullPath>
+        </FileNode>
+      </Items>
+    </LogicalFolder>
+    <LogicalFolder Name="Miscellaneous" Type="3" Sorted="true">
+      <Items>
+        <FileNode Name="2014plan.sqlplan">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>2014plan.sqlplan</FullPath>
+        </FileNode>
+        <FileNode Name="Add4Clients.cmd">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>Add4Clients.cmd</FullPath>
+        </FileNode>
+        <FileNode Name="KillWorkers.cmd">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>KillWorkers.cmd</FullPath>
+        </FileNode>
+        <FileNode Name="Performance Troubleshooting made easier.pptx">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>Performance Troubleshooting made easier.pptx</FullPath>
+        </FileNode>
+        <FileNode Name="RunXESelectDemo1.cmd">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>RunXESelectDemo1.cmd</FullPath>
+        </FileNode>
+        <FileNode Name="RunXESelectDemo2.cmd">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>RunXESelectDemo2.cmd</FullPath>
+        </FileNode>
+        <FileNode Name="RunXESelectDemo3.cmd">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>RunXESelectDemo3.cmd</FullPath>
+        </FileNode>
+        <FileNode Name="RunXESelectDemo4.cmd">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>RunXESelectDemo4.cmd</FullPath>
+        </FileNode>
+      </Items>
+    </LogicalFolder>
+  </Items>
+</SqlWorkbenchSqlProject>
