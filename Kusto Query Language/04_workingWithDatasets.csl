@@ -19,10 +19,17 @@
 let n = 10;  // number
 let computerName= "On-Premise-16S";  // string
 let cutoff = ago(1h); // datetime
-Event 
+Event
 | where TimeGenerated > cutoff 
     and Computer  == computerName
 | take n
+
+//If no data in Event table use this example 
+//Copied from https://docs.microsoft.com/en-us/azure/data-explorer/kusto/query/letstatement#using-multiple-let-statements
+let foo1 = (_start:long, _end:long, _step:long) { range x from _start to _end step _step};
+let foo2 = (_step:long) { foo1(1, 100, _step)};
+foo2(2) | count
+// Result: 50
 
 //------------------------------------------------------------------------------
 // join (https://docs.microsoft.com/en-us/azure/kusto/query/joinoperator)
@@ -110,7 +117,7 @@ let startTime = ago(1d);
 let endTime = now();
 Perf 
 | where TimeGenerated between (startTime .. endTime)
-| where Computer == "ContosoJbFwJb"
+| where Computer == "MABS20.NA.contosohotels.com"
 | where CounterName == "% Processor Time"
 | where ObjectName == "Processor"
 | where InstanceName == "_Total"

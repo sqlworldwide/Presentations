@@ -17,7 +17,7 @@ https://gallery.technet.microsoft.com/scriptcenter/Get-ExternalPublic-IP-c1b601b
 #>
 
 
-# Starting with Azure PowerShell version 6.0, Azure PowerShell requires PowerShell version 5.0. 
+# Starting with Azure PowerShell version 7.0, Azure PowerShell requires PowerShell version 5.0. 
 # To check the version of PowerShell running on your machine, run the following command.
 # If you have an outdated version, 
 # visit https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-windows-powershell?view=powershell-6#upgrading-existing-windows-powershell.
@@ -29,12 +29,13 @@ https://gallery.technet.microsoft.com/scriptcenter/Get-ExternalPublic-IP-c1b601b
 Import-Module Az 
 
 # Sign in to Azure
-# $VerbosePreference = $DebugPreference = "Continue"
-Connect-AzAccount -Subscription 'Azure Pass - Sponsorship'
-
-# Run below code if you are connected to wrong subscription and need to change context
-# $SubscriptionList =Get-AzSubscription
-# Set-AzContext -SubscriptionId $SubscriptionList[0].Id
+#$VerbosePreference = $DebugPreference = "Continue"
+Connect-AzAccount
+#if you need to see the list of your subscription
+#$SubscriptionList =Get-AzSubscription
+#$SubscriptionList
+#Use below code if you have multiple subscription and you want to use a particular one
+Set-AzContext -SubscriptionId 'bxxxxxxx-69a4-4xxxxxx-818c-xxxxxxxxx8'
 
 <#
 Breaking change warnings are a means for the cmdlet authors to communicate with the end users any upcoming breaking changes in the cmdlet. Most of these changes will be taking effect in the next breaking change release.
@@ -161,18 +162,18 @@ Set-AzDiagnosticSetting `
 
 
 #Setting up action group
-$emailaddress = 'abc@test.com'
+$emailaddress = 'abc@xyz.com'
 $phoneNumber = 1234567890
 $emailDBA = New-AzActionGroupReceiver -Name 'emailDBA' -EmailAddress $emailaddress
 $smsDBA = New-AzActionGroupReceiver -Name 'smsDBA' -SmsReceiver -CountryCode '1' -PhoneNumber $phoneNumber 
-
+$phoneDBA = New-AzActionGroupReceiver -Name 'phoneDBA' -VoiceReceiver -VoiceCountryCode '1' -VoicePhoneNumber $phoneNumber 
+ 
 Set-AzActionGroup `
     -Name 'notifydbadeadlock' `
     -ResourceGroupName $resourceGroupName `
     -ShortName 'deadlock' `
-    -Receiver $emailDBA,$smsDBA
+    -Receiver $emailDBA,$smsDBA,$phoneDBA
    
-
 #Run SimulateDeadlock.sql script
 
 #Clean up by removing resource group name

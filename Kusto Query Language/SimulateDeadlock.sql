@@ -3,7 +3,8 @@ Script Name: SimulateDeadlock.sql
 Written by Taiob M Ali
 SqlWorldWide.com
 */
-
+--Connect to sqlalertdemoserver.database.windows.net
+--Change database context to sqlalertdemodatabase
 CREATE TABLE dt_Employees (
     EmpId INT IDENTITY,
     EmpName VARCHAR(16),

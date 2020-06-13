@@ -143,7 +143,12 @@ AzureMetrics
 // Query copied from https://docs.microsoft.com/en-us/azure/azure-monitor/log-query/datetime-operations#aggregations-and-bucketing-by-time-intervals
 Event
 | where TimeGenerated > ago(30m)
-| summarize events_count=count() by bin(TimeGenerated, 5m) 
+| summarize events_count=count() by bin(TimeGenerated, 5m)
+
+//by days (copied from pluralsight examples)
+Perf 
+| summarize NumberOfEntries=count() 
+         by bin(TimeGenerated, 1d)
 
 //------------------------------------------------------------------------------
 // Extend (https://docs.microsoft.com/en-us/azure/kusto/query/extendoperator)
@@ -266,6 +271,7 @@ AzureMetrics
 
 // Find drives with low disk space
 Perf
+| where TimeGenerated > ago (7d)
 | where ObjectName == "LogicalDisk"
     and CounterName == "% Free Space"
     and CounterValue < 50
@@ -297,6 +303,19 @@ Event
         , myEventID 
         , myEventSequence 
 
+//If Event table does not have any data use this query
+let Traces = datatable(EventText:string)
+[
+"Event: NotifySliceRelease (resourceName=PipelineScheduler, totalSlices=27, sliceNumber=23, lockTime=02/17/2016 08:40:01, releaseTime=02/17/2016 08:40:01, previousLockTime=02/17/2016 08:39:01)",
+"Event: NotifySliceRelease (resourceName=PipelineScheduler, totalSlices=27, sliceNumber=15, lockTime=02/17/2016 08:40:00, releaseTime=02/17/2016 08:40:00, previousLockTime=02/17/2016 08:39:00)",
+"Event: NotifySliceRelease (resourceName=PipelineScheduler, totalSlices=27, sliceNumber=20, lockTime=02/17/2016 08:40:01, releaseTime=02/17/2016 08:40:01, previousLockTime=02/17/2016 08:39:01)",
+"Event: NotifySliceRelease (resourceName=PipelineScheduler, totalSlices=27, sliceNumber=22, lockTime=02/17/2016 08:41:01, releaseTime=02/17/2016 08:41:00, previousLockTime=02/17/2016 08:40:01)",
+"Event: NotifySliceRelease (resourceName=PipelineScheduler, totalSlices=27, sliceNumber=16, lockTime=02/17/2016 08:41:00, releaseTime=02/17/2016 08:41:00, previousLockTime=02/17/2016 08:40:00)"
+];
+Traces  
+| parse EventText with * "resourceName=" resourceName ", totalSlices=" totalSlices:long * "sliceNumber=" sliceNumber:long * "lockTime=" lockTime ", releaseTime=" releaseTime:date "," * "previousLockTime=" previouLockTime:date ")" *  
+| project resourceName ,totalSlices , sliceNumber , lockTime , releaseTime , previouLockTime
+
 //------------------------------------------------------------------------------
 // Between (https://docs.microsoft.com/en-us/azure/kusto/query/betweenoperator)
 //------------------------------------------------------------------------------
@@ -317,6 +336,7 @@ AzureMetrics
 
 //Interprets a JSON value and let you parse individual elements
 SecurityAlert
+| where TimeGenerated > ago (7d)
 | extend ExtProps=todynamic(ExtendedProperties)
 | project AlertName 
         , TimeGenerated 
@@ -324,6 +344,7 @@ SecurityAlert
         , ExtProps["ServiceId"]
         , ExtProps["ReportingSystem"]
         , ExtProps["OccuringDatacenter"]
+
 
 //------------------------------------------------------------------------------
 // parse_xml (https://docs.microsoft.com/en-us/azure/kusto/query/parse-xmlfunction)
@@ -350,6 +371,42 @@ AzureDiagnostics
 | extend error_state= d.login_information.error_state
 | order by event_time_t desc
 
+
+//If AzureDiagnostics does not have any data use below example
+//copied from https://stackoverflow.com/questions/53873208/turn-series-to-columns-in-kusto-azure-data-explorer
+datatable(someColumn:string, xmlValue:string)
+["hello", '<EventData xmlns="http://schemas.microsoft.com/win/2004/08/events/event">\r\n'
+  '<Data Name="DomainBehaviorVersion">8</Data>\r\n'
+  '<Data Name="OemInformation">12</Data>\r\n'
+  '<Data Name="DomainPolicyChanged">Password Policy</Data>\r\n'
+  '<Data Name="DomainName">XXX</Data>\r\n'
+  '<Data Name="DomainSid">S-1-5-21-....</Data>\r\n'
+  '<Data Name="SubjectUserSid">S-1-5-18</Data>\r\n'
+  '<Data Name="SubjectUserName">SRV-XX-001$</Data>\r\n'
+  '<Data Name="SubjectDomainName">DOMAIN</Data>\r\n'
+  '<Data Name="SubjectLogonId">0x3e7</Data>\r\n'
+  '<Data Name="PrivilegeList">-</Data>\r\n'
+  '<Data Name="MinPasswordAge"></Data>\r\n'
+  '<Data Name="MaxPasswordAge"></Data>\r\n'
+  '<Data Name="ForceLogoff"></Data>\r\n'
+  '<Data Name="LockoutThreshold">耠</Data>\r\n'
+  '<Data Name="LockoutObservationWindow"></Data>\r\n'
+  '<Data Name="LockoutDuration"></Data>\r\n'
+  '<Data Name="PasswordProperties">耠-</Data>\r\n'
+  '<Data Name="MinPasswordLength">-</Data>\r\n'
+  '<Data Name="PasswordHistoryLength">-</Data>\r\n'
+  '<Data Name="MachineAccountQuota">-</Data>\r\n'
+  '<Data Name="MixedDomainMode">1</Data>\r\n'
+'</EventData>',
+"world", '<EventData xmlns="http://schemas.microsoft.com/win/2004/08/events/event">\r\n'
+  '<Data Name="DomainBehaviorVersion">876543</Data>\r\n'
+  '<Data Name="OemInformation">12345</Data>\r\n'
+'</EventData>'
+]
+| extend parsed = parse_xml(xmlValue).EventData.Data
+| mvexpand parsed
+| summarize d = make_bag(pack(tostring(parsed['@Name']), parsed['#text'])) by someColumn
+| evaluate bag_unpack(d)
 //------------------------------------------------------------------------------
 // format_timespan 
 //------------------------------------------------------------------------------
