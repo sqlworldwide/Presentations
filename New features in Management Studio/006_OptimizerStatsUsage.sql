@@ -106,3 +106,20 @@ CROSS APPLY sys.dm_db_stats_histogram(s.[object_id], s.stats_id) AS hist
 WHERE s.[name] = N'IX_CustomersStatus'
 AND CAST(range_high_key AS varchar) = 0;
 
+--What happens is more than one statistics is used in the same plan?
+--Query copied from
+--https://sqlserverfast.com/blog/hugo/2020/04/ssms-18-5-small-change-huge-effect/
+--Turn on Actual Execution Plan (Ctrl+M)
+USE [AdventureWorks];
+GO
+SELECT sod.SalesOrderID,
+       sod.SalesOrderDetailID,
+       sod.CarrierTrackingNumber,
+       soh.ShipDate
+FROM   Sales.SalesOrderDetail AS sod
+JOIN   Sales.SalesOrderHeader AS soh
+  ON   soh.SalesOrderID = sod.SalesOrderID
+WHERE  soh.SalesPersonID = 285;
+
+
+

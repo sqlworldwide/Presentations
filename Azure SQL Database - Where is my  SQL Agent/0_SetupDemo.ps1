@@ -23,7 +23,7 @@ https://gallery.technet.microsoft.com/scriptcenter/Get-ExternalPublic-IP-c1b601b
 # visit https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-windows-powershell?view=powershell-6#upgrading-existing-windows-powershell.
 
 $PSVersionTable.PSVersion
-Import-Module Az 
+#Import-Module Az 
 
 # Sign in to Azure
 #$VerbosePreference = $DebugPreference = "Continue"
@@ -34,7 +34,7 @@ Set-AzContext -SubscriptionId 'bda7bbb8-69a4-4354-818c-416f42c60a58'
 # Declare variables
 # The data center and resource name for your resources
 $resourceGroupName = "sqlagentdemo"
-$primaryLocation = "East US" 
+$primaryLocation = "East US"  
 $elasticPoolName = "sqlagentdemo"
 
 # The logical server name: Use a random value or replace with your own value (do not capitalize)

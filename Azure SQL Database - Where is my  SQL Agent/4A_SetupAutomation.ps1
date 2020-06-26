@@ -10,18 +10,18 @@ This script will create
     Create Blank runbook (Type PowerShellWorkflow)
 ============================================================================
 #>
-Import-Module Az 
+# Import-Module Az 
 
 # Sign in to Azure
 #$VerbosePreference = $DebugPreference = "Continue"
-Connect-AzAccount
+#Connect-AzAccount
 #Use below code if you have multiple subscription and you want to use a particular one
-Set-AzContext -SubscriptionId 'your subscription id'
+Set-AzContext -SubscriptionId 'bda7bbb8-69a4-4354-818c-416f42c60a58'
 
 # Declare variables
 # The data center and resource name for your resources
 $resourceGroupName = "sqlagentdemo"
-$primaryLocation = "East US 2" 
+$primaryLocation = "East US" 
 
 # The logical server name: Use a random value or replace with your own value (do not capitalize)
 $automationAccountName = "ugdemo2"

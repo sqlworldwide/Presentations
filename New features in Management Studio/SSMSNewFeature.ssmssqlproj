@@ -131,6 +131,12 @@
     </LogicalFolder>
     <LogicalFolder Name="Miscellaneous" Type="3" Sorted="true">
       <Items>
+        <FileNode Name="1stPlan.sqlplan">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>C:\Users\taiob\Desktop\1stPlan.sqlplan</FullPath>
+        </FileNode>
         <FileNode Name="2014plan.sqlplan">
           <AssociatedConnectionMoniker />
           <AssociatedConnSrvName />

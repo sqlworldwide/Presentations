@@ -26,10 +26,11 @@ if ($Timer.IsPastDue) {
  I already ran the code in Azure SQL Server 'ugdemotargetserver.database.windows.net'
  Database Name:testRunBookDB 
 
-CREATE USER BostonAzureDemo FROM EXTERNAL PROVIDER
-GO
-ALTER  ROLE db_owner ADD MEMBER BostonAzureDemo
-GO
+ CREATE USER BostonAzureDemo FROM EXTERNAL PROVIDER
+ GO
+ ALTER  ROLE db_owner ADD MEMBER BostonAzureDemo
+ GO
+
  Used help from following resources in setting up 'Managed Service Identity'
  https://docs.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-connect-msi
  https://www.azurecorner.com/using-managed-service-identity-in-azure-functions-to-access-azure-sql-database/
