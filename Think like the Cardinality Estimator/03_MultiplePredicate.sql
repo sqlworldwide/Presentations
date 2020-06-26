@@ -10,13 +10,11 @@ Instruction to run this script
 --------------------------------------------------------------------------
 Run this on a separate window
 
-USE WideWorldImporters;
+USE [WideWorldImporters];
 GO
-
 DBCC SHOW_STATISTICS ('Sales.Orders', [FK_Sales_Orders_ContactPersonID])
-WITH HISTOGRAM;;
-GO
-  
+WITH HISTOGRAM;
+GO  
 ============================================================================*/
 USE [Wideworldimporters]; 
 GO

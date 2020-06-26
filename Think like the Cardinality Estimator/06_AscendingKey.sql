@@ -9,12 +9,12 @@ ascending key column in the table and cardinality estimates are not available fo
 Instruction to run this script
 Run this on a separate window
 --------------------------------------------------------------------------
-USE WideWorldImporters;
-GO
---Updating statistics first
+Run this on a separate window
 
+USE [WideWorldImporters];
+GO
 DBCC SHOW_STATISTICS ('Sales.Orders', [FK_Sales_Orders_ContactPersonID])
-WITH HISTOGRAM;;
+WITH HISTOGRAM;
 GO
 ============================================================================*/
 
@@ -43,26 +43,26 @@ WHERE   [s].[object_id] = OBJECT_ID(N'Sales.Orders');
 DBCC SHOW_STATISTICS ('Sales.Orders', [_WA_Sys_0000000E_44CA3770]);
 GO 
 
-
 --Inserting 50 more rows which is not enough to trigger auto update statistics
 SET NOCOUNT ON;
- INSERT INTO [Sales].[Orders]
-           ([OrderID]
-           ,[CustomerID]
-           ,[SalespersonPersonID]
-           ,[PickedByPersonID]
-           ,[ContactPersonID]
-           ,[BackorderOrderID]
-           ,[OrderDate]
-           ,[ExpectedDeliveryDate]
-           ,[CustomerPurchaseOrderNumber]
-           ,[IsUndersupplyBackordered]
-           ,[Comments]
-           ,[DeliveryInstructions]
-           ,[InternalComments]
-           ,[PickingCompletedWhen]
-           ,[LastEditedBy]
-           ,[LastEditedWhen])
+INSERT INTO 
+[Sales].[Orders]
+  ([OrderID]
+  ,[CustomerID]
+  ,[SalespersonPersonID]
+  ,[PickedByPersonID]
+  ,[ContactPersonID]
+  ,[BackorderOrderID]
+  ,[OrderDate]
+  ,[ExpectedDeliveryDate]
+  ,[CustomerPurchaseOrderNumber]
+  ,[IsUndersupplyBackordered]
+  ,[Comments]
+  ,[DeliveryInstructions]
+  ,[InternalComments]
+  ,[PickingCompletedWhen]
+  ,[LastEditedBy]
+  ,[LastEditedWhen])
 VALUES
 		((NEXT VALUE FOR [Sequences].[OrderID]), 832, 2, 3, 1113, 47,'2013-01-01', '2013-01-01', 12211, 1,
 		NULL, NULL, NULL,'2017-03-01 11:00:00', 3, GETDATE());
@@ -72,7 +72,6 @@ SET NOCOUNT OFF;
 SELECT COUNT(*) AS [TotalRowsInTable]
 FROM Sales.Orders
 GO
-
 
 --Confirm statistics did not get updated
 --Look at

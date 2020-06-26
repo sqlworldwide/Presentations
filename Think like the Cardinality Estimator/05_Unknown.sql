@@ -10,13 +10,13 @@ Instruction to run this script
 --------------------------------------------------------------------------
 Run this on a separate window
 
-USE WideWorldImporters;
+USE [WideWorldImporters];
 GO
-
-DBCC SHOW_STATISTICS ('Sales.Orders', [FK_Sales_Orders_ContactPersonID]);
+DBCC SHOW_STATISTICS ('Sales.Orders', [FK_Sales_Orders_ContactPersonID])
+WITH HISTOGRAM;
 GO
-  
 ============================================================================*/
+
 USE [WideWorldImporters]; 
 GO
 --run putthingsback.sql
@@ -61,6 +61,28 @@ FROM Sales.Orders AS o
 SELECT * FROM @OrderDetails AS od 
 WHERE ContactPersonID=1025
 OPTION (RECOMPILE)
+
+--Thant changes in 2019 with Table variable deferred compilation
+--https://docs.microsoft.com/en-us/sql/relational-databases/performance/intelligent-query-processing?view=sql-server-ver15#table-variable-deferred-compilation
+--I can get 271.3 without recompile hint
+ALTER DATABASE WideWorldImporters  
+SET COMPATIBILITY_LEVEL = 150;  
+GO 
+
+DECLARE @OrderDetails TABLE ( ContactPersonID INT)
+
+INSERT INTO @OrderDetails ( ContactPersonID)
+SELECT ContactPersonID
+FROM Sales.Orders AS o
+
+SELECT * FROM @OrderDetails AS od 
+WHERE ContactPersonID=1025
+GO
+
+--Setting back to 140 for future demo
+ALTER DATABASE WideWorldImporters  
+SET COMPATIBILITY_LEVEL = 140;  
+GO
 
 --Estimated number was higher pre 2014
 SELECT 

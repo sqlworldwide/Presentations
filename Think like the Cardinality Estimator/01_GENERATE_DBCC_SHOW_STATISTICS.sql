@@ -19,10 +19,10 @@ GO
 USE [WideWorldImporters]; 
 GO
 SELECT 
-	'STAT_HEADER'  AS [Section],
-	'Updated' AS [ColumnName],
-	CONVERT(VARCHAR(256),(SELECT 
-	STATS_DATE(OBJECT_ID, index_id) AS StatsUpdated
+  'STAT_HEADER'  AS [Section],
+  'Updated' AS [ColumnName],
+  CONVERT(VARCHAR(256),(SELECT 
+  STATS_DATE(OBJECT_ID, index_id) AS StatsUpdated
 FROM sys.indexes
 WHERE OBJECT_ID = OBJECT_ID('Sales.Orders')
 AND Name ='FK_Sales_Orders_ContactPersonID')) AS [Value],
@@ -55,28 +55,28 @@ SELECT
 	'HISTOGRAM'   AS [Section],
 	'RANGE_ROWS'  AS [ColumnName], 
 	CONVERT (VARCHAR(256),
-		(SELECT COUNT(0) AS [RANGE_ROWS_KEY1063]
+		(SELECT COUNT(0) AS [RANGE_ROWS_KEY2083]
 		 FROM sales.orders
-		 WHERE ContactPersonID BETWEEN 1056 AND 1062)) AS [Value],
-			'Total number or rows BETWEEN 1056 AND 1062' AS [Description]
+		 WHERE ContactPersonID BETWEEN 2084 AND 2090)) AS [Value],
+			'Total number or rows BETWEEN 2084 AND 2090' AS [Description]
 UNION ALL
 SELECT 
 	'HISTOGRAM'   AS [Section],
 	'EQ_ROWS'    AS [ColumnName], 
 	CONVERT (VARCHAR(256),
-		(SELECT COUNT(0) AS [EQ_ROWS_KEY1063]
+		(SELECT COUNT(0) AS [EQ_ROWS_KEY2083]
 			FROM sales.orders
-			WHERE ContactPersonID=1063)) AS [Value],
-				'Total number or rows WHERE ContactPersonID=1063 ' AS [Description]
+			WHERE ContactPersonID=2083)) AS [Value],
+				'Total number or rows WHERE ContactPersonID=2083 ' AS [Description]
 UNION ALL
 SELECT 
 	'HISTOGRAM'   AS [Section],
 	'DISTINCT_RANGE_ROWS'    AS [ColumnName], 
 	CONVERT (VARCHAR(256),
-		(SELECT COUNT(DISTINCT ContactPersonID) AS [DISTINCT_RANGE_ROWS_KEY1063]
+		(SELECT COUNT(DISTINCT ContactPersonID) AS [DISTINCT_RANGE_ROWS_KEY2083]
 		FROM sales.orders
-		WHERE ContactPersonID BETWEEN 1056 AND 1062)) AS [Value],
-			'DISTINCT ContactPersonID BETWEEN 1056 AND 1062' AS [Description]
+		WHERE ContactPersonID BETWEEN 2084 AND 2090)) AS [Value],
+			'DISTINCT ContactPersonID BETWEEN 2084 AND 2090' AS [Description]
 UNION ALL
 SELECT 
 	'HISTOGRAM'   AS [Section],
@@ -85,11 +85,11 @@ SELECT
 		(SELECT CONVERT(DECIMAL(7, 4), (CONVERT (DECIMAL (7,4),
 		(SELECT COUNT(0) 
 			FROM sales.orders
-			WHERE ContactPersonID BETWEEN 1056 AND 1062)))/
+			WHERE ContactPersonID BETWEEN 2084 AND 2090)))/
 		(SELECT Count(0) 
 		FROM (SELECT DISTINCT contactpersonid
 		FROM sales.orders 
-		WHERE ContactPersonID BETWEEN 1056 AND 1062) t1)))) AS [Value],
+		WHERE ContactPersonID BETWEEN 2084 AND 2090) t1)))) AS [Value],
 			'RANGE_ROWS divided by DISTINCT_RANGE_ROWS' AS [Description]
 
 

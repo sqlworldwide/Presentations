@@ -24,22 +24,19 @@ SET @dbname = N'WideWorldImporters'
 IF (EXISTS (SELECT name 
 FROM master.dbo.sysdatabases 
 WHERE ('[' + name + ']' = @dbname 
-OR name = @dbname)))
+  OR name = @dbname)))
 BEGIN
 ALTER DATABASE [WideWorldImporters] SET RESTRICTED_USER WITH ROLLBACK IMMEDIATE;
 END
 GO
 
+DECLARE @fileName nvarchar(255)
+SET @fileName = N'C:\WideWorldImporters-Full.bak'
+--Restoring to default path
 RESTORE DATABASE [WideWorldImporters] 
-FROM DISK = 
-	N'C:\WideWorldImporters-Full.bak' WITH FILE = 1, 
-	MOVE N'WWI_Primary' TO 	N'C:\Program Files\Microsoft SQL Server\MSSQL14.MSSQLSERVER\MSSQL\DATA\WideWorldImporters.mdf', 
-	MOVE N'WWI_UserData' TO N'C:\Program Files\Microsoft SQL Server\MSSQL14.MSSQLSERVER\MSSQL\DATA\WideWorldImporters_UserData.ndf',
-	MOVE N'WWI_Log' TO N'C:\Program Files\Microsoft SQL Server\MSSQL14.MSSQLSERVER\MSSQL\DATA\WideWorldImporters.ldf', 
-	MOVE N'WWI_InMemory_Data_1' TO N'C:\Program Files\Microsoft SQL Server\MSSQL14.MSSQLSERVER\MSSQL\DATA\WideWorldImporters_InMemory_Data_1', 
-	NOUNLOAD, replace, stats = 5 ;
-
-GO 
+FROM DISK = N'C:\WideWorldImporters-Full.bak' WITH FILE = 1, 
+NOUNLOAD, replace, stats = 5 ;
+GO
 
 SELECT 
 	name,

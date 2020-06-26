@@ -8,11 +8,10 @@ when using single predicate.
 
 Instruction to run this script
 --------------------------------------------------------------------------
-Run this on a separate window.
+Run this on a separate window
 
-USE WideWorldImporters;
+USE [WideWorldImporters];
 GO
-
 DBCC SHOW_STATISTICS ('Sales.Orders', [FK_Sales_Orders_ContactPersonID])
 WITH HISTOGRAM;
 GO
@@ -37,21 +36,21 @@ WHERE ContactPersonID=1025
 --Inserting 2759 records and check if statistics were not update automatically
 --Turn off Actual Execual Plan (CTRL+M)
 INSERT INTO sales.orders 
-            (customerid, 
-             salespersonpersonid, 
-             pickedbypersonid, 
-             contactpersonid, 
-             backorderorderid, 
-             orderdate, 
-             expecteddeliverydate, 
-             customerpurchaseordernumber, 
-             isundersupplybackordered, 
-             comments, 
-             deliveryinstructions, 
-             internalcomments, 
-             pickingcompletedwhen, 
-             lasteditedby, 
-             lasteditedwhen) 
+  (customerid, 
+    salespersonpersonid, 
+    pickedbypersonid, 
+    contactpersonid, 
+    backorderorderid, 
+    orderdate, 
+    expecteddeliverydate, 
+    customerpurchaseordernumber, 
+    isundersupplybackordered, 
+    comments, 
+    deliveryinstructions, 
+    internalcomments, 
+    pickingcompletedwhen, 
+    lasteditedby, 
+    lasteditedwhen) 
 SELECT 
 	customerid, 
 	salespersonpersonid, 
@@ -72,15 +71,13 @@ FROM sales.orders
 WHERE contactpersonid = 1025 
 GO 5
 
-
 --Confirm statistics did not get updated
 --Look at
 --	Total rows
 --	Max RANGE_HI_KEY 
 --None of these values changed
 
-DBCC SHOW_STATISTICS ('Sales.Orders', [FK_Sales_Orders_ContactPersonID])
-WITH STAT_HEADER;
+DBCC SHOW_STATISTICS ('Sales.Orders', [FK_Sales_Orders_ContactPersonID]);
 GO 
 
 --Removes all elements from the plan cache for Wideworldimporters database 
@@ -107,7 +104,6 @@ SELECT
 
 --Run PutThingsBackForDemo.sql
 
-
 --Include Actual Execution Plan (CTRL+M)
 --Histogram intra step hit
 --In histogram look AT line  11
@@ -119,8 +115,6 @@ SELECT
 	ContactPersonID
 FROM Sales.Orders
 WHERE ContactPersonID=1057
-
-
 
 --Include Actual Execution Plan (CTRL+M)
 --Distinct values reciprocal of Density Vector
