@@ -86,13 +86,20 @@ Following section shows how estimated rows were calculated pre 2014
 SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
 FROM Sales.Orders
 WHERE ContactPersonID between 1024 and 1027
-OPTION(querytraceon  9481, RECOMPILE)
+OPTION (USE HINT ('FORCE_LEGACY_CARDINALITY_ESTIMATION'));  
+GO
+--Hint is encouraged over trace flag
+SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
+FROM Sales.Orders
+WHERE ContactPersonID between 1024 and 1027
+OPTION(querytraceon  9481, RECOMPILE);
+GO
 
 --Estimated rows 1236.17
 SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
 FROM Sales.Orders
 WHERE CustomerID  between 10 and 20 
-OPTION(querytraceon  9481, RECOMPILE)
+OPTION (USE HINT ('FORCE_LEGACY_CARDINALITY_ESTIMATION')); 
 
 --Include Actual Execution Plan (CTRL+M)
 --Putting it together
@@ -101,8 +108,8 @@ SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
 FROM Sales.Orders
 WHERE ContactPersonID between 1024 and 1027
 AND CustomerID  between 10 and 20
-OPTION(querytraceon  9481, RECOMPILE)
-
+OPTION (USE HINT ('FORCE_LEGACY_CARDINALITY_ESTIMATION')); 
+GO
 -- 4.358028650060800
 --C * S1 * SQRT(S2) * SQRT(SQRT(S3)) * SQRT(SQRT(SQRT(S4))) = SQL2014
 --C * S1 * S2 * .......*Sn = Pre SQL2014
@@ -114,7 +121,7 @@ SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
 FROM Sales.Orders
 WHERE ContactPersonID between 1024 and 1027
 OR CustomerID  between 10 and 20
-OPTION(querytraceon  9481, RECOMPILE)
+OPTION (USE HINT ('FORCE_LEGACY_CARDINALITY_ESTIMATION')); 
 
 --1485.499150896005240
 --C * 1-(1-S1) * SQRT(1-S2) .....* SQRT(1-Sn) =  SQL2014

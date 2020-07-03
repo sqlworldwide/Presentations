@@ -29,7 +29,7 @@ CREATE PROCEDURE [dbo].[OrderID_by_ContactPersonID]
 AS
 SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
 FROM Sales.Orders
-WHERE ContactPersonID=@contactPersonID
+WHERE ContactPersonID=@contactPersonID;
 GO
 
 --Include Actual Execution Plan (CTRL+M)
@@ -57,11 +57,16 @@ DBCC SHOW_STATISTICS ('Sales.Orders', [FK_Sales_Orders_ContactPersonID])
 WITH HISTOGRAM;
 GO
 
---Removes all elements from the plan cache for Wideworldimporters database 
---WARNING: Do not run this in your production server
-ALTER DATABASE SCOPED CONFIGURATION CLEAR PROCEDURE_CACHE;
+--Removes the plan from cache for single stored procedure
+--Get plan handle
+SELECT cp.plan_handle 
+FROM sys.dm_exec_cached_plans AS cp 
+CROSS APPLY sys.dm_exec_sql_text(plan_handle) AS st 
+WHERE OBJECT_NAME (st.objectid) LIKE '%OrderID_by_ContactPersonID%';
 GO
-
+--Replace the plan handle from the query above
+DBCC FREEPROCCACHE(0x050007001FF51F5EC0A880D09701000001000000000000000000000000000000000000000000000000000000);
+GO
 
 --Include Actual Execution Plan (CTRL+M)
 --Calling with 1057 again

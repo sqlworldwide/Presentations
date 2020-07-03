@@ -35,6 +35,7 @@ FROM    sys.[stats] AS [s]
 		ON [s].[stats_id] = [sc].[stats_id]
 		AND [s].[object_id] = [sc].[object_id]
 WHERE   [s].[object_id] = OBJECT_ID(N'Sales.Orders');
+GO
 
 
 --Lets pick _WA_Sys_0000000E_44CA3770 as an example which is for column PickingCompletedWhen 
@@ -70,7 +71,7 @@ GO 50
 SET NOCOUNT OFF;
 --73595+50=73645
 SELECT COUNT(*) AS [TotalRowsInTable]
-FROM Sales.Orders
+FROM Sales.Orders;
 GO
 
 --Confirm statistics did not get updated
@@ -86,8 +87,8 @@ GO
 --Look at 'Estimated number of rows' for 'Clustered Index Scan' operator 34.6329385790
 SELECT OrderID
 FROM Sales.Orders
-WHERE [PickingCompletedWhen]='2017-03-01 11:00:00'
-
+WHERE [PickingCompletedWhen]='2017-03-01 11:00:00';
+GO
 
 --Looking at cardinality estimation for pre and post 2014
 --If you are still in pre 2014 and have this issue
@@ -103,7 +104,6 @@ SELECT
 	'It is fixed number which is 1' AS [Formula], 
 	1 AS [EstimatedNumRows], 
 	'50' AS [ActualNumRows]         
-
 
 --Rollback for future demos
 --Run PutThingsBackForDemo.sql

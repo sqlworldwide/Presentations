@@ -27,8 +27,7 @@ GO
 DECLARE @OrderId AS SMALLINT = 1025;
 SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
 FROM Sales.Orders 
-WHERE OrderId=@OrderId
-
+WHERE OrderId=@OrderId;
 
 --Look at 'Estimated number of rows' for 'Index Seek' 111.003
 --EQUALITY Operator
@@ -38,12 +37,11 @@ WHERE OrderId=@OrderId
 DECLARE @cpid AS SMALLINT = 1025;
 SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
 FROM Sales.Orders 
-WHERE ContactPersonID=@cpid
+WHERE ContactPersonID=@cpid;
 
 --Total number of rows * density of ContactPersonID
 --111.003044120
-SELECT 73595 * 0.001508296
-
+SELECT 73595 * 0.001508296;
 
 --EQUALITY Operator
 --Statistics not available such as table variable
@@ -52,15 +50,16 @@ SELECT 73595 * 0.001508296
 --Look at 'Estimated number of rows' for 'Table scan' will be either 1 or 271.3
 --Show this as is and after commenting our option(recompile).
 
-DECLARE @OrderDetails TABLE ( ContactPersonID INT)
+DECLARE @OrderDetails TABLE ( ContactPersonID INT);
 
 INSERT INTO @OrderDetails ( ContactPersonID)
 SELECT ContactPersonID
-FROM Sales.Orders AS o
+FROM Sales.Orders AS o;
 
 SELECT * FROM @OrderDetails AS od 
 WHERE ContactPersonID=1025
-OPTION (RECOMPILE)
+OPTION (RECOMPILE);
+GO
 
 --Thant changes in 2019 with Table variable deferred compilation
 --https://docs.microsoft.com/en-us/sql/relational-databases/performance/intelligent-query-processing?view=sql-server-ver15#table-variable-deferred-compilation
@@ -69,14 +68,14 @@ ALTER DATABASE WideWorldImporters
 SET COMPATIBILITY_LEVEL = 150;  
 GO 
 
-DECLARE @OrderDetails TABLE ( ContactPersonID INT)
+DECLARE @OrderDetails TABLE ( ContactPersonID INT);
 
 INSERT INTO @OrderDetails ( ContactPersonID)
 SELECT ContactPersonID
-FROM Sales.Orders AS o
+FROM Sales.Orders AS o;
 
 SELECT * FROM @OrderDetails AS od 
-WHERE ContactPersonID=1025
+WHERE ContactPersonID=1025;
 GO
 
 --Setting back to 140 for future demo
@@ -114,8 +113,8 @@ FROM Sales.Orders AS o
 
 SELECT * FROM @OrderDetails2012 AS od 
 WHERE ContactPersonID=1025
---OPTION( QUERYTRACEON  9481)
-OPTION(RECOMPILE, QUERYTRACEON  9481)
+--OPTION (USE HINT ('FORCE_LEGACY_CARDINALITY_ESTIMATION')); 
+OPTION(RECOMPILE, USE HINT ('FORCE_LEGACY_CARDINALITY_ESTIMATION'));
 
 --Estimated row 4468.24
 SELECT POWER(73595.0, .75)
@@ -168,7 +167,8 @@ WHERE ContactPersonID BETWEEN @LowerContactPersonID1 AND @UpperContactPersonID
 
 SELECT ContactPersonID FROM Sales.Orders 
 WHERE ContactPersonID BETWEEN @LowerContactPersonID1 AND @UpperContactPersonID
-OPTION( QUERYTRACEON  9481)
+OPTION (USE HINT ('FORCE_LEGACY_CARDINALITY_ESTIMATION')); 
+GO
 
 
 --Looking at cardinality estimation for pre and post 2014
