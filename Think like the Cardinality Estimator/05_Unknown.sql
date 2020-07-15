@@ -61,7 +61,7 @@ WHERE ContactPersonID=1025
 OPTION (RECOMPILE);
 GO
 
---Thant changes in 2019 with Table variable deferred compilation
+--That changes in 2019 with Table variable deferred compilation
 --https://docs.microsoft.com/en-us/sql/relational-databases/performance/intelligent-query-processing?view=sql-server-ver15#table-variable-deferred-compilation
 --I can get 271.3 without recompile hint
 ALTER DATABASE WideWorldImporters  

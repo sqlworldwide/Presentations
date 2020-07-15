@@ -59,13 +59,15 @@ GO
 
 --Removes the plan from cache for single stored procedure
 --Get plan handle
-SELECT cp.plan_handle 
+DECLARE @PlanHandle VARBINARY(64);
+SELECT  @PlanHandle = cp.plan_handle 
 FROM sys.dm_exec_cached_plans AS cp 
 CROSS APPLY sys.dm_exec_sql_text(plan_handle) AS st 
 WHERE OBJECT_NAME (st.objectid) LIKE '%OrderID_by_ContactPersonID%';
-GO
---Replace the plan handle from the query above
-DBCC FREEPROCCACHE(0x050007001FF51F5EC0A880D09701000001000000000000000000000000000000000000000000000000000000);
+IF @PlanHandle IS NOT NULL
+    BEGIN
+        DBCC FREEPROCCACHE(@PlanHandle);
+    END
 GO
 
 --Include Actual Execution Plan (CTRL+M)
