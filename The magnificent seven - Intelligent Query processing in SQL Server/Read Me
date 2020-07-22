@@ -1,0 +1,5 @@
+## Title : **The Magnificent 7 - Intelligent Query Processing**
+### Abstract
+Is there a way to fix query performance issues without any code changes? Making application changes can be an expensive undertaking. Hence, developers and DBAs want the query processor to adapt to their workload needs vs. having to use options and trace flags to gain performance. Adaptation is the idea behind Intelligent Query processing in the newer versions of SQL Server. In this demo-heavy presentation, I will walk you through seven different intelligent query processing features that have been introduced in the last two versions of SQL Server. We will look at both the pros and cons of using these features and how to control them if you are not ready to use them yet.
+
+By attending this session, you learn the new capabilities of Intelligent Query Processing. You equip yourself with powerful tools to convince your peers to change the database compatibility level to 150 for the Azure SQL Databases or upgrade to SQL Server 2019 for on-premise databases.
