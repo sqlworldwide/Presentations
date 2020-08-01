@@ -20,6 +20,77 @@ USE [Wideworldimporters];
 GO
 
 --Estimated rows 342.625
+/*
+Where is 342.625 coming from?
+I have few email conversation with Paul White to understand this. Following text is modified from our
+email conversation.
+
+The relevant steps of the histogram are:
+
+RANGE_HI_KEY	RANGE_ROWS	EQ_ROWS	DISTINCT_RANGE_ROWS	AVG_RANGE_ROWS
+1021	        338	        113	    3	                112.6667
+1025	        103	        89	    1	                103
+1031	        241	        138	    2	                120.5
+
+The range spans more than one step, so it is split into three component subranges:
+
+1. >= 1024 < 1025
+2. = 1025
+3. > 1025 <= 1027
+
+Step 2 is easy to calculate because we have EQ_ROWS for RANGE_HI_KEY 1025 = 89.
+
+Step 1 and step 3 mean we need to estimate within a step.
+
+The general idea is to estimate how many of the DISTINCT_RANGE_ROWS will lie within the subrange.
+
+The new CE also assumes that >= and <= within a step will always match one of the distinct values 
+(due to the equality part of the comparison) whereas < and > within a step will not.
+
+For step 1, the estimator sees there is one distinct range row with 103 rows per value for the step 
+with RANGE_HI_KEY 1025.
+
+The subrange (>= 1024 < 1025) contains an equality component, 
+so this part of the calculation assesses that the one distinct range row will be a match.
+
+The step 1 subrange therefore contributes 103 rows.
+
+For step 3, the estimator sees there are two distinct range rows with 120.5 rows per value 
+for the covering step with RANGE_HI_KEY 1031.
+
+One of those distinct values is assumed to match because the subrange (> 1025 <= 1027) 
+contains an equality component.
+
+The remaining question for step 3 is what are the chances that the one remaining 
+DISTINCT_RANGE_ROW will fall within the range (> 1025 < 1027).
+
+The range (> 1025 < 1027) contains one integer value (1026).
+
+But, both ends of that range are excluded. 
+The step 3 subrange (> 1025 < 1027) cannot match the 1025 or 1031 values and one of the distinct values
+is assumed to match.
+so that leaves 4 possible values.
+
+The remainder of step 3 is therefore looking for one value among four values 
+so the chance of a match is 1/4 = 0.25.
+
+Step 3 matches one distinct value (the assumed equality match) plus 0.25 of a distinct value 
+(chance of a match in the remaining range) = 1.25 distinct values.
+
+Multiplying 1.25 distinct values by the AVG_RANGE_ROWS (120.5) 
+gives a step 3 estimate of 150.625 rows.
+
+The final total for all three subranges is 103 (from step 1) + 89 (from step 2) + 150.625 (from step 3)
+= 342.625 rows.
+
+The selectivity is 342.625 divided by the cardinality 73,595 
+= CONVERT(real, 342.625) / CONVERT(real, 73595) = 0.00465555.
+
+Related reading:
+https://dba.stackexchange.com/questions/148523/cardinality-estimation-for-and-for-intra-step-statistics-value
+https://dba.stackexchange.com/questions/249057/%d0%a1ardinality-estimation-of-partially-covering-range-predicates
+
+*/
 SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
 FROM Sales.Orders
 WHERE ContactPersonID between 1024 and 1027
