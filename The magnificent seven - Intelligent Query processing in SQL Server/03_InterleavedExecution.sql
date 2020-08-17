@@ -160,7 +160,8 @@ WHERE [si].[Lead Time Days] > 0
 		AND [fo].[Quantity] > 50;
 GO
 
---We no longer have spill-warnings, as we're granting more memory based on the true row count flowing from the MSTVF table scan
+--We no longer have spill-warnings, as we're granting more memory based on the true row count 
+--flowing from the MSTVF table scan
 --look at the new estimated and actual row for the function call
 USE [master];
 GO

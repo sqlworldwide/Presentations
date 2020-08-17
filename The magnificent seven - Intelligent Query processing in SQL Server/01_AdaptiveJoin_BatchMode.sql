@@ -70,7 +70,7 @@ GO
 
 /*
 Question:
-With the introduction of Batch Mode on Rowstore can I take adavantge of adaptive join in rowstor?
+With the introduction of Batch Mode on Rowstore can I take adavantge of adaptive join in rowstore?
 Yes 
 Ref: https://www.sqlshack.com/sql-server-2019-new-features-batch-mode-on-rowstore/
 Set up before you can run the demo code:
