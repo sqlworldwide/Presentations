@@ -34,7 +34,7 @@ WHERE OrderId=@OrderId;
 --Not known, Using Statistics for FK_Sales_Orders_ContactPersonID
 --run time value using 'All density' 0.001508296 for column 'ContactPersonID'
 
-DECLARE @cpid AS SMALLINT = 1025;
+DECLARE @cpid AS SMALLINT = 1067;
 SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
 FROM Sales.Orders 
 WHERE ContactPersonID=@cpid;
@@ -86,13 +86,13 @@ GO
 --Estimated number was higher pre 2014
 SELECT 
 	'SQL 2014' AS [Version], 
-	'Total number of rows raiser to the power of .5' AS [Formula], 
+	'Total number of rows raise to the power of .5' AS [Formula], 
 	POWER(73595.0, .5) AS [EstimatedNumRows], 
 	'89' AS [ActualNumRows]
 UNION ALL
 SELECT 
 	'PRE 2014' AS [Version], 
-	'Total number of rows raiser to the power of .75' AS [Formula], 
+	'Total number of rows raise to the power of .75' AS [Formula], 
 	POWER(73595.0, .75) AS [EstimatedNumRows], 
 	'89' AS [ActualNumRows]
 
