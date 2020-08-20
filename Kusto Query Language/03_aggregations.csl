@@ -49,13 +49,6 @@ Heartbeat
 | extend availability_rate=total_available_hours*100/total_number_of_buckets
 
 //------------------------------------------------------------------------------
-// pivot (https://docs.microsoft.com/en-us/azure/kusto/query/pivotplugin)
-//------------------------------------------------------------------------------
-
-// Rotates a table by turning the unique values from one column in the input table into multiple columns in the output table, 
-// and performs aggregations where they are required on any remaining column values that are wanted in the final output.
-
-//------------------------------------------------------------------------------
 // top-nested (https://docs.microsoft.com/en-us/azure/kusto/query/topnestedoperator)
 //------------------------------------------------------------------------------
 
@@ -63,19 +56,13 @@ Heartbeat
 // You can add a row for all other records
 
 AzureMetrics
-| top-nested 3 of Resource
-    with others =  'All Other Resource' by ResourceCount = count() 
-, top-nested 3 of MetricName  
-    with others =  'All Other Resource' by MetricNameCount = count() 
-|sort by Resource, ResourceCount
+| top-nested 3 of MetricName  
+   with others =  'All Other Resource' by MetricNameCount = count()
+|sort by MetricNameCount
 
 //------------------------------------------------------------------------------
 // any (https://docs.microsoft.com/en-us/azure/kusto/query/any-aggfunction)
 //------------------------------------------------------------------------------
-
-// Returns random non-empty value from the specified expression values 
-AzureMetrics
-| summarize any(*)
 
 // Returns a random row for each distinct value
 AzureMetrics

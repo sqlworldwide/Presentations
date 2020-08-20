@@ -12,22 +12,23 @@
 
 // Basket finds all frequent patterns of discrete attributes (dimensions) in the data 
 // and will return all frequent patterns that passed the frequency threshold in the original query. 
+// Association. Buying bread will most likely cuase buying butter, jam or egg.
 
 // Basket is based on the Apriori algorithm originally developed for basket analysis data mining
 
 // Here, we will do an analysis to see which combination of computer plus performance counters appears the most frequently
 
-// copied from pluralsight example in test portal
+// copied from https://www.ciraltos.com/azure-machine-learning-in-log-analytics/
 
 // You can pass a paremeter 'thereshold' which
 // Sets the minimal ratio of the rows to be considered frequent 
-Perf
-| where TimeGenerated >= ago(10d)
-| project Computer
-        , ObjectName 
-        , CounterName
-        , InstanceName  
-| evaluate basket()
+SecurityEvent
+| where TimeGenerated >= ago(1d)
+| project Account
+        , Computer
+        , Activity
+        , LogonTypeName
+| evaluate basket(0.10)
 
 // You can also test basket in Azure data explorer 
 // https://dataexplorer.azure.com/clusters/help/databases/Samples

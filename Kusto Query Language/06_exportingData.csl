@@ -12,6 +12,7 @@
 
 // It will actually create a TXT file, and put it in clipboard. 
 // Open PowerBI desktop
+// Login with your account (my account taiob@sqlworldwide.onmicrosoft.com)
 // 'Get Data' -> 'Blank Query' -> 'Advanced Query Editor' menu choices.
 // From there, paste in the M query from the clipboard.
 

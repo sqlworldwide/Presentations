@@ -6,10 +6,12 @@ SqlWorldWide.com
 This script will create 
     A resource group 
     A logical SQL server
-    Few sample databases
+    Empty sample databases
+    Create Log Analytics Workspace
+    Setting up an action group (Azure Alert)
     Clean up code at the end
 
-Script can take between 40~50 minutes during my test. Mileage will vary in your case
+Script can take between 5~8 minutes during my test. Mileage will vary in your case
 
 Credit:
 https://docs.microsoft.com/en-us/azure/sql-database/sql-database-get-started-powershell
@@ -35,7 +37,7 @@ Connect-AzAccount
 #$SubscriptionList =Get-AzSubscription
 #$SubscriptionList
 #Use below code if you have multiple subscription and you want to use a particular one
-Set-AzContext -SubscriptionId 'bxxxxxxx-69a4-4xxxxxx-818c-xxxxxxxxx8'
+Set-AzContext -SubscriptionId 'xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
 
 <#
 Breaking change warnings are a means for the cmdlet authors to communicate with the end users any upcoming breaking changes in the cmdlet. Most of these changes will be taking effect in the next breaking change release.
@@ -98,7 +100,7 @@ Write-Host 'Resource group created' `
     -back green 
  }  
   
-#Create job server
+#Create a Azure SQL Server
 New-AzSqlServer `
     -ResourceGroupName $resourceGroupName `
     -ServerName $sqlServerName `
@@ -121,7 +123,7 @@ New-AzSqlServerFirewallRule `
 -AllowAllAzureIPs
 
 
-#Create a empty database
+#Create an empty database
 New-AzSqlDatabase  `
     -ResourceGroupName $resourceGroupName `
     -ServerName $sqlServerName `
@@ -130,7 +132,7 @@ New-AzSqlDatabase  `
     -RequestedServiceObjectiveName "S0" `
     -MaxSizeBytes 10737418240 
 
-# Create a log analytics workspace
+#Create a log analytics workspace
 New-AzOperationalInsightsWorkspace `
   -Location $rgLocation `
   -Name $workspaceName `
@@ -160,9 +162,8 @@ Set-AzDiagnosticSetting `
     -Enabled $True `
     -Name "sqlalertdemo"
 
-
 #Setting up action group
-$emailaddress = 'abc@xyz.com'
+$emailaddress = 'taiob@xxxxxxxxx.com'
 $phoneNumber = 1234567890
 $emailDBA = New-AzActionGroupReceiver -Name 'emailDBA' -EmailAddress $emailaddress
 $smsDBA = New-AzActionGroupReceiver -Name 'smsDBA' -SmsReceiver -CountryCode '1' -PhoneNumber $phoneNumber 

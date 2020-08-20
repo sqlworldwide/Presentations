@@ -37,14 +37,14 @@ AzureMetrics
 
 // Searches can be combined logically
 AzureMetrics
-| search "Per Disk Read Bytes/sec" and "CONTOSOADDS1"
+| search "Per Disk Read Bytes/sec" and "CH-JBOXVM10"
 
 //------------------------------------------------------------------------------
 // Where (https://docs.microsoft.com/en-us/azure/kusto/query/whereoperator)
 //------------------------------------------------------------------------------
 
-// where limits the result set. Rather than looking across
-// columns for values, where limits based on conditions
+// where limits the result set. 
+// Rather than looking across columns for values, where limits based on conditions
 // Look at the "Time Range" in the portal
 // Details about date time and ago operator https://docs.microsoft.com/en-us/azure/azure-monitor/log-query/datetime-operations
 AzureMetrics
@@ -77,13 +77,14 @@ AzureMetrics
 
 // Where supports regex as well
 AzureMetrics
- | where Resource  matches regex "CONTOSORETAIL[A-Z]"
+ | where Resource  matches regex "CH-[A-Z]"
 
 //------------------------------------------------------------------------------
 // Take/Limit are synonyms (https://docs.microsoft.com/en-us/azure/kusto/query/takeoperator)
 //------------------------------------------------------------------------------
 
 // Take is used to grab a random number of rows from the input data
+// There is no guarantee which records are returned, unless the source data is sorted
 AzureMetrics 
 | take 10 
 
@@ -120,7 +121,7 @@ AzureMetrics
 //------------------------------------------------------------------------------
 
 // Summariaze allows you to aggregate by function
-// Here we are aggregating by counting number of rows by column (MetricName) using the count() function
+// Here we are aggregating by counting number of rows in column name 'MetricName' using the count() function
 AzureMetrics 
 | summarize count() by MetricName
 
@@ -132,7 +133,7 @@ AzureMetrics
 AzureMetrics 
 | summarize count() by Resource, MetricName
 
-// With Summarize, you can  use other aggregation functions
+// With Summarize, you can use other aggregation functions
 AzureMetrics 
 | where MetricName has "CPU"
 | summarize NumberOfEntries=count()
@@ -140,11 +141,6 @@ AzureMetrics
     by Resource, MetricName
 
 // Bin allows you to summarize into logical groups, like days
-// Query copied from https://docs.microsoft.com/en-us/azure/azure-monitor/log-query/datetime-operations#aggregations-and-bucketing-by-time-intervals
-Event
-| where TimeGenerated > ago(30m)
-| summarize events_count=count() by bin(TimeGenerated, 5m)
-
 //by days (copied from pluralsight examples)
 Perf 
 | summarize NumberOfEntries=count() 
@@ -157,6 +153,8 @@ Perf
 // Create calculated columns and append them to the result set.
 AzureMetrics
 | where MetricName == "CPU Credits Remaining"
+| where Average != 0
+    and Total != Average
 | extend HeadRoom = Total - Average 
 
 // Can also use with strcat to create new string columns
@@ -228,12 +226,11 @@ AzureMetrics
 AzureMetrics
 | distinct Resource, MetricName
 
-
 // Distinct can be used to limit a result set 
-// Get a list of all sources that had an error event
-Event
-| where EventLevelName == "Error"
-| distinct Source
+// Get a list of all MetricName containing CPU
+AzureMetrics
+| where MetricName has 'CPU'
+| distinct Resource, MetricName 
 
 //------------------------------------------------------------------------------
 // sample-distinct (https://docs.microsoft.com/en-us/azure/kusto/query/sampledistinctoperator)
@@ -350,29 +347,6 @@ SecurityAlert
 // parse_xml (https://docs.microsoft.com/en-us/azure/kusto/query/parse-xmlfunction)
 //------------------------------------------------------------------------------
 
-// Interprets a string as a XML value, converts the value to a JSON and returns the value as dynamic
-// I do not have data to demo this for now but I wrote this to look at login failure details
-AzureDiagnostics
-| where Category == 'SQLSecurityAuditEvents'
-| where action_name_s == "DATABASE AUTHENTICATION FAILED" 
-| project event_time_t
-        , Resource 
-        , server_instance_name_s
-        , database_name_s
-        , action_name_s
-        , succeeded_s
-        , server_principal_name_s
-        , client_ip_s
-        , application_name_s
-        , ResourceId
-        , additional_information_s
-| extend d = parse_xml(additional_information_s)
-| extend error_code =d.login_information.error_code
-| extend error_state= d.login_information.error_state
-| order by event_time_t desc
-
-
-//If AzureDiagnostics does not have any data use below example
 //copied from https://stackoverflow.com/questions/53873208/turn-series-to-columns-in-kusto-azure-data-explorer
 datatable(someColumn:string, xmlValue:string)
 ["hello", '<EventData xmlns="http://schemas.microsoft.com/win/2004/08/events/event">\r\n'

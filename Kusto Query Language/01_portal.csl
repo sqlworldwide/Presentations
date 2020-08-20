@@ -6,24 +6,21 @@
 // This is what you will see in portal when you go to your workspace
 // 
 // Talk about 
-// --Database
-// --Table
-// --Sample Record Icon
-// --Columns
-// --Datatypes (https://docs.microsoft.com/en-us/azure/kusto/query/scalar-data-types/)
+// Database
+// Table--Pop up window
+// Sample Record Icon
+// Columns
+// Datatypes (https://docs.microsoft.com/en-us/azure/kusto/query/scalar-data-types/)
 //    datetime
 //    numberic
 //    text    
-// --Default row number
-// --Deafult time frame
-// --Filters (there are 2 ways to put filter)
-//   show filter on Resource column 'CONTOSOAZLNX1'
-// --Grouping
-// --Query Explorer
-// --Visualization
-// AzureMetrics
-// | summarize countResource= count() by Resource
-// | order by countResource  
+// Default row number
+// Deafult time frame
+// Filters (there are 2 ways to put filter)
+// Show filter on Resource column
+// Grouping
+// Query Explorer
+// Example Queries
 //------------------------------------------------------------------------------
 
 // To retrieve data, you can simply enter the table name and hit the
@@ -31,6 +28,11 @@
 // By Default it will return 10,000 records from last 24 hours
 
 AzureMetrics
+
+// Visualization 
+AzureMetrics
+ | summarize countResource= count() by Resource
+ | order by countResource 
 
 
 
