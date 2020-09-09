@@ -9,6 +9,7 @@ This script will create
     Empty sample databases
     Create Log Analytics Workspace
     Setting up an action group (Azure Alert)
+    Creates a Log Alert Rule (Scheduled Query Rule type) using Kusto Query Language
     Clean up code at the end
 
 Script can take between 5~8 minutes during my test. Mileage will vary in your case
@@ -37,7 +38,7 @@ Connect-AzAccount
 #$SubscriptionList =Get-AzSubscription
 #$SubscriptionList
 #Use below code if you have multiple subscription and you want to use a particular one
-Set-AzContext -SubscriptionId 'xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
+Set-AzContext -SubscriptionId 'xxx7xxx8-69a4-0000-000c-000f00c00a00'
 
 <#
 Breaking change warnings are a means for the cmdlet authors to communicate with the end users any upcoming breaking changes in the cmdlet. Most of these changes will be taking effect in the next breaking change release.
@@ -118,10 +119,9 @@ New-AzSqlServer `
 
 #Set Allow access to Azure services 
 New-AzSqlServerFirewallRule `
--ServerName $sqlServerName `
--ResourceGroupName $resourceGroupName  `
--AllowAllAzureIPs
-
+    -ServerName $sqlServerName `
+    -ResourceGroupName $resourceGroupName  `
+    -AllowAllAzureIPs
 
 #Create an empty database
 New-AzSqlDatabase  `
@@ -134,10 +134,10 @@ New-AzSqlDatabase  `
 
 #Create a log analytics workspace
 New-AzOperationalInsightsWorkspace `
-  -Location $rgLocation `
-  -Name $workspaceName `
-  -Sku Standard `
-  -ResourceGroupName $resourceGroupName
+    -Location $rgLocation `
+    -Name $workspaceName `
+    -Sku Standard `
+    -ResourceGroupName $resourceGroupName
 
 # List of solutions to enable
 $Solutions = "Security", "Updates", "SQLAssessment"
@@ -163,17 +163,66 @@ Set-AzDiagnosticSetting `
     -Name "sqlalertdemo"
 
 #Setting up action group
-$emailaddress = 'taiob@xxxxxxxxx.com'
-$phoneNumber = 1234567890
-$emailDBA = New-AzActionGroupReceiver -Name 'emailDBA' -EmailAddress $emailaddress
-$smsDBA = New-AzActionGroupReceiver -Name 'smsDBA' -SmsReceiver -CountryCode '1' -PhoneNumber $phoneNumber 
-$phoneDBA = New-AzActionGroupReceiver -Name 'phoneDBA' -VoiceReceiver -VoiceCountryCode '1' -VoicePhoneNumber $phoneNumber 
+$emailaddress = 'first.last@abc.com'
+$phoneNumber = 1234578890
+$emailDBA = 
+New-AzActionGroupReceiver `
+    -Name 'emailDBA' `
+    -EmailAddress $emailaddress
+$smsDBA = 
+New-AzActionGroupReceiver  `
+    -Name 'smsDBA' -SmsReceiver `
+    -CountryCode '1' `
+    -PhoneNumber $phoneNumber 
+$phoneDBA = 
+New-AzActionGroupReceiver `
+    -Name 'phoneDBA' `
+    -VoiceReceiver -VoiceCountryCode '1' `
+    -VoicePhoneNumber $phoneNumber 
  
 Set-AzActionGroup `
     -Name 'notifydbadeadlock' `
     -ResourceGroupName $resourceGroupName `
     -ShortName 'deadlock' `
     -Receiver $emailDBA,$smsDBA,$phoneDBA
+
+$actionGroupId =(Get-AzResource -name 'notifydbadeadlock').ResourceId
+
+$source =
+New-AzScheduledQueryRuleSource  `
+    -Query "AzureDiagnostics | where  Category == 'Deadlocks' "  `
+    -DataSourceId $workspaceId
+
+$schedule = 
+New-AzScheduledQueryRuleSchedule `
+    -FrequencyInMinutes 15 `
+    -TimeWindowInMinutes 30
+    
+$triggerCondition = 
+New-AzScheduledQueryRuleTriggerCondition `
+    -ThresholdOperator  "GreaterThan" `
+    -Threshold 0 
+    
+$aznsActionGroup = 
+New-AzScheduledQueryRuleAznsActionGroup `
+    -ActionGroup $actionGroupId `
+    -EmailSubject "Deadlock Found" 
+
+$alertingAction = 
+New-AzScheduledQueryRuleAlertingAction `
+    -AznsAction $aznsActionGroup `
+    -Severity "3" `
+    -Trigger $triggerCondition
+
+New-AzScheduledQueryRule `
+    -ResourceGroupName $resourceGroupName `
+    -Location $rgLocation `
+    -Action $alertingAction `
+    -Enabled $true `
+    -Description "This alert will be fired an a deadlock is found in last 30 minutes " `
+    -Source $source `
+    -Schedule $schedule `
+    -Name "Found Deadlock Alert"
    
 #Run SimulateDeadlock.sql script
 

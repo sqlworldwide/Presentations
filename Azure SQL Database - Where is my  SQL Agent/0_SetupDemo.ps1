@@ -16,7 +16,6 @@ https://docs.microsoft.com/en-us/azure/sql-database/sql-database-get-started-pow
 https://gallery.technet.microsoft.com/scriptcenter/Get-ExternalPublic-IP-c1b601bb
 #>
 
-
 # Starting with Azure PowerShell version 7.0, Azure PowerShell requires PowerShell version 5.0. 
 # To check the version of PowerShell running on your machine, run the following command.
 # If you have an outdated version, 
@@ -29,7 +28,7 @@ $PSVersionTable.PSVersion
 #$VerbosePreference = $DebugPreference = "Continue"
 Connect-AzAccount
 #Use below code if you have multiple subscription and you want to use a particular one
-Set-AzContext -SubscriptionId 'bda7bbb8-69a4-4354-818c-416f42c60a58'
+Set-AzContext -SubscriptionId '00dxxxxx-ac00-0000-ab0b-5a0000f1c00e'
 
 # Declare variables
 # The data center and resource name for your resources
@@ -57,7 +56,6 @@ $jobDatabase = "jobdatabase"
 $collectionDatabase = "dbawarehouse"
 $databaseName1 = "adventureworks"
 $databaseName2 = "WideWorldImporters"
-
 
 #Check if resource group exist
 $resGrpChk = Get-AzResourceGroup `
@@ -118,6 +116,7 @@ New-AzSqlDatabase  -ResourceGroupName $resourceGroupName `
     -Edition "Standard" `
     -RequestedServiceObjectiveName "S0" `
     -MaxSizeBytes 10737418240 
+
 #Create an empty database to hold job output
 New-AzSqlDatabase  -ResourceGroupName $resourceGroupName `
     -ServerName $jobServerName `
@@ -125,7 +124,6 @@ New-AzSqlDatabase  -ResourceGroupName $resourceGroupName `
     -Edition "Standard" `
     -RequestedServiceObjectiveName "S0" `
     -MaxSizeBytes 10737418240 
-
 
 #Create target server
 New-AzSqlServer `
@@ -149,7 +147,6 @@ New-AzSqlServerFirewallRule `
     -ResourceGroupName $resourceGroupName  `
     -AllowAllAzureIPs
 
-
 #Create a database using adventureworks smaple
 New-AzSqlDatabase  `
     -ResourceGroupName $resourceGroupName `
@@ -171,7 +168,6 @@ Set-Location "C:\Program Files (x86)\Microsoft SQL Server\140\DAC\bin\"
 
 .\sqlpackage.exe /a:Import /sf:$output /tsn:"$targetServerName.database.windows.net" `
     /tdn:$databaseName2 /tu:$adminlogin /tp:$password
-
 
 New-AzSqlElasticPool `
     -ResourceGroupName $resourceGroupName `
@@ -197,8 +193,6 @@ New-AzSqlDatabase  `
     -Edition "Standard" `
     -RequestedServiceObjectiveName "S0" `
     -MaxSizeBytes 10737418240 `
-
-
 
 #To use Elastic Jobs, register the feature in your Azure subscription by running the following command 
 #(this only needs to be run once in each subscription where you want to use Elastic Jobs):

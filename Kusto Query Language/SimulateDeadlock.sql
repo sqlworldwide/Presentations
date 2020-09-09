@@ -57,10 +57,5 @@ GO
 DROP TABLE dt_Employees;
 GO
 
---after about 5~7 minuetes run this Kusto Query inside your log analytics workspace
-/*
-AzureDiagnostics
-| where  Category == 'Deadlocks' 
-| where TimeGenerated > ago(30m)
-*/
-
+--after about 5~7 minuetes run this deadlock should fire alert
+--that was configured by DemoAlert.ps1 file

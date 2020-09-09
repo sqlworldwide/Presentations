@@ -16,7 +16,7 @@ This script will create
 #$VerbosePreference = $DebugPreference = "Continue"
 #Connect-AzAccount
 #Use below code if you have multiple subscription and you want to use a particular one
-Set-AzContext -SubscriptionId 'bda7bbb8-69a4-4354-818c-416f42c60a58'
+Set-AzContext -SubscriptionId '00dxxxxx-ac00-0000-ab0b-5a0000f1c00e'
 
 # Declare variables
 # The data center and resource name for your resources
