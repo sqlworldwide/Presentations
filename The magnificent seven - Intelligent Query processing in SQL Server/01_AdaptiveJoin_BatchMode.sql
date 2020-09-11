@@ -59,7 +59,7 @@ SELECT TOP 5 [City Key], [Customer Key], [Stock Item Key],
 FROM [Fact].[Order];
 GO
 
--- Show with Live Query Stats
+-- Now run the same query with value 361
 SELECT [fo].[Order Key], [si].[Lead Time Days], [fo].[Quantity]
 FROM [Fact].[Order] AS [fo]
 INNER JOIN [Dimension].[Stock Item] AS [si] 
@@ -99,10 +99,51 @@ GO
 ALTER DATABASE SCOPED CONFIGURATION CLEAR PROCEDURE_CACHE;
 GO
 
-SELECT  ProductID,SUM(LineTotal)  ,
-SUM(UnitPrice) , SUM(UnitPriceDiscount) FROM 
-Sales.SalesOrderDetailEnlarged SOrderDet 
-INNER JOIN Sales.SalesOrderHeaderEnlarged  SalesOr
-ON SOrderDet.SalesOrderID = SalesOr.SalesOrderID
-GROUP  BY ProductID;
+SELECT 
+  ProductID, SUM(LineTotal) [sumOfLineTotal], 
+	SUM(UnitPrice) [sumOfUnitPrice], SUM(UnitPriceDiscount) [sumOfUnitPriceDiscount]
+FROM Sales.SalesOrderDetailEnlarged sode
+INNER JOIN Sales.SalesOrderHeaderEnlarged  sohe
+  ON sode.SalesOrderID = sohe.SalesOrderID
+GROUP BY ProductID;
+GO
+
+/*
+If you have a cached plan and you might not get the advantage of adaptive join.
+It depends on the plan that is in cache
+*/
+
+USE [master];
+GO
+
+ALTER DATABASE [WideWorldImportersDW] SET COMPATIBILITY_LEVEL = 140;
+GO
+
+USE [WideWorldImportersDW];
+GO
+
+ALTER DATABASE SCOPED CONFIGURATION CLEAR PROCEDURE_CACHE;
+GO
+
+
+/*
+Turn on Actual Execution plan ctrl+M
+*/
+
+DROP PROCEDURE IF EXISTS dbo.countByQuantity;
+GO
+CREATE PROCEDURE dbo.countByQuantity
+    @quantity int = 0
+AS
+SELECT [fo].[Order Key], [si].[Lead Time Days], [fo].[Quantity]
+FROM [Fact].[Order] AS [fo]
+INNER JOIN [Dimension].[Stock Item] AS [si] 
+	ON [fo].[Stock Item Key] = [si].[Stock Item Key]
+WHERE [fo].[Quantity] = @quantity
+RETURN 0;
+GO
+
+EXEC dbo.countByQuantity 10;
+GO
+exec dbo.countByQuantity 361;
 GO
