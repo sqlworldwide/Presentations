@@ -6,7 +6,7 @@ DEMO:
 Script copied form:
 https://blogs.msdn.microsoft.com/sql_server_team/more-showplan-enhancements-udfs/
 */
---Run this in SQL2017 and then in SQL2019
+-- Run this in SQL2017 and then in SQL2019
 -- Create UDF
 USE AdventureWorks
 GO
@@ -16,13 +16,13 @@ CREATE FUNCTION ufn_CategorizePrice(@Price money)
 RETURNS NVARCHAR(50)
 AS
 BEGIN
-    DECLARE @PriceCategory NVARCHAR(50)
+  DECLARE @PriceCategory NVARCHAR(50)
 
-    IF @Price < 100 SELECT @PriceCategory = 'Cheap'
-    IF @Price BETWEEN 101 and 500 SELECT @PriceCategory =  'Mid Price'
-    IF @Price BETWEEN 501 and 1000 SELECT @PriceCategory =  'Expensive'
-    IF @Price > 1001 SELECT @PriceCategory =  'Unaffordable'
-    RETURN @PriceCategory 
+  IF @Price < 100 SELECT @PriceCategory = 'Cheap'
+  IF @Price BETWEEN 101 and 500 SELECT @PriceCategory =  'Mid Price'
+  IF @Price BETWEEN 501 and 1000 SELECT @PriceCategory =  'Expensive'
+  IF @Price > 1001 SELECT @PriceCategory =  'Unaffordable'
+  RETURN @PriceCategory 
 END
 GO
 

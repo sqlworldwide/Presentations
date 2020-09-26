@@ -48,12 +48,15 @@ To suppress these warning messages, set the environment variable 'SuppressAzureP
 Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
 
 # Declare variables
-# The data center and resource name for your resources
+# The region and resource group name
 $resourceGroupName = "sqlalertdemo"
 $rgLocation = "East US"  
+# Log Analytics workspace name
 $workspaceName = "Sqlalertdemo"
 # The logical server name: Use a random value or replace with your own value (do not capitalize)
 $sqlServerName = "sqlalertdemoserver"
+# The database name
+$alertDemoDatabase = "sqlalertdemodatabase"
 
 # Set an admin login and password for your database
 # The login information for the server
@@ -65,9 +68,6 @@ $password = Get-Content "C:\password.txt"
 $ipinfo = Invoke-RestMethod http://ipinfo.io/json 
 $startip = $ipinfo.ip
 $endip = $ipinfo.ip 
-
-# The database name
-$alertDemoDatabase = "sqlalertdemodatabase"
 
 #Check if resource group exist
 $resGrpChk = Get-AzResourceGroup `
@@ -139,7 +139,7 @@ New-AzOperationalInsightsWorkspace `
     -Sku Standard `
     -ResourceGroupName $resourceGroupName
 
-# List of solutions to enable
+# List of solutions to enable for the log analytics workspace you create above
 $Solutions = "Security", "Updates", "SQLAssessment"
 # Add solutions
 foreach ($solution in $Solutions) {
@@ -149,7 +149,7 @@ foreach ($solution in $Solutions) {
     -IntelligencePackName $solution -Enabled $true
 }
 
-# Setting up Database to send diagonstic data to log analytics workspace created above
+# Setting up Azure SQL Database to send diagonstic data to log analytics workspace created above
 $workspaceId = (Get-AzResource -name $workspaceName).ResourceId
 $databaseId = (Get-AzsqlDatabase -ServerName $sqlServerName -DatabaseName $alertDemoDatabase -ResourceGroupName $resourceGroupName).ResourceId
 
@@ -162,7 +162,7 @@ Set-AzDiagnosticSetting `
     -Enabled $True `
     -Name "sqlalertdemo"
 
-#Setting up action group
+#Setting up action group to use with the alert
 $emailaddress = 'first.last@abc.com'
 $phoneNumber = 1234578890
 $emailDBA = 
@@ -186,8 +186,10 @@ Set-AzActionGroup `
     -ShortName 'deadlock' `
     -Receiver $emailDBA,$smsDBA,$phoneDBA
 
+# Retreive action group id
 $actionGroupId =(Get-AzResource -name 'notifydbadeadlock').ResourceId
 
+# Creating the Azure alert
 $source =
 New-AzScheduledQueryRuleSource  `
     -Query "AzureDiagnostics | where  Category == 'Deadlocks' "  `
@@ -219,7 +221,7 @@ New-AzScheduledQueryRule `
     -Location $rgLocation `
     -Action $alertingAction `
     -Enabled $true `
-    -Description "This alert will be fired an a deadlock is found in last 30 minutes " `
+    -Description "This alert will be fired when a deadlock is found in last 30 minutes " `
     -Source $source `
     -Schedule $schedule `
     -Name "Found Deadlock Alert"

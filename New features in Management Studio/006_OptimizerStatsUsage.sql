@@ -1,11 +1,11 @@
 /*
 Script Name: 006_OptimizerStatsUsage.sql
 Demo:
-   1. OptimizerStatsUsage
-	 		Statistics being used 
-			Sampling percent
-			Modification count
-			Actionable insight
+  OptimizerStatsUsage
+	Statistics being used 
+	Sampling percent
+	Modification count
+	Actionable insight
 
 Read details: https://blogs.msdn.microsoft.com/sql_server_team/sql-server-2017-showplan-enhancements/ by Pedro Lopes
 Code is copied from 

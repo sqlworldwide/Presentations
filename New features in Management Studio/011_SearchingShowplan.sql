@@ -18,7 +18,7 @@ Until 2014
    ActualElapsedms="965" ActualCPUms="965" ActualScans="1" ActualLogicalReads="26073" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" />
 </RunTimeInformation>
 
-How can I caputure the same information to Analyze later on?
+How can I caputure the same information to analyze later on?
 
 Details below about Query_thread_profile
 https://blogs.msdn.microsoft.com/sql_server_team/added-per-operator-level-performance-stats-for-query-processing/
@@ -39,7 +39,7 @@ GO
 
 
 --Once the trace is running, start watch live data 
---run following qeury
+--Run following qeury
 --Turn on Actual Execution Plan (Ctrl+M)
 /*
 Code copied from 
@@ -65,10 +65,16 @@ SELECT
   FROM [AdventureWorks].[Sales].[vPersonDemographics]
   ORDER BY BusinessEntityID;
 
---Stop the trace
---Sort estimated rows column in descending order
---Take a note of 19972 value and search for the nodes in Actual Execution Plan
---Review all other search options
+/*
+Stop the trace
+Sort estimated rows column in descending order
+Take a note of 19972 value and search for the nodes in Actual Execution Plan
+Chost Execution plan TAB
+ctrl+f
+From dropdown chose 'EstimateRows' 
 
---You can also use the same feature from the plan in the cache
---https://docs.microsoft.com/en-us/sql/relational-databases/system-dynamic-management-views/sys-dm-exec-query-profiles-transact-sql?view=sql-server-2017
+Review all other search options
+
+You can also use the same feature from the plan in the cache
+https://docs.microsoft.com/en-us/sql/relational-databases/system-dynamic-management-views/sys-dm-exec-query-profiles-transact-sql?view=sql-server-2017
+*/

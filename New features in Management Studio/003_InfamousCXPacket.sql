@@ -26,11 +26,14 @@ FROM    sys.dm_exec_session_wait_stats
 WHERE   session_id = 56
 */
 
---Query is copied from 
---https://blogs.msdn.microsoft.com/sql_server_team/making-parallelism-waits-actionable/
---Turn on Actual Execution Plan (Ctrl+M)
---Look at the properties of root node and waitstats, you will need to CXCONSUMER as this is not actionable
---About 10 seconds
+/*
+Query is copied from 
+https://blogs.msdn.microsoft.com/sql_server_team/making-parallelism-waits-actionable/
+Turn on Actual Execution Plan (Ctrl+M)
+Look at the properties of root node and waitstats, 
+you will not see CXCONSUMER as this is not actionable
+Run time about 10 seconds
+*/
 USE [AdventureWorks];
 GO
 SELECT *
