@@ -106,10 +106,12 @@ CROSS APPLY sys.dm_db_stats_histogram(s.[object_id], s.stats_id) AS hist
 WHERE s.[name] = N'IX_CustomersStatus'
 AND CAST(range_high_key AS varchar) = 0;
 
---What happens is more than one statistics is used in the same plan?
---Query copied from
---https://sqlserverfast.com/blog/hugo/2020/04/ssms-18-5-small-change-huge-effect/
---Turn on Actual Execution Plan (Ctrl+M)
+/*
+What happens is more than one statistics is used in the same plan?
+Query copied from
+https://sqlserverfast.com/blog/hugo/2020/04/ssms-18-5-small-change-huge-effect/
+Turn on Actual Execution Plan (Ctrl+M)
+*/
 USE [AdventureWorks];
 GO
 SELECT sod.SalesOrderID,
@@ -121,5 +123,75 @@ JOIN   Sales.SalesOrderHeader AS soh
   ON   soh.SalesOrderID = sod.SalesOrderID
 WHERE  soh.SalesPersonID = 285;
 
+/*
+Will it show Auto Created Statistics
+Rafael Cuesta - rafael.cuesta@outlook.com asked this quesion and I was not sure
+He sent me this demo code and it works.
+*/
+USE [Adventureworks];
+GO
+DROP TABLE IF EXISTS CustomersStatusDemo;
+GO
+CREATE TABLE CustomersStatusDemo
+ (CustomerID int IDENTITY(1,1) PRIMARY KEY, 
+  [EmailAddress] NCHAR(200), 
+	[PurchasesLst30d] bit);
+GO
+INSERT INTO CustomersStatusDemo ([EmailAddress])
+SELECT
+  [EmailAddress]
+FROM Person.EmailAddress;
+GO
 
+UPDATE CustomersStatusDemo
+SET [PurchasesLst30d] = 0
+WHERE CustomerID % 100 <> 0;
+UPDATE CustomersStatusDemo
+SET [PurchasesLst30d] = 1
+WHERE CustomerID % 100 = 0;
+GO
 
+CREATE INDEX IX_CustomersStatus ON CustomersStatusDemo([PurchasesLst30d]);
+GO
+
+--Check Table statistics with clustered and nonclustered index stats
+SELECT
+    obj.name
+   ,ST.name
+   ,st.auto_created
+   ,stprop.last_updated
+   ,stprop.modification_counter
+   ,stprop.rows
+   ,stprop.rows_sampled
+FROM sys.objects AS obj
+JOIN sys.STATS st
+    ON obj.object_id = st.object_id
+CROSS APPLY sys.dm_db_stats_properties(OBJECT_ID(obj.name), st.stats_id) AS stprop
+WHERE obj.NAME = N'CustomersStatusDemo'
+
+--Run a query with predicate in a non-indexed column to auto create statistics for it 
+SELECT 
+	EmailAddress 
+FROM CustomersStatusDemo 
+WHERE EmailAddress LIKE 'aaron1%' 
+
+--Now we have an autocreated statistic
+SELECT
+  obj.name
+  ,ST.name
+  ,st.auto_created
+  ,stprop.last_updated
+  ,stprop.modification_counter
+  ,stprop.rows
+  ,stprop.rows_sampled
+FROM sys.objects AS obj
+JOIN sys.STATS st
+	ON obj.object_id = st.object_id
+CROSS APPLY sys.dm_db_stats_properties(OBJECT_ID(obj.name), st.stats_id) AS stprop
+WHERE obj.NAME = N'CustomersStatusDemo'
+
+--Run this with actual plan enabled to check the auto created stats information in the properties of the root node
+SELECT 
+	EmailAddress 
+FROM CustomersStatus 
+WHERE EmailAddress LIKE 'aaron1%' 

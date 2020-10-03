@@ -1,5 +1,5 @@
 -- ******************************************************** --
--- Scirpt Name: 04_MFG_BatchModesql.sql
+-- Scirpt Name: 04_MGF_BatchModesql.sql
 -- This code is copied from
 -- https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
 

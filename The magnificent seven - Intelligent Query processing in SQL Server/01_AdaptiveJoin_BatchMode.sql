@@ -143,7 +143,30 @@ WHERE [fo].[Quantity] = @quantity
 RETURN 0;
 GO
 
+--Execute same stored procedure with 2 different parameter value
+--Turn on Actual Execution plan ctrl+M
 EXEC dbo.countByQuantity 10;
 GO
-exec dbo.countByQuantity 361;
+EXEC dbo.countByQuantity 361;
 GO
+
+--Now evict the plan from the cache and run the same statement in reverse order
+--Removes the plan from cache for single stored procedure
+--Get plan handle
+DECLARE @PlanHandle VARBINARY(64);
+SELECT  @PlanHandle = cp.plan_handle 
+FROM sys.dm_exec_cached_plans AS cp 
+CROSS APPLY sys.dm_exec_sql_text(plan_handle) AS st 
+WHERE OBJECT_NAME (st.objectid) LIKE '%countByQuantity%';
+IF @PlanHandle IS NOT NULL
+    BEGIN
+        DBCC FREEPROCCACHE(@PlanHandle);
+    END
+GO
+--Turn on Actual Execution plan ctrl+M
+EXEC dbo.countByQuantity 361;
+GO
+EXEC dbo.countByQuantity 10;
+GO
+
+
