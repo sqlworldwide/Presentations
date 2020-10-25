@@ -1,7 +1,8 @@
 //------------------------------------------------------------------------------
 // machineLearning.csl
 // These are also called evaluate operators
-// Written by Taiob M Ali
+// Written by Taiob Ali
+// SqlWorldWide.com
 //------------------------------------------------------------------------------
 // https://aka.ms/LADemo
 //------------------------------------------------------------------------------
@@ -20,7 +21,7 @@
 
 // copied from https://www.ciraltos.com/azure-machine-learning-in-log-analytics/
 
-// You can pass a paremeter 'thereshold' which
+// You can pass a paremeter 'threshold' which
 // Sets the minimal ratio of the rows to be considered frequent 
 SecurityEvent
 | where TimeGenerated >= ago(1d)

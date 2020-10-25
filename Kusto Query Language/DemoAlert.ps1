@@ -38,7 +38,7 @@ Connect-AzAccount
 #$SubscriptionList =Get-AzSubscription
 #$SubscriptionList
 #Use below code if you have multiple subscription and you want to use a particular one
-Set-AzContext -SubscriptionId 'xxx7xxx8-69a4-0000-000c-000f00c00a00'
+Set-AzContext -SubscriptionId '18d92f52-ac34-4379-ab8b-5a5106f1c54e'
 
 <#
 Breaking change warnings are a means for the cmdlet authors to communicate with the end users any upcoming breaking changes in the cmdlet. Most of these changes will be taking effect in the next breaking change release.
@@ -49,10 +49,10 @@ Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
 
 # Declare variables
 # The region and resource group name
-$resourceGroupName = "sqlalertdemo"
+$resourceGroupName = "sqlalertdemo1"
 $rgLocation = "East US"  
 # Log Analytics workspace name
-$workspaceName = "Sqlalertdemo"
+$workspaceName = "Sqlalertdemo2"
 # The logical server name: Use a random value or replace with your own value (do not capitalize)
 $sqlServerName = "sqlalertdemoserver"
 # The database name
@@ -163,8 +163,8 @@ Set-AzDiagnosticSetting `
     -Name "sqlalertdemo"
 
 #Setting up action group to use with the alert
-$emailaddress = 'first.last@abc.com'
-$phoneNumber = 1234578890
+$emailaddress = 'taiob@sqlworldwide.com'
+$phoneNumber = 9784272092
 $emailDBA = 
 New-AzActionGroupReceiver `
     -Name 'emailDBA' `

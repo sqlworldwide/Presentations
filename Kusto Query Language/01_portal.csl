@@ -1,6 +1,7 @@
 //------------------------------------------------------------------------------
 // 01_portal.csl
-// Written by Taiob M Ali
+// Written by Taiob Ali
+// SqlWorldWide.com
 //------------------------------------------------------------------------------
 // Go to: https://aka.ms/LADemo
 // This is what you will see in portal when you go to your workspace
@@ -32,8 +33,4 @@ AzureMetrics
 // Visualization 
 AzureMetrics
  | summarize countResource= count() by Resource
- | order by countResource 
-
-
-
-  
+ | order by countResource   

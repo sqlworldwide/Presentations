@@ -1,6 +1,7 @@
 //------------------------------------------------------------------------------
 // 03_aggregations.csl
-// Written by Taiob M Ali
+// Written by Taiob Ali
+// SqlWorldWide.com
 //------------------------------------------------------------------------------
 // Go to: https://aka.ms/LADemo
 // Will mostly use LogManagement/AzureMetrics table (loosely speaking)
@@ -16,10 +17,10 @@
 // returns the row where that maximum value was found
 // The second parameter indicates which columns to return. * means all.
 // By default it always returns the "by" column and the maximized value.
-AzureMetrics
-| where MetricName =='Network Out Total'
-| summarize arg_max(Total, TimeGenerated) by Resource
-| sort by Total
+//copied from pluralsight examples
+Perf
+| summarize arg_max(CounterValue, TimeGenerated, Computer) by CounterName
+| sort by CounterName asc
 
 //------------------------------------------------------------------------------
 // Percentiles (https://docs.microsoft.com/en-us/azure/kusto/query/percentiles-aggfunction)
@@ -54,11 +55,11 @@ Heartbeat
 
 // Produces hierarchical top results, where each level is a drill-down based on previous level values 
 // You can add a row for all other records
-
 AzureMetrics
-| top-nested 3 of MetricName  
-   with others =  'All Other Resource' by MetricNameCount = count()
-|sort by MetricNameCount
+| top-nested 3 of MetricName by MetricCount = count() 
+   , top-nested 3 of ResourceGroup by ResourceGroupCount = count() 
+|sort by MetricName asc 
+       , ResourceGroup asc
 
 //------------------------------------------------------------------------------
 // any (https://docs.microsoft.com/en-us/azure/kusto/query/any-aggfunction)
