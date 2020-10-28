@@ -38,7 +38,7 @@ Connect-AzAccount
 #$SubscriptionList =Get-AzSubscription
 #$SubscriptionList
 #Use below code if you have multiple subscription and you want to use a particular one
-Set-AzContext -SubscriptionId '18d92f52-ac34-4379-ab8b-5a5106f1c54e'
+Set-AzContext -SubscriptionId 'Put your subscripton Id'
 
 <#
 Breaking change warnings are a means for the cmdlet authors to communicate with the end users any upcoming breaking changes in the cmdlet. Most of these changes will be taking effect in the next breaking change release.
@@ -163,8 +163,8 @@ Set-AzDiagnosticSetting `
     -Name "sqlalertdemo"
 
 #Setting up action group to use with the alert
-$emailaddress = 'taiob@sqlworldwide.com'
-$phoneNumber = 9784272092
+$emailaddress = 'abcatdomain.com'
+$phoneNumber = 1234567890
 $emailDBA = 
 New-AzActionGroupReceiver `
     -Name 'emailDBA' `
