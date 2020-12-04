@@ -1,5 +1,6 @@
 /*
 Scirpt Name: 00_Setup.sql
+Takes about 18 minute in my laptop
 Setting up database for all the demo
 Download WideWorldImportersDW-Full.bak from https://aka.ms/wwidwbak
 */
@@ -265,9 +266,6 @@ GO
 *   PARTICULAR PURPOSE. 
 *
 ******************************************************************************/
-
-
-
 USE AdventureWorks;
 GO
 
@@ -313,7 +311,6 @@ SELECT SalesOrderID, RevisionNumber, OrderDate, DueDate, ShipDate, Status, Onlin
 FROM Sales.SalesOrderHeader WITH (HOLDLOCK TABLOCKX)
 GO
 SET IDENTITY_INSERT Sales.SalesOrderHeaderEnlarged OFF
-
 GO
 ALTER TABLE Sales.SalesOrderHeaderEnlarged ADD CONSTRAINT
 	PK_SalesOrderHeaderEnlarged_SalesOrderID PRIMARY KEY CLUSTERED 
@@ -380,7 +377,6 @@ ALTER TABLE Sales.SalesOrderDetailEnlarged ADD CONSTRAINT
 	SalesOrderID,
 	SalesOrderDetailID
 	) WITH( STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-
 GO
 CREATE UNIQUE NONCLUSTERED INDEX AK_SalesOrderDetailEnlarged_rowguid ON Sales.SalesOrderDetailEnlarged
 	(
@@ -393,13 +389,9 @@ CREATE NONCLUSTERED INDEX IX_SalesOrderDetailEnlarged_ProductID ON Sales.SalesOr
 	) WITH( STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
 
-
 BEGIN TRANSACTION
-
-
 DECLARE @TableVar TABLE
 (OrigSalesOrderID int, NewSalesOrderID int)
-
 INSERT INTO Sales.SalesOrderHeaderEnlarged 
 	(RevisionNumber, OrderDate, DueDate, ShipDate, Status, OnlineOrderFlag, 
 	 PurchaseOrderNumber, AccountNumber, CustomerID, SalesPersonID, TerritoryID, 
@@ -457,7 +449,6 @@ FROM Sales.SalesOrderDetail AS sod
 JOIN @TableVar AS tv
 	ON sod.SalesOrderID = tv.OrigSalesOrderID
 ORDER BY sod.SalesOrderDetailID
-
 COMMIT
 --Revert MAXDOP Setting
 EXEC sp_configure 'max degree of parallelism', 2;  
