@@ -12,8 +12,8 @@ Run this on a separate window
 
 USE [WideWorldImporters];
 GO
-DBCC SHOW_STATISTICS ('Sales.Orders', [FK_Sales_Orders_ContactPersonID])
-WITH HISTOGRAM;
+
+DBCC SHOW_STATISTICS ('Sales.Orders', [FK_Sales_Orders_ContactPersonID]);
 GO  
 ============================================================================*/
 USE [Wideworldimporters]; 
@@ -93,12 +93,14 @@ https://dba.stackexchange.com/questions/249057/%d0%a1ardinality-estimation-of-pa
 */
 SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
 FROM Sales.Orders
-WHERE ContactPersonID between 1024 and 1027
+WHERE ContactPersonID between 1024 and 1027;
+GO
 
 --Estimated rows 1236.17
 SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
 FROM Sales.Orders
-WHERE CustomerID  between 10 and 20 
+WHERE CustomerID  between 10 and 20;
+GO
 
 --Include Actual Execution Plan (CTRL+M)
 --Putting both top queries together
@@ -106,7 +108,8 @@ WHERE CustomerID  between 10 and 20
 SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
 FROM Sales.Orders
 WHERE (ContactPersonID between 1024 and 1027)
-AND (CustomerID  between 10 and 20)
+	AND (CustomerID  between 10 and 20);
+GO
 
 
 --2014 approach to conjunctive predicates is to use exponential backoff. 
@@ -114,17 +117,18 @@ AND (CustomerID  between 10 and 20)
 --Given a table with cardinality C, and predicate selectivities S1, S2, S3 … Sn, where S1 is the most selective and Sn the least
 --Estimate = C * S1 * SQRT(S2) * SQRT(SQRT(S3)) * SQRT(SQRT(SQRT(S4))) …
 --Estimated rows on the nested loop operator 44.4052021967852
-SELECT 
-	'SQL 2014' AS [Version], 
-	'C * S1 * SQRT(S2) * SQRT(SQRT(S3)) * SQRT(SQRT(SQRT(S4))) …' AS [Formula], 
-	(73595)*(342.625/73595)* SQRT(1236.17/73595) AS [EstimatedNumRows], 
+SELECT
+	'SQL 2014' AS [Version],
+	'C * S1 * SQRT(S2) * SQRT(SQRT(S3)) * SQRT(SQRT(SQRT(S4))) …' AS [Formula],
+	(73595)*(342.625/73595)* SQRT(1236.17/73595) AS [EstimatedNumRows],
 	'211' AS [ActualNumRows]
 UNION ALL
-SELECT 
-	'PRE 2014' AS [Version], 
-	'C * S1 * S2 * .......*Sn' AS [Formula], 
-	(73595) *(261.00/73595)*(1236.17/73595) AS [EstimatedNumRows], 
-	'211' AS [ActualNumRows]
+SELECT
+	'PRE 2014' AS [Version],
+	'C * S1 * S2 * .......*Sn' AS [Formula],
+	(73595) *(261.00/73595)*(1236.17/73595) AS [EstimatedNumRows],
+	'211' AS [ActualNumRows];
+GO
 
 
 --Changing conjunction to disjunction (AND to OR)
@@ -132,23 +136,25 @@ SELECT
 SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
 FROM Sales.Orders
 WHERE (ContactPersonID between 1024 and 1027)
-OR (CustomerID  between 10 and 20)
+	OR (CustomerID  between 10 and 20);
+GO
 
 
 --1404.80079282584
 --C * 1-(1-S1) * SQRT(1-S2) .....* SQRT(1-Sn)
 --S1, S2, S3 … Sn, where S1 is the least selective and Sn is the most selective
-SELECT 
-	'SQL 2014' AS [Version], 
-	'C * 1-(1-S1) * SQRT(1-S2) .....* SQRT(1-Sn)' AS [Formula], 
-	(73595) * (1-((1-1236.17/73595) * SQRT(1-342.625/73595))) AS [EstimatedNumRows], 
-	'1235' AS [ActualNumRows]
+	SELECT
+		'SQL 2014' AS [Version],
+		'C * 1-(1-S1) * SQRT(1-S2) .....* SQRT(1-Sn)' AS [Formula],
+		(73595) * (1-((1-1236.17/73595) * SQRT(1-342.625/73595))) AS [EstimatedNumRows],
+		'1235' AS [ActualNumRows]
 UNION ALL
-SELECT 
-	'PRE 2014' AS [Version], 
-	'C * (S1+S2+....+Sn)-(S1*S2*.....*Sn)' AS [Formula], 
-	(73595) * ((261.0/73595+1236.17/73595)-(261.0/73595*1236.17/73595)) AS [EstimatedNumRows],
-	'1235' AS [ActualNumRows]
+	SELECT
+		'PRE 2014' AS [Version],
+		'C * (S1+S2+....+Sn)-(S1*S2*.....*Sn)' AS [Formula],
+		(73595) * ((261.0/73595+1236.17/73595)-(261.0/73595*1236.17/73595)) AS [EstimatedNumRows],
+		'1235' AS [ActualNumRows];
+GO
 
 /*
 Following section shows how estimated rows were calculated pre 2014
@@ -171,6 +177,7 @@ SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
 FROM Sales.Orders
 WHERE CustomerID  between 10 and 20 
 OPTION (USE HINT ('FORCE_LEGACY_CARDINALITY_ESTIMATION')); 
+GO
 
 --Include Actual Execution Plan (CTRL+M)
 --Putting it together
@@ -180,11 +187,13 @@ FROM Sales.Orders
 WHERE ContactPersonID between 1024 and 1027
 AND CustomerID  between 10 and 20
 OPTION (USE HINT ('FORCE_LEGACY_CARDINALITY_ESTIMATION')); 
-GO
+GO;
+
 -- 4.358028650060800
 --C * S1 * SQRT(S2) * SQRT(SQRT(S3)) * SQRT(SQRT(SQRT(S4))) = SQL2014
 --C * S1 * S2 * .......*Sn = Pre SQL2014
-SELECT (735950 * (261.00/73595)*(1236.17/73595)
+SELECT (735950 * (261.00/73595)*(1236.17/73595);
+GO
 
 --Changing conjunction to disjunction (AND to OR)
 --Estimated rows on the nested loop iterator output 1492.78
@@ -193,11 +202,11 @@ FROM Sales.Orders
 WHERE ContactPersonID between 1024 and 1027
 OR CustomerID  between 10 and 20
 OPTION (USE HINT ('FORCE_LEGACY_CARDINALITY_ESTIMATION')); 
+GO
 
 --1485.499150896005240
 --C * 1-(1-S1) * SQRT(1-S2) .....* SQRT(1-Sn) =  SQL2014
 -- C * (S1+S2+....+Sn)-(S1*S2*.....*Sn) = Pre SQL 2014
-SELECT (73595) * ((261.0/73595+1236.17/73595)-(261.0/73595*1236.17/73595))
-
-
+SELECT (73595) * ((261.0/73595+1236.17/73595)-(261.0/73595*1236.17/73595));
+GO
 */

@@ -12,8 +12,7 @@ Run this on a separate window
 
 USE [WideWorldImporters];
 GO
-DBCC SHOW_STATISTICS ('Sales.Orders', [FK_Sales_Orders_ContactPersonID])
-WITH HISTOGRAM;
+DBCC SHOW_STATISTICS ('Sales.Orders', [FK_Sales_Orders_ContactPersonID]);
 GO
 ============================================================================*/
 
@@ -36,7 +35,7 @@ GO
 --Look at 'Estimated number of rows' for 'Index Seek' operator 89
 --Look at row 5 in the histogram, which is a direct hit for RANGE_HI_KEY=1025
 EXECUTE [dbo].[OrderID_by_ContactPersonID] @contactPersonID = 1025;
-
+GO
 
 --As seen before direct hit for RANGE_HI_KEY  1025
 DBCC SHOW_STATISTICS ('Sales.Orders', [FK_Sales_Orders_ContactPersonID])
@@ -49,7 +48,7 @@ GO
 --Parameter compile with
 --Parameter runtime value 
 EXECUTE [dbo].[OrderID_by_ContactPersonID] @contactPersonID = 1057;
-
+GO
 
 --What the value should be for 1057?
 --118.6667
@@ -60,14 +59,14 @@ GO
 --Removes the plan from cache for single stored procedure
 --Get plan handle
 DECLARE @PlanHandle VARBINARY(64);
-SELECT  @PlanHandle = cp.plan_handle 
+SELECT @PlanHandle = cp.plan_handle
 FROM sys.dm_exec_cached_plans AS cp 
-CROSS APPLY sys.dm_exec_sql_text(plan_handle) AS st 
+CROSS APPLY sys.dm_exec_sql_text(plan_handle) AS st
 WHERE OBJECT_NAME (st.objectid) LIKE '%OrderID_by_ContactPersonID%';
 IF @PlanHandle IS NOT NULL
-    BEGIN
-        DBCC FREEPROCCACHE(@PlanHandle);
-    END
+  BEGIN
+		DBCC FREEPROCCACHE(@PlanHandle);
+	END
 GO
 
 --Include Actual Execution Plan (CTRL+M)
@@ -77,4 +76,4 @@ GO
 --Parameter compile with
 --Parameter runtime value 
 EXECUTE [dbo].[OrderID_by_ContactPersonID] @contactPersonID = 1057;
-
+GO
