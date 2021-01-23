@@ -4,7 +4,7 @@
 -- https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
 
 -- Modified by Taiob Ali
--- July 20, 2020
+-- January 23, 2021
 
 -- Interleaved Execution
 
@@ -22,7 +22,7 @@
 -- ******************************************************** --
 
 /*
-	Create MSTVF
+Create a multi-statement table-valued functions (MSTVFs)
 */
 
 USE [WideWorldImportersDW];

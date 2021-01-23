@@ -4,7 +4,7 @@
 -- https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
 
 -- Modified by Taiob Ali
--- July 20, 2020
+-- January 23, 2021
 
 -- Scalar UDF Inlining
 
@@ -55,7 +55,11 @@ END
 GO
 
 --Checking if the UDF is inlineable by looking at the value of is_inlineable column
-SELECT * FROM sys.sql_modules
+SELECT 
+  object_id,
+  definition,
+  is_inlineable
+FROM sys.sql_modules
 WHERE object_id = OBJECT_ID('ufn_customer_category')
 GO
 
@@ -67,8 +71,9 @@ During inlining you can see this in the properties or XML plan  ContainsInlineSc
 */
 
 SELECT TOP 100
-		[Customer Key], [Customer],
-       dbo.ufn_customer_category([Customer Key]) AS [Discount Price]
+  [Customer Key], 
+	[Customer],
+	dbo.ufn_customer_category([Customer Key]) AS [Discount Price]
 FROM [Dimension].[Customer]
 ORDER BY [Customer Key]
 OPTION (RECOMPILE,USE HINT('DISABLE_TSQL_SCALAR_UDF_INLINING'));
@@ -76,8 +81,9 @@ GO
 
 -- After (show actual query execution plan for Scalar UDF Inlining)
 SELECT TOP 100
-		[Customer Key], [Customer],
-       dbo.ufn_customer_category([Customer Key]) AS [Discount Price]
+  [Customer Key], 
+  [Customer],
+  dbo.ufn_customer_category([Customer Key]) AS [Discount Price]
 FROM [Dimension].[Customer]
 ORDER BY [Customer Key]
 OPTION (RECOMPILE);
