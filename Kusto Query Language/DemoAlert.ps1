@@ -165,8 +165,8 @@ Set-AzDiagnosticSetting `
     -Name "sqlalertdemo"
 
 #Setting up action group to use with the alert
-$emailaddress = 'taiob@sqlworldwide.com'
-$phoneNumber = 9784272092
+$emailaddress = 'abcatdomain.com'
+$phoneNumber = 1234567890
 $emailDBA = 
 New-AzActionGroupReceiver `
     -Name 'emailDBA' `
