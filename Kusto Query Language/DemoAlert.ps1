@@ -25,6 +25,7 @@ https://gallery.technet.microsoft.com/scriptcenter/Get-ExternalPublic-IP-c1b601b
 # If you have an outdated version, 
 # visit https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-windows-powershell?view=powershell-6#upgrading-existing-windows-powershell.
 
+break
 # Run below code if you need to check what version of PowerShell you are running
 # $PSVersionTable.PSVersion
 
@@ -34,11 +35,12 @@ Import-Module Az
 # Sign in to Azure
 #$VerbosePreference = $DebugPreference = "Continue"
 Connect-AzAccount
+
 #if you need to see the list of your subscription
 #$SubscriptionList =Get-AzSubscription
 #$SubscriptionList
 #Use below code if you have multiple subscription and you want to use a particular one
-Set-AzContext -SubscriptionId 'Put your subscripton Id'
+Set-AzContext -SubscriptionId '18d92f52-ac34-4379-ab8b-5a5106f1c54e'
 
 <#
 Breaking change warnings are a means for the cmdlet authors to communicate with the end users any upcoming breaking changes in the cmdlet. Most of these changes will be taking effect in the next breaking change release.
@@ -163,8 +165,8 @@ Set-AzDiagnosticSetting `
     -Name "sqlalertdemo"
 
 #Setting up action group to use with the alert
-$emailaddress = 'abcatdomain.com'
-$phoneNumber = 1234567890
+$emailaddress = 'taiob@sqlworldwide.com'
+$phoneNumber = 9784272092
 $emailDBA = 
 New-AzActionGroupReceiver `
     -Name 'emailDBA' `
@@ -192,7 +194,7 @@ $actionGroupId =(Get-AzResource -name 'notifydbadeadlock').ResourceId
 # Creating the Azure alert
 $source =
 New-AzScheduledQueryRuleSource  `
-    -Query "AzureDiagnostics | where  Category == 'Deadlocks' "  `
+    -Query "AzureMetrics | where MetricName == 'deadlock' "  `
     -DataSourceId $workspaceId
 
 $schedule = 
