@@ -10,6 +10,10 @@ This script will
     save the result in local server
 ============================================================================
 #>
+Import-module SqlServer
+Import-Module dbatools
+
+Set-AzContext -SubscriptionId '18d92f52-ac34-4379-ab8b-5a5106f1c54e'
 # Putting my query in a variable
 $databaseQuery = 
 "
@@ -34,7 +38,7 @@ $localTableName = 'databasesize'
 # The login information for the server
 $adminlogin = "taiob"
 #Replace with password file location
-$password = Get-Content "C:\Azure SQL Database - Where is my  SQL Agent\password.txt"
+$password = Get-Content "C:\password.txt"
 $password = ConvertTo-SecureString -String $password -AsPlainText -Force
 #$databaseCredentials = Get-Credential -Message "Please provide credentials for $SqlInstance"
 $databaseCredentials = New-Object System.Management.Automation.PSCredential($adminlogin, $password) 
@@ -54,7 +58,7 @@ foreach ($SqlInstance in $resources) {
             -Username $databaseCredentials.GetNetworkCredential().UserName `
             -Password $databaseCredentials.GetNetworkCredential().Password `
             -Database $databaseName | `
-            Write-DbaDataTable -SqlInstance $localInstanceName -Database $localDatabaseName -Table $localTableName
+            Write-DbaDbTableData -SqlInstance $localInstanceName -Database $localDatabaseName -Table $localTableName
     }
 }
 <#
