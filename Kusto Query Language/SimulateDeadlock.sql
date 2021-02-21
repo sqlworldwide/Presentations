@@ -75,3 +75,28 @@ GO
 ** After about 5~7 minuetes of running this deadlock should fire alert
 ** that was configured by DemoAlert.ps1 file
 */
+
+/*
+After dropping the two tables from above demo
+Use the query below to fin the drip event
+*/
+
+/*
+// This is Kusto Query
+// Ref: https://techcommunity.microsoft.com/t5/azure-database-support-blog/azure-sql-db-and-log-analytics-better-together-part-3-query/ba-p/1034222
+// Who DROPPED my table?
+
+let ServerName = "sqlalertdemoserver";
+let DBName = "sqlalertdemodatabase";
+AzureDiagnostics
+| where TimeGenerated >= ago(1d)
+| where LogicalServerName_s =~ ServerName
+| where database_name_s =~ DBName
+| where Category =~ "SQLSecurityAuditEvents"
+| where action_name_s in ("BATCH COMPLETED", "RPC COMPLETED")
+| where statement_s contains "DROP" or statement_s contains "TRUNCATE" 
+| project TimeGenerated, event_time_t, LogicalServerName_s, database_name_s, succeeded_s, session_id_d, action_name_s,
+            client_ip_s, session_server_principal_name_s , database_principal_name_s, statement_s, additional_information_s, application_name_s
+| top 1000 by TimeGenerated desc
+
+*/

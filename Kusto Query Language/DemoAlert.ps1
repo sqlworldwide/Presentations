@@ -165,8 +165,8 @@ Set-AzDiagnosticSetting `
     -Name "sqlalertdemo"
 
 #Setting up action group to use with the alert
-$emailaddress = 'abcatdomain.com'
-$phoneNumber = 1234567890
+$emailaddress = 'taiob@sqlworldwide.com'
+$phoneNumber = 9784272092
 $emailDBA = 
 New-AzActionGroupReceiver `
     -Name 'emailDBA' `
@@ -227,7 +227,14 @@ New-AzScheduledQueryRule `
     -Source $source `
     -Schedule $schedule `
     -Name "Found Deadlock Alert"
-   
+
+# Enable the log analytics auditing policy of an Azure SQL server   
+Set-AzSqlServerAudit `
+    -ResourceGroupName $resourceGroupName `
+    -ServerName $sqlServerName `
+    -LogAnalyticsTargetState Enabled `
+    -WorkspaceResourceId $workspaceId
+    
 #Run SimulateDeadlock.sql script
 
 #Clean up by removing resource group name
