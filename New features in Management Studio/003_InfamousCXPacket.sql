@@ -6,7 +6,7 @@ Script Name:003_InfamousCXPacket.sql
 
 --Changing MaxDOP to 0
 SELECT name, value_in_use  FROM SYS.configurations
-WHERE [name] ='max degree of parallelism'
+WHERE [name] ='max degree of parallelism';
 GO
 EXEC sp_configure 'show advanced options', 1;  
 GO
@@ -40,7 +40,7 @@ SELECT *
 FROM [Sales].[SalesOrderDetail] SOD
 INNER JOIN [Production].[Product] P ON SOD.ProductID = P.ProductID
 WHERE SalesOrderDetailID > 10
-ORDER BY Style
+ORDER BY Style;
 GO
 
 

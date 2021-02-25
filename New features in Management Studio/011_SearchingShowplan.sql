@@ -26,7 +26,7 @@ https://blogs.msdn.microsoft.com/sql_server_team/added-per-operator-level-perfor
 
 --Run this in another window and start the trace
 IF EXISTS(SELECT * FROM sys.server_event_sessions WHERE name='PerfStats_XE')  
-    DROP EVENT session [PerfStats_XE] ON SERVER;  
+  DROP EVENT session [PerfStats_XE] ON SERVER;  
 GO
 CREATE EVENT SESSION [PerfStats_XE] ON SERVER
 ADD EVENT sqlserver.query_thread_profile(
@@ -49,21 +49,21 @@ https://dba.stackexchange.com/questions/135455/what-does-option-fast-in-select-s
 USE [AdventureWorks];
 GO
 SELECT 
-	   [BusinessEntityID]
-      ,[TotalPurchaseYTD]
-      ,[DateFirstPurchase]
-      ,[BirthDate]
-      ,[MaritalStatus]
-      ,[YearlyIncome]
-      ,[Gender]
-      ,[TotalChildren]
-      ,[NumberChildrenAtHome]
-      ,[Education]
-      ,[Occupation]
-      ,[HomeOwnerFlag]
-      ,[NumberCarsOwned]
-  FROM [AdventureWorks].[Sales].[vPersonDemographics]
-  ORDER BY BusinessEntityID;
+  BusinessEntityID,
+  TotalPurchaseYTD,
+  DateFirstPurchase,
+  BirthDate,
+  MaritalStatus,
+  YearlyIncome,
+  Gender,
+  TotalChildren,
+  NumberChildrenAtHome,
+  Education,
+  Occupation,
+  HomeOwnerFlag,
+  NumberCarsOwned
+FROM AdventureWorks.Sales.vPersonDemographics
+ORDER BY BusinessEntityID;
 
 /*
 Stop the trace

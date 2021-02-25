@@ -21,13 +21,13 @@ when processing big amounts of data (millions and billions of rows).
 --Turn on Actual Execution Plan (Ctrl+M)
 --Look at the properties of the index scan
 --Look at the elapsed time from QueryTimeStats
-USE AdventureWorks
+USE [AdventureWorks];
 GO
-DBCC FREESYSTEMCACHE ('Adventureworks')  --For DEMO only, please do not do this in produciton
+DBCC FREESYSTEMCACHE ('Adventureworks');  --For DEMO only, please do not do this in produciton
 GO
 ALTER DATABASE Adventureworks SET COMPATIBILITY_LEVEL = 140;
 GO
-SELECT COUNT_BIG(*) FROM [AdventureWorks].[dbo].[bigTransactionHistory];
+SELECT COUNT_BIG(*) AS [NumberOfRows] FROM dbo.bigTransactionHistory;
 GO
 
 --Changing compatibility level to SQL 2019
@@ -35,12 +35,13 @@ GO
 --Look at the properties of the index scan
 --Look at properties of select statement and you will see BatchModeOnRowStoreUsed=True
 --Look at the elapsed time from QueryTimeStats
-USE AdventureWorks
+USE [AdventureWorks];
 GO
-DBCC FREESYSTEMCACHE ('Adventureworks')  --For DEMO only, please do not do this in produciton
+DBCC FREESYSTEMCACHE ('Adventureworks'); --For DEMO only, please do not do this in produciton
 GO
 ALTER DATABASE Adventureworks SET COMPATIBILITY_LEVEL = 150;
 GO
-SELECT COUNT_BIG(*) FROM [AdventureWorks].[dbo].[bigTransactionHistory];
+SELECT COUNT_BIG(*) AS [NumberOfRows] FROM dbo.bigTransactionHistory;
 GO
+
 

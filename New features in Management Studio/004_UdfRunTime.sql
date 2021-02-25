@@ -8,9 +8,9 @@ https://blogs.msdn.microsoft.com/sql_server_team/more-showplan-enhancements-udfs
 */
 -- Run this in SQL2017 and then in SQL2019
 -- Create UDF
-USE AdventureWorks
+USE [AdventureWorks];
 GO
-DROP FUNCTION IF EXISTS ufn_CategorizePrice
+DROP FUNCTION IF EXISTS ufn_CategorizePrice;
 GO
 CREATE FUNCTION ufn_CategorizePrice(@Price money)
 RETURNS NVARCHAR(50)
@@ -23,16 +23,17 @@ BEGIN
   IF @Price BETWEEN 501 and 1000 SELECT @PriceCategory =  'Expensive'
   IF @Price > 1001 SELECT @PriceCategory =  'Unaffordable'
   RETURN @PriceCategory 
-END
+END;
 GO
 
 --Changing compatibility level to SQL 2017
 ALTER DATABASE CURRENT SET COMPATIBILITY_LEVEL = 140; 
 GO
+
 --Turn on Actual Execution Plan (Ctrl+M)
 --Look at the properties of root node. Expand QueryTimeStats node
 --You will two new attributes 'UdfCpuTime' and 'UdfElapsedTime' 
-USE AdventureWorks
+USE [AdventureWorks];
 GO
 SELECT 
   dbo.ufn_CategorizePrice(UnitPrice) AS [AffordAbility], 
@@ -41,19 +42,18 @@ SELECT
   ProductID, SpecialOfferID, 
   UnitPrice, UnitPriceDiscount, 
   LineTotal, rowguid, ModifiedDate 
-FROM Sales.SalesOrderDetail
+FROM Sales.SalesOrderDetail;
 GO
-
-
 
 --Changing compatibility level to SQL 2019
 ALTER DATABASE CURRENT SET COMPATIBILITY_LEVEL = 150; 
 GO
+
 --Turn on Actual Execution Plan (Ctrl+M)
 --Look at the properties of root node. 
 --You will NOT see the attributes 'UdfCpuTime' and 'UdfElapsedTime' as we saw in 2017
 --Rather you will see a new one 'ContainsInlineScalarTsqludfs=True' under Misc
-USE AdventureWorks
+USE [AdventureWorks];
 GO
 SELECT 
   dbo.ufn_CategorizePrice(UnitPrice) AS [AffordAbility], 
@@ -62,5 +62,5 @@ SELECT
   ProductID, SpecialOfferID, 
   UnitPrice, UnitPriceDiscount, 
   LineTotal, rowguid, ModifiedDate 
-FROM Sales.SalesOrderDetail
+FROM Sales.SalesOrderDetail;
 GO

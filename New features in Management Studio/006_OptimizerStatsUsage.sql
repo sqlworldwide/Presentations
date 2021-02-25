@@ -63,17 +63,18 @@ Actual: 100
 -- dm_db_stats_histogram- new in SQL2016 SP1 CU2
 -- Details here https://blogs.msdn.microsoft.com/sql_server_team/easy-way-to-get-statistics-histogram-programmatically/
 SELECT
-    stats_name = S.[name], 
-    DDSP.stats_id,
-    DDSP.[rows],
-    DDSP.modification_counter
+  stats_name = S.[name], 
+  DDSP.stats_id,
+  DDSP.[rows],
+  DDSP.modification_counter
 FROM sys.stats AS S
 CROSS APPLY sys.dm_db_stats_properties(S.object_id, S.stats_id) AS DDSP
 WHERE
-    S.[object_id] = OBJECT_ID(N'dbo.CustomersStatus', N'U');
+  S.[object_id] = OBJECT_ID(N'dbo.CustomersStatus', N'U');
 GO
 
-SELECT hist.*
+SELECT 
+  hist.*
 FROM sys.stats AS s
 CROSS APPLY sys.dm_db_stats_histogram(s.[object_id], s.stats_id) AS hist
 WHERE s.[name] = N'IX_CustomersStatus'
@@ -114,14 +115,15 @@ Turn on Actual Execution Plan (Ctrl+M)
 */
 USE [AdventureWorks];
 GO
-SELECT sod.SalesOrderID,
-       sod.SalesOrderDetailID,
-       sod.CarrierTrackingNumber,
-       soh.ShipDate
-FROM   Sales.SalesOrderDetail AS sod
-JOIN   Sales.SalesOrderHeader AS soh
-  ON   soh.SalesOrderID = sod.SalesOrderID
-WHERE  soh.SalesPersonID = 285;
+SELECT 
+  sod.SalesOrderID,
+  sod.SalesOrderDetailID,
+  sod.CarrierTrackingNumber,
+  soh.ShipDate
+FROM Sales.SalesOrderDetail AS sod
+JOIN Sales.SalesOrderHeader AS soh
+ON soh.SalesOrderID = sod.SalesOrderID
+WHERE soh.SalesPersonID = 285;
 
 /*
 Will it show Auto Created Statistics
@@ -156,42 +158,42 @@ GO
 
 --Check Table statistics with clustered and nonclustered index stats
 SELECT
-    obj.name
-   ,ST.name
-   ,st.auto_created
-   ,stprop.last_updated
-   ,stprop.modification_counter
-   ,stprop.rows
-   ,stprop.rows_sampled
+  obj.name,
+  ST.name,
+  st.auto_created,
+  stprop.last_updated,
+  stprop.modification_counter,
+  stprop.rows,
+  stprop.rows_sampled
 FROM sys.objects AS obj
 JOIN sys.STATS st
-    ON obj.object_id = st.object_id
+ON obj.object_id = st.object_id
 CROSS APPLY sys.dm_db_stats_properties(OBJECT_ID(obj.name), st.stats_id) AS stprop
-WHERE obj.NAME = N'CustomersStatusDemo'
+WHERE obj.NAME = N'CustomersStatusDemo';
 
 --Run a query with predicate in a non-indexed column to auto create statistics for it 
 SELECT 
 	EmailAddress 
 FROM CustomersStatusDemo 
-WHERE EmailAddress LIKE 'aaron1%' 
+WHERE EmailAddress LIKE 'aaron1%';
 
 --Now we have an autocreated statistic
 SELECT
-  obj.name
-  ,ST.name
-  ,st.auto_created
-  ,stprop.last_updated
-  ,stprop.modification_counter
-  ,stprop.rows
-  ,stprop.rows_sampled
+  obj.name,
+  ST.name,
+  st.auto_created,
+  stprop.last_updated,
+  stprop.modification_counter,
+  stprop.rows,
+  stprop.rows_sampled
 FROM sys.objects AS obj
 JOIN sys.STATS st
-	ON obj.object_id = st.object_id
+ON obj.object_id = st.object_id
 CROSS APPLY sys.dm_db_stats_properties(OBJECT_ID(obj.name), st.stats_id) AS stprop
-WHERE obj.NAME = N'CustomersStatusDemo'
+WHERE obj.NAME = N'CustomersStatusDemo';
 
 --Run this with actual plan enabled to check the auto created stats information in the properties of the root node
 SELECT 
 	EmailAddress 
 FROM CustomersStatus 
-WHERE EmailAddress LIKE 'aaron1%' 
+WHERE EmailAddress LIKE 'aaron1%';

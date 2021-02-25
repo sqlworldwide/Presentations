@@ -3,12 +3,14 @@ Scirpt Name: 001_Setup.sql
 Setting up database for all the demo
 Download AdventureWorks backup
 https://github.com/Microsoft/sql-server-samples/releases/tag/adventureworks
+
+In my machine it takes about 2 min 15 seconds.
 */
 
-USE [master]
+USE [master];
 GO
-DECLARE @dbname nvarchar(128)
-SET @dbname = N'AdventureWorks'
+DECLARE @dbname nvarchar(128);
+SET @dbname = N'AdventureWorks';
 
 IF (EXISTS (SELECT name 
 FROM master.dbo.sysdatabases 
@@ -20,8 +22,8 @@ END
 GO
 USE [master]
 GO
-DECLARE @dbname nvarchar(128)
-SET @dbname = N'AdventureWorks'
+DECLARE @dbname nvarchar(128);
+SET @dbname = N'AdventureWorks';
 
 IF (EXISTS (SELECT name 
 FROM master.dbo.sysdatabases 
@@ -38,13 +40,13 @@ MOVE N'AdventureWorks2017' TO N'C:\Program Files\Microsoft SQL Server\MSSQL15.SQ
 MOVE N'AdventureWorks2017_log' TO N'C:\Program Files\Microsoft SQL Server\MSSQL15.SQL2019\MSSQL\DATA\AdventureWorks2017_log.ldf', 
 NOUNLOAD,  REPLACE, STATS = 5;
 GO
-USE [AdventureWorks]
+USE [AdventureWorks];
 GO
-ALTER AUTHORIZATION ON DATABASE::[AdventureWorks] TO [sa]
+ALTER AUTHORIZATION ON DATABASE::[AdventureWorks] TO [sa];
 GO
-USE [master]
+USE [master];
 GO
-ALTER DATABASE [AdventureWorks] SET COMPATIBILITY_LEVEL = 150
+ALTER DATABASE [AdventureWorks] SET COMPATIBILITY_LEVEL = 150;
 GO
 
 /*
@@ -85,16 +87,16 @@ FROM Production.Product AS p
 CROSS JOIN master..spt_values AS a
 WHERE
 	a.type = 'p'
-	AND a.number BETWEEN 1 AND 50
+	AND a.number BETWEEN 1 AND 50;
 GO
 
 
 ALTER TABLE dbo.bigProduct
-ALTER COLUMN ProductId INT NOT NULL	
+ALTER COLUMN ProductId INT NOT NULL;
 GO
 
 ALTER TABLE dbo.bigProduct
-ADD CONSTRAINT pk_bigProduct PRIMARY KEY (ProductId)
+ADD CONSTRAINT pk_bigProduct PRIMARY KEY (ProductId);
 GO
 
 
@@ -164,17 +166,17 @@ CROSS APPLY
 	) AS z
 	WHERE
 		z.groupRange % 2 = 1
-) AS x
+) AS x;
 
 
 
 ALTER TABLE dbo.bigTransactionHistory
-ALTER COLUMN TransactionID INT NOT NULL
+ALTER COLUMN TransactionID INT NOT NULL;
 GO
 
 
 ALTER TABLE dbo.bigTransactionHistory
-ADD CONSTRAINT pk_bigTransactionHistory PRIMARY KEY (TransactionID)
+ADD CONSTRAINT pk_bigTransactionHistory PRIMARY KEY (TransactionID);
 GO
 
 
@@ -188,10 +190,10 @@ INCLUDE
 (
 	Quantity,
 	ActualCost
-)
+);
 GO
 --Set MAXDOP=2
-USE [master]
+USE [master];
 GO
 EXEC sp_configure 'show advanced options', 1;  
 GO

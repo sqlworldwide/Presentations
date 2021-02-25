@@ -21,21 +21,21 @@ GO
 USE [AdventureWorks];
 GO
 SELECT 
-	 ProductID,
-   Quantity 
+  ProductID,
+  Quantity 
 FROM Production.TransactionHistory
 WHERE ProductID=880 and Quantity>10;
 GO
 
 --Turn on Actual Execution Plan (Ctrl+M)
---Run the same query with TF9430 which is undocumented
+--Run the same query with TF9130 which is undocumented
 --Do not use in production and use it at your own risk
 --You will see an extra node which is the residual predicate
 USE [AdventureWorks];
 GO
 SELECT 
-	 ProductID,
-   Quantity 
+  ProductID,
+	Quantity 
 FROM Production.TransactionHistory
 WHERE ProductID=880 and Quantity>10
 OPTION (QUERYTRACEON 9130);
@@ -43,7 +43,6 @@ GO
 
 --Run the previsous query again  and show that this information is exposed now
 --with difference of 'Actual number of rows' vs 'Number of rows read'
-
 
 --Drop index
 USE [AdventureWorks];
@@ -66,8 +65,8 @@ GO
 USE [AdventureWorks];
 GO
 SELECT 
-	 ProductID,
-   Quantity 
+	ProductID,
+	Quantity 
 FROM Production.TransactionHistory
 WHERE ProductID=880 and Quantity>10;
 GO

@@ -28,7 +28,7 @@ DECLARE @ProductID TABLE (ProductID INT)
 --populating table variable
 INSERT INTO @ProductID (ProductID)
 SELECT ProductID
-FROM [dbo].[bigTransactionHistory] ;
+FROM dbo.bigTransactionHistory;
 --Now selecting from the table variable.
 SELECT DISTINCT	ProductID FROM @ProductID 
 WHERE ProductID>1700
@@ -51,7 +51,7 @@ DECLARE @ProductID TABLE (ProductID INT);
 
 INSERT INTO @ProductID (ProductID)
 SELECT ProductID
-FROM [dbo].[bigTransactionHistory] ;
+FROM dbo.bigTransactionHistory;
 
 SELECT DISTINCT	ProductID FROM @ProductID 
 WHERE ProductID>1700
@@ -80,10 +80,10 @@ CREATE TABLE #ProductId (ProductID INT);
 
 INSERT INTO #ProductID (ProductID)
 SELECT ProductID
-FROM [dbo].[bigTransactionHistory] ;
+FROM dbo.bigTransactionHistory;
 
-CREATE NONCLUSTERED INDEX [NCI_ProductID]
-ON [dbo].[#ProductID] ([ProductID]);
+CREATE NONCLUSTERED INDEX NCI_ProductID
+ON dbo.#ProductID (ProductID);
 
 
 --Turn on Actual Execution Plan (Ctrl+M)

@@ -20,7 +20,7 @@ CREATE PROCEDURE Sales.SalesFromDate (@StartOrderdate datetime) AS
 SELECT *
 FROM Sales.SalesOrderHeader AS h 
 INNER JOIN Sales.SalesOrderDetail AS d ON h.SalesOrderID = d.SalesOrderID
-WHERE (h.OrderDate >= @StartOrderdate)
+WHERE (h.OrderDate >= @StartOrderdate);
 GO
 
 --Turn on Actual Execution Plan (Ctrl+M)
