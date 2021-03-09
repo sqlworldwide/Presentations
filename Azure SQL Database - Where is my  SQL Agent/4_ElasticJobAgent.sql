@@ -1,12 +1,11 @@
 /*============================================================================
-5_ElasticJobAgent
+4_ElasticJobAgent.sql
 Written by Taiob M Ali
 SqlWorldWide.com
 
 This script will demo Elastic Job Agent service in Azure
 Before you can run this demo, you must run these two script successfully
-0_SetupDemo.ps1 
-5_CreateElasticJobAgent.ps1
+DemoWhereIsMySqlAgent.ipynb
 
 You can do the same using PowerShell
 'Create an Elastic Job agent using PowerShell'
