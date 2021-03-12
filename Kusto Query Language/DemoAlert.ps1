@@ -191,6 +191,17 @@ Set-AzActionGroup `
 # Retreive action group id
 $actionGroupId =(Get-AzResource -name 'notifydbadeadlock').ResourceId
 
+<#
+I am using a simple Kusto query here for demo purpose.
+In production I will use this one:
+AzureMetrics
+| where ResourceProvider == "MICROSOFT.SQL"
+| where TimeGenerated >=ago(60min)
+| where MetricName in ('deadlock')
+| parse _ResourceId with * "/microsoft.sql/servers/" Resource // subtract Resource name for _ResourceId
+| summarize Deadlock_max_60Mins = max(Maximum) by Resource, MetricName
+#>
+
 # Creating the Azure alert
 $source =
 New-AzScheduledQueryRuleSource  `

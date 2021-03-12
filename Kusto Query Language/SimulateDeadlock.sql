@@ -78,7 +78,7 @@ GO
 
 /*
 After dropping the two tables from above demo
-Use the query below to fin the drip event
+Use the query below to find the drop event
 */
 
 /*
