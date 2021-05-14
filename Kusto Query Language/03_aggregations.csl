@@ -39,15 +39,15 @@ Usage
 //------------------------------------------------------------------------------
 
 // Returns a count of rows for which Predicate evaluates to true
-// looking at computer availability based on heartbeat
-// Query was modified from https://docs.microsoft.com/en-us/azure/azure-monitor/log-query/examples#server-availability-rate
-Heartbeat
-| where TimeGenerated > (startofday(datetime("2019-08-01"))) and TimeGenerated < now()
-| summarize heartbeat_per_hour=count() by bin_at(TimeGenerated, 1h, (startofday(datetime("2018-03-01"))) ), Computer
-| extend available_per_hour=iff(heartbeat_per_hour>0, true, false)
-| summarize total_available_hours=countif(available_per_hour==true) by Computer 
-| extend total_number_of_buckets=round((now()-(startofday(datetime("2019-08-01"))) )/1h)+1
-| extend availability_rate=total_available_hours*100/total_number_of_buckets
+let T = datatable(name:string, day_of_birth:long)
+[
+   "John", 9,
+   "Paul", 18,
+   "George", 25,
+   "Ringo", 7
+];
+T
+| summarize countif(strlen(name) > 4)
 
 //------------------------------------------------------------------------------
 // top-nested (https://docs.microsoft.com/en-us/azure/kusto/query/topnestedoperator)
