@@ -4,7 +4,7 @@ Setting up database for all the demo
 Download AdventureWorks backup
 https://github.com/Microsoft/sql-server-samples/releases/tag/adventureworks
 
-In my machine it takes about 2 min 15 seconds.
+In my machine it takes about 3 minutes.
 */
 
 USE [master];

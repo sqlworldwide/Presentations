@@ -3,9 +3,9 @@ Script Name: 005_BatchModeOnRowStoreUsed.sql
 
 Demo: 
 	BatchModeOnRowStoreUsed (SQL2019 need new SSMS)
-The Turbo Button is Here - The Batch Mode on Rowstore Indexes by  Niko Neugebauer
-https://www.pass.org/Community/PASSBlog/tabid/1476/entryid/891/The-Turbo-Button-is-Here-The-Batch-Mode-on-Rowstore-Indexes.aspx
-Highligt from the above article:
+Watch this video  Niko Neugebauer
+https://www.youtube.com/watch?v=NbIqVA-XZ9k
+Highligt from the above video:
 The difference between the Row Execution Mode and the Batch Execution Mode is that 
 the traditional Row Execution Mode processes are performed on a row-by-row basis, 
 essentially through the GetNext() function between different iterators in the execution plans. 

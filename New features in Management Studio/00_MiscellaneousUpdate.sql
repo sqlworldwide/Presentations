@@ -31,4 +31,6 @@ SSMS 18.6 Fixed long outstanding issue with Database Diagrams,
 					SSMS 17.9.1 and previous releases can also open the diagram after being saved by SSMS 18.6.
 SSMS 18.7 Beginning with SQL Server Management Studio (SSMS) 18.7, Azure Data Studio is automatically installed alongside SSMS.
           Added PREDICT operator
+SSMS 18.9 Added support for greatest and least in IntelliSense
+					Always show Estimated Number of Rows for All Executions property
 */
