@@ -10,3 +10,11 @@ GO
 -- To update the currently configured value for this feature.  
 RECONFIGURE;  
 GO  
+
+  
+-- To enable the feature.  
+EXECUTE sp_configure 'max server memory', 12700;  
+GO  
+-- To update the currently configured value for this feature.  
+RECONFIGURE;  
+GO  
