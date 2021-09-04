@@ -1,0 +1,50 @@
+//------------------------------------------------------------------------------
+// DemoAzureMonitorLogsExtension.loganalytics
+// Written by Taiob Ali
+// SqlWorldWide.com
+//------------------------------------------------------------------------------
+
+// Prerequisite
+// Use Azure Data Studio
+// Azure Monitor Logs Extension installed and enabled
+
+// Find deadlock
+AzureMetrics
+| where ResourceProvider == "MICROSOFT.SQL"
+| where TimeGenerated >=ago(60min)
+| where MetricName in ('deadlock')
+| parse _ResourceId with * "/microsoft.sql/servers/" Resource // subtract Resource name for _ResourceId
+| summarize Deadlock_max_60Mins = max(Maximum) by Resource, MetricName
+
+
+// Who dropped my table
+let ServerName = "sqlalertdemoserver";
+let DBName = "sqlalertdemodatabase";
+AzureDiagnostics
+| where TimeGenerated >= ago(1d)
+| where LogicalServerName_s =~ ServerName
+| where database_name_s =~ DBName
+| where Category =~ "SQLSecurityAuditEvents"
+| where action_name_s in ("BATCH COMPLETED", "RPC COMPLETED")
+| where statement_s contains "DROP" or statement_s contains "TRUNCATE" 
+| project TimeGenerated, event_time_t, LogicalServerName_s, database_name_s, succeeded_s, session_id_d, action_name_s,
+            client_ip_s, session_server_principal_name_s , database_principal_name_s, statement_s, additional_information_s, application_name_s
+| top 1000 by TimeGenerated desc
+
+// Log Write Percent in last one hour
+AzureMetrics
+| where ResourceProvider == "MICROSOFT.SQL"
+| where TimeGenerated >= ago(60min)
+| where MetricName in ('log_write_percent')
+| parse _ResourceId with * "/microsoft.sql/servers/" Resource// subtract Resource name for _ResourceId
+| summarize Log_Maximum_last60mins = max(Maximum), Log_Minimum_last60mins = min(Minimum), Log_Average_last60mins = avg(Average) by Resource, MetricName
+
+// Avg CPU usage 
+// Avg CPU usage in the last hour by resource name. 
+//consistently high averages could indicate a customer needs to move to a larger SKU
+AzureMetrics
+| where ResourceProvider == "MICROSOFT.SQL" // /DATABASES
+| where TimeGenerated >= ago(60min)
+| where MetricName in ('cpu_percent') 
+| parse _ResourceId with * "/microsoft.sql/servers/" Resource  // subtract Resource name for _ResourceId
+| summarize CPU_Maximum_last15mins = max(Maximum), CPU_Minimum_last15mins = min(Minimum), CPU_Average_last15mins = avg(Average) by Resource , MetricName
