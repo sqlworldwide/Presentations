@@ -127,7 +127,7 @@ WHERE soh.SalesPersonID = 285;
 
 /*
 Will it show Auto Created Statistics
-Rafael Cuesta - rafael.cuesta@outlook.com asked this quesion and I was not sure
+Rafael Cuesta - asked this quesion and I was not sure
 He sent me this demo code and it works.
 */
 USE [Adventureworks];
