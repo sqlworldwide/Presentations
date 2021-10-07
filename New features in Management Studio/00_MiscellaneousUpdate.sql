@@ -27,10 +27,13 @@ SSMS 18.6 Fixed long outstanding issue with Database Diagrams,
 					If you created or saved a diagram using SSMS 18.0 through 18.5.1, 
 					and that diagram includes a Text Annotation, 
 					you won't be able to open that diagram in any version of SSMS. With this fix, 
-					SSMS 18.6 can open and save a diagram created by SSMS 17.9.1 and prior. 
-					SSMS 17.9.1 and previous releases can also open the diagram after being saved by SSMS 18.6.
-SSMS 18.7 Beginning with SQL Server Management Studio (SSMS) 18.7, Azure Data Studio is automatically installed alongside SSMS.
+					SSMS 18.6 can open and save a diagram created by SSMS 17.9.1 and prior
+					SSMS 17.9.1 and previous releases can also open the diagram after being saved by SSMS 18.6
+SSMS 18.7 Beginning with SQL Server Management Studio (SSMS) 18.7, Azure Data Studio is automatically installed alongside SSMS
           Added PREDICT operator
 SSMS 18.9 Added support for greatest and least in IntelliSense
 					Always show Estimated Number of Rows for All Executions property
+SSMS 18.10 Support for peer to peer publication with Last Writer Win (LWW) conflict detection
+           Support for Ledger syntax in XEvents interface
+					 Support for rich data types in Import Flat File wizard, including money
 */
