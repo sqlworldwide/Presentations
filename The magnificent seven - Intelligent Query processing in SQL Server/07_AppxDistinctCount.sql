@@ -4,7 +4,7 @@
 -- https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
 
 -- Modified by Taiob Ali
--- July 20, 2020
+-- October 14, 2021
 
 -- Approximate count distinct
 
@@ -42,6 +42,11 @@ OPTION (USE HINT('DISALLOW_BATCH_MODE'), RECOMPILE); -- Isolating out BMOR
 SELECT APPROX_COUNT_DISTINCT([WWI Order ID])
 FROM [Fact].[OrderHistoryExtended]
 OPTION (USE HINT('DISALLOW_BATCH_MODE'), RECOMPILE); -- Isolating out BMOR
+GO
+
+SELECT APPROX_COUNT_DISTINCT([WWI Order ID])
+FROM [Fact].[OrderHistoryExtended]
+OPTION (RECOMPILE); 
 GO
 
 --With in 2.6%

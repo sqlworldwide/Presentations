@@ -4,7 +4,7 @@
 -- https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
 
 -- Modified by Taiob Ali
--- January 23, 2021
+-- October 14 20, 2021
 
 -- Scalar UDF Inlining
 
@@ -32,6 +32,7 @@ GO
 Adapted from SQL Server Books Online
 https://docs.microsoft.com/sql/relational-databases/user-defined-functions/scalar-udf-inlining
 */
+
 CREATE OR ALTER FUNCTION 
 	dbo.ufn_customer_category(@CustomerKey INT) 
 RETURNS CHAR(10) AS

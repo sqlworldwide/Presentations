@@ -4,7 +4,7 @@
 -- https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
 
 -- Modified by Taiob Ali
--- July 20, 2020
+-- October 14 20, 2021
 
 -- Batch mode Memory Grant Feedback
 
@@ -51,7 +51,14 @@ Look at the warning about excessive memory grant
 */
 EXEC [FactOrderByLineageKey] 8;
 GO
--- Execute this query a few times - each time looking at 
--- the plan to see impact on spills, memory grant size, and run time
+
+/*
+Execute this query a few times - each time looking at 
+the plan to see impact on spills, memory grant size, and run time
+
+Description of 'IsMemoryGrantFeedbackAdjusted' values:
+https://docs.microsoft.com/en-us/sql/relational-databases/performance/intelligent-query-processing?view=sql-server-ver15#row-mode-memory-grant-feedback
+*/
+
 EXEC [FactOrderByLineageKey] 9;
 GO

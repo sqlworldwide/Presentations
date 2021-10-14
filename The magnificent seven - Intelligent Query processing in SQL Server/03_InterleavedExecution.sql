@@ -4,7 +4,7 @@
 -- https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
 
 -- Modified by Taiob Ali
--- January 23, 2021
+-- October 14 20, 2021
 
 -- Interleaved Execution
 
@@ -140,6 +140,7 @@ GO
 Turn on Actual Execution plan ctrl+M
 look at the new estimated number of rows=100
 Look at the spill warning due to low estimate
+Show the new attribute 'ContainsInterleavedExecutionCandidates' but not executed
 */
 SELECT [fo].[Order Key], [fo].[Description], [fo].[Package],
 		[fo].[Quantity], [foo].[OutlierEventQuantity]
@@ -165,6 +166,7 @@ GO
 --We no longer have spill-warnings, as we're granting more memory based on the true row count 
 --flowing from the MSTVF table scan
 --look at the new estimated and actual row for the function call
+
 USE [master];
 GO
 
@@ -176,6 +178,9 @@ GO
 
 ALTER DATABASE SCOPED CONFIGURATION CLEAR PROCEDURE_CACHE;
 GO
+
+--Show the new attribute 'ContainsInterleavedExecutionCandidates'
+--Show the new attribute 'IsInterleavedExecuted'
 
 SELECT [fo].[Order Key], [fo].[Description], [fo].[Package],
 		[fo].[Quantity], [foo].[OutlierEventQuantity]
