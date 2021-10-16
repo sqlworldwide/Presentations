@@ -69,12 +69,6 @@ CREATE TABLE testtable2
  
 CREATE INDEX idx_testtable2_col3col4 on testtable2 (col3  asc, col4 asc);
 CREATE INDEX idx_testtable2_col3col4_1 on testtable2 (col3  asc, col4 asc);
--- To enable the feature.  
-EXECUTE sp_configure 'max server memory', 12700;  
-GO  
--- To update the currently configured value for this feature.  
-RECONFIGURE;  
-GO  
 
 --Adjust Max Memory
 USE [master];
