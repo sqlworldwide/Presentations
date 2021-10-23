@@ -1,6 +1,6 @@
 /*============================================================================
 PutThingsBackForDemo.sql
-Written by Taiob M Ali
+Written by Taiob Ali
 SqlWorldWide.com
 
 This script will restore WideWorldImporters database to set things back for demo.
@@ -17,8 +17,9 @@ If you do not want to restore in default location change:
 	2. Log file location
 ============================================================================*/
 
-USE [master]
+USE [master];
 GO
+
 DECLARE @dbname nvarchar(128)
 SET @dbname = N'WideWorldImporters'
 
@@ -33,7 +34,11 @@ GO
 
 DECLARE @fileName nvarchar(255)
 SET @fileName = N'C:\WideWorldImporters-Full.bak'
---Restoring to default path
+
+/*
+Restoring to default path
+*/
+
 RESTORE DATABASE [WideWorldImporters] 
 FROM DISK = N'C:\WideWorldImporters-Full.bak' WITH FILE = 1, 
 NOUNLOAD, replace, stats = 5 ;
@@ -55,8 +60,11 @@ SELECT
 FROM sys.databases;
 GO
 
---updating statistics since we are using an old backup
-USE [WideWorldImporters]
+/*
+updating statistics since we are using an old backup
+*/
+
+USE [WideWorldImporters];
 GO
 UPDATE STATISTICS Sales.Orders;
 GO

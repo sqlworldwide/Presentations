@@ -1,6 +1,6 @@
 /*============================================================================
 MultiplePredicate.sql
-Written by Taiob M Ali
+Written by Taiob Ali
 SqlWorldWide.com
 
 This script will demonstrate how estimated numbers of rows are calculated 
@@ -16,10 +16,10 @@ GO
 DBCC SHOW_STATISTICS ('Sales.Orders', [FK_Sales_Orders_ContactPersonID]);
 GO  
 ============================================================================*/
+
 USE [Wideworldimporters]; 
 GO
 
---Estimated rows 342.625
 /*
 Where is 342.625 coming from?
 I have few email conversation with Paul White to understand this. Following text is modified from our
@@ -89,34 +89,46 @@ The selectivity is 342.625 divided by the cardinality 73,595
 Related reading:
 https://dba.stackexchange.com/questions/148523/cardinality-estimation-for-and-for-intra-step-statistics-value
 https://dba.stackexchange.com/questions/249057/%d0%a1ardinality-estimation-of-partially-covering-range-predicates
-
 */
+
+/*
+Estimated rows 342.625
+*/
+
 SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
 FROM Sales.Orders
 WHERE ContactPersonID between 1024 and 1027;
 GO
 
---Estimated rows 1236.17
+/*
+Estimated rows 1236.17
+*/
+
 SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
 FROM Sales.Orders
 WHERE CustomerID  between 10 and 20;
 GO
 
---Include Actual Execution Plan (CTRL+M)
---Putting both top queries together
---Look at 'Estimated number of rows' for 'Nested Loops' operator 44.4052
+/*
+Include Actual Execution Plan (CTRL+M)
+Putting both top queries together
+Look at 'Estimated number of rows' for 'Nested Loops' operator 44.4052
+*/
+
 SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
 FROM Sales.Orders
 WHERE (ContactPersonID between 1024 and 1027)
 	AND (CustomerID  between 10 and 20);
 GO
 
+/*
+2014 approach to conjunctive predicates is to use exponential backoff. 
+Pre 2014 I have explained below which I will not demonstrate in the interest of time.
+Given a table with cardinality C, and predicate selectivities S1, S2, S3 … Sn, where S1 is the most selective and Sn the least
+Estimate = C * S1 * SQRT(S2) * SQRT(SQRT(S3)) * SQRT(SQRT(SQRT(S4))) …
+Estimated rows on the nested loop operator 44.4052021967852
+*/
 
---2014 approach to conjunctive predicates is to use exponential backoff. 
---Pre 2014 I have explained below which I will not demonstrate in the interest of time.
---Given a table with cardinality C, and predicate selectivities S1, S2, S3 … Sn, where S1 is the most selective and Sn the least
---Estimate = C * S1 * SQRT(S2) * SQRT(SQRT(S3)) * SQRT(SQRT(SQRT(S4))) …
---Estimated rows on the nested loop operator 44.4052021967852
 SELECT
 	'SQL 2014' AS [Version],
 	'C * S1 * SQRT(S2) * SQRT(SQRT(S3)) * SQRT(SQRT(SQRT(S4))) …' AS [Formula],
@@ -130,30 +142,34 @@ SELECT
 	'211' AS [ActualNumRows];
 GO
 
+/*
+Changing conjunction to disjunction (AND to OR)
+Look at 'Estimated number of rows' for 'Clustered Index Scan' operator 1404.8
+*/
 
---Changing conjunction to disjunction (AND to OR)
---Look at 'Estimated number of rows' for 'Clustered Index Scan' operator 1404.8
 SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
 FROM Sales.Orders
 WHERE (ContactPersonID between 1024 and 1027)
 	OR (CustomerID  between 10 and 20);
 GO
 
+/*
+1404.80079282584
+C * 1-(1-S1) * SQRT(1-S2) .....* SQRT(1-Sn)
+S1, S2, S3 … Sn, where S1 is the least selective and Sn is the most selective
+*/
 
---1404.80079282584
---C * 1-(1-S1) * SQRT(1-S2) .....* SQRT(1-Sn)
---S1, S2, S3 … Sn, where S1 is the least selective and Sn is the most selective
-	SELECT
-		'SQL 2014' AS [Version],
-		'C * 1-(1-S1) * SQRT(1-S2) .....* SQRT(1-Sn)' AS [Formula],
-		(73595) * (1-((1-1236.17/73595) * SQRT(1-342.625/73595))) AS [EstimatedNumRows],
-		'1235' AS [ActualNumRows]
+SELECT
+	'SQL 2014' AS [Version],
+	'C * 1-(1-S1) * SQRT(1-S2) .....* SQRT(1-Sn)' AS [Formula],
+	(73595) * (1-((1-1236.17/73595) * SQRT(1-342.625/73595))) AS [EstimatedNumRows],
+	'1235' AS [ActualNumRows]
 UNION ALL
-	SELECT
-		'PRE 2014' AS [Version],
-		'C * (S1+S2+....+Sn)-(S1*S2*.....*Sn)' AS [Formula],
-		(73595) * ((261.0/73595+1236.17/73595)-(261.0/73595*1236.17/73595)) AS [EstimatedNumRows],
-		'1235' AS [ActualNumRows];
+SELECT
+	'PRE 2014' AS [Version],
+	'C * (S1+S2+....+Sn)-(S1*S2*.....*Sn)' AS [Formula],
+	(73595) * ((261.0/73595+1236.17/73595)-(261.0/73595*1236.17/73595)) AS [EstimatedNumRows],
+	'1235' AS [ActualNumRows];
 GO
 
 /*

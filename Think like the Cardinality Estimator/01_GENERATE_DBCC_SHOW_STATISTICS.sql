@@ -1,6 +1,6 @@
 /*============================================================================
 GENERATE_DBCC_SHOW_STATISTICS.sql
-Written by Taiob M Ali
+Written by Taiob Ali
 SqlWorldWide.com
 
 This script will generate the numbers for DBCC SHOW_STATISTICS ouput using select statements.
@@ -17,6 +17,7 @@ GO
 
 USE [WideWorldImporters]; 
 GO
+
 SELECT
 	'STAT_HEADER'  AS [Section],
 	'Updated' AS [ColumnName],
