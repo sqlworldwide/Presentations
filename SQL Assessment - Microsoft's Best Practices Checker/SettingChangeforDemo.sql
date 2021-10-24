@@ -1,34 +1,39 @@
--- To allow advanced options to be changed.  
-EXECUTE sp_configure 'show advanced options', 1;  
-GO  
--- To update the currently configured value for advanced options.  
-RECONFIGURE;  
-GO  
+USE [master];
+GO
 -- To enable the feature.  
 EXECUTE sp_configure 'xp_cmdshell', 1;  
 GO  
 -- To update the currently configured value for this feature.  
 RECONFIGURE;  
 GO  
+-- Revert
+-- To disable the feature.  
+EXECUTE sp_configure 'xp_cmdshell', 0;  
+GO  
+-- To update the currently configured value for this feature.  
+RECONFIGURE;  
+GO 
+
 
 --Change one of the tempdb file size
-USE [master]
+USE [master];
 GO
-ALTER DATABASE [tempdb] MODIFY FILE ( NAME = N'temp8', SIZE = 10 )
+ALTER DATABASE [tempdb] MODIFY FILE ( NAME = N'temp8', SIZE = 10 );
 GO
 --Revert
-USE [tempdb]
+USE [tempdb];
 GO
-DBCC SHRINKFILE (N'temp8' , 8)
+DBCC SHRINKFILE (N'temp8' , 8);
 GO
 
 --Create a login with same password
 USE [master];
 GO
 IF EXISTS 
-    (SELECT name  
-     FROM master.sys.server_principals
-     WHERE name = 'nesqlugdemo')
+  (SELECT 
+    name  
+   FROM master.sys.server_principals
+   WHERE name = 'nesqlugdemo')
 BEGIN
 DROP LOGIN [nesqlugdemo];
 END
@@ -73,18 +78,22 @@ CREATE INDEX idx_testtable2_col3col4_1 on testtable2 (col3  asc, col4 asc);
 --Adjust Max Memory
 USE [master];
 GO
-EXEC sys.sp_configure N'max server memory (MB)', N'13000'
+EXEC sys.sp_configure N'max server memory (MB)', N'13000';
 GO
-RECONFIGURE WITH OVERRIDE
+RECONFIGURE WITH OVERRIDE;
 GO
 --Revert
-EXEC sys.sp_configure N'max server memory (MB)', N'12000'
+EXEC sys.sp_configure N'max server memory (MB)', N'12000';
 GO
-RECONFIGURE WITH OVERRIDE
+RECONFIGURE WITH OVERRIDE;
 GO
 
 --Turn on Trace Flag 634
-DBCC TRACEON(634,-1)
+USE [master];
+GO
+DBCC TRACEON(634,-1);
+GO
 --Revert
---Turn on Trace Flag 634
-DBCC TRACEOFF(634,-1)
+--Turn off Trace Flag 634
+DBCC TRACEOFF(634,-1);
+GO
