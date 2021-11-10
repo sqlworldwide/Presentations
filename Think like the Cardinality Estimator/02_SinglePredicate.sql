@@ -99,6 +99,7 @@ GO
 
 /*
 Include Actual Execution Plan (CTRL+M)
+2759+89=2848 records
 Histogram direct hit RANGE_HI_KEY
 Look at 'Estimated number of rows' for 'NonClustered Index Seek' operator which should be 89 
 as this is a direct hit (seen above) but it is 92.3365 why?

@@ -29,7 +29,11 @@ GO
 CREATE PROCEDURE [dbo].[OrderID_by_ContactPersonID]
 	@contactPersonID INT
 AS
-SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
+SELECT 
+	OrderID, 
+	CustomerID, 
+	SalespersonPersonID, 
+	ContactPersonID
 FROM Sales.Orders
 WHERE ContactPersonID=@contactPersonID;
 GO
@@ -77,7 +81,8 @@ Get plan handle
 */
 
 DECLARE @PlanHandle VARBINARY(64);
-SELECT @PlanHandle = cp.plan_handle
+SELECT 
+	@PlanHandle = cp.plan_handle
 FROM sys.dm_exec_cached_plans AS cp 
 CROSS APPLY sys.dm_exec_sql_text(plan_handle) AS st
 WHERE OBJECT_NAME (st.objectid) LIKE '%OrderID_by_ContactPersonID%';

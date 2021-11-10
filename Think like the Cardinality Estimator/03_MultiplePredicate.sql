@@ -95,18 +95,26 @@ https://dba.stackexchange.com/questions/249057/%d0%a1ardinality-estimation-of-pa
 Estimated rows 342.625
 */
 
-SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
+SELECT 
+	OrderID, 
+	CustomerID, 
+	SalespersonPersonID, 
+	ContactPersonID
 FROM Sales.Orders
-WHERE ContactPersonID between 1024 and 1027;
+WHERE ContactPersonID BETWEEN 1024 AND 1027;
 GO
 
 /*
 Estimated rows 1236.17
 */
 
-SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
+SELECT 
+	OrderID, 
+	CustomerID, 
+	SalespersonPersonID, 
+	ContactPersonID
 FROM Sales.Orders
-WHERE CustomerID  between 10 and 20;
+WHERE CustomerID BETWEEN 10 AND 20;
 GO
 
 /*
@@ -115,16 +123,20 @@ Putting both top queries together
 Look at 'Estimated number of rows' for 'Nested Loops' operator 44.4052
 */
 
-SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
+SELECT 
+	OrderID, 
+	CustomerID, 
+	SalespersonPersonID, 
+	ContactPersonID
 FROM Sales.Orders
-WHERE (ContactPersonID between 1024 and 1027)
-	AND (CustomerID  between 10 and 20);
+WHERE (ContactPersonID BETWEEN 1024 AND 1027)
+	AND (CustomerID BETWEEN 10 AND 20);
 GO
 
 /*
 2014 approach to conjunctive predicates is to use exponential backoff. 
 Pre 2014 I have explained below which I will not demonstrate in the interest of time.
-Given a table with cardinality C, and predicate selectivities S1, S2, S3 … Sn, where S1 is the most selective and Sn the least
+Given a table with cardinality C, and predicate selectivities S1, S2, S3 … Sn, where S1 is the most selective and Sn is the least
 Estimate = C * S1 * SQRT(S2) * SQRT(SQRT(S3)) * SQRT(SQRT(SQRT(S4))) …
 Estimated rows on the nested loop operator 44.4052021967852
 */
@@ -147,10 +159,14 @@ Changing conjunction to disjunction (AND to OR)
 Look at 'Estimated number of rows' for 'Clustered Index Scan' operator 1404.8
 */
 
-SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
+SELECT 
+	OrderID, 
+	CustomerID, 
+	SalespersonPersonID, 
+	ContactPersonID
 FROM Sales.Orders
-WHERE (ContactPersonID between 1024 and 1027)
-	OR (CustomerID  between 10 and 20);
+WHERE (ContactPersonID BETWEEN 1024 AND 1027)
+	OR (CustomerID  BETWEEN 10 AND 20);
 GO
 
 /*
@@ -176,32 +192,48 @@ GO
 Following section shows how estimated rows were calculated pre 2014
 
 --Estimated rows 261
-SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
+SELECT 
+	OrderID, 
+	CustomerID, 
+	SalespersonPersonID, 
+	ContactPersonID
 FROM Sales.Orders
-WHERE ContactPersonID between 1024 and 1027
+WHERE ContactPersonID BETWEEN 1024 AND 1027
 OPTION (USE HINT ('FORCE_LEGACY_CARDINALITY_ESTIMATION'));  
 GO
 --Hint is encouraged over trace flag
-SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
+SELECT 
+	OrderID, 
+	CustomerID, 
+	SalespersonPersonID, 
+	ContactPersonID
 FROM Sales.Orders
-WHERE ContactPersonID between 1024 and 1027
-OPTION(querytraceon  9481, RECOMPILE);
+WHERE ContactPersonID BETWEEN 1024 AND 1027
+OPTION(querytraceon 9481, RECOMPILE);
 GO
 
 --Estimated rows 1236.17
-SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
+SELECT 
+	OrderID, 
+	CustomerID, 
+	SalespersonPersonID, 
+	ContactPersonID
 FROM Sales.Orders
-WHERE CustomerID  between 10 and 20 
+WHERE CustomerID  BETWEEN 10 AND 20 
 OPTION (USE HINT ('FORCE_LEGACY_CARDINALITY_ESTIMATION')); 
 GO
 
 --Include Actual Execution Plan (CTRL+M)
 --Putting it together
 --Estimated rows on the nested loop iterator output 4.38399
-SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
+SELECT 
+	OrderID, 
+	CustomerID, 
+	SalespersonPersonID, 
+	ContactPersonID
 FROM Sales.Orders
-WHERE ContactPersonID between 1024 and 1027
-AND CustomerID  between 10 and 20
+WHERE ContactPersonID BETWEEN 1024 AND 1027
+AND CustomerID  BETWEEN 10 AND 20
 OPTION (USE HINT ('FORCE_LEGACY_CARDINALITY_ESTIMATION')); 
 GO;
 
@@ -213,10 +245,14 @@ GO
 
 --Changing conjunction to disjunction (AND to OR)
 --Estimated rows on the nested loop iterator output 1492.78
-SELECT OrderID, CustomerID, SalespersonPersonID, ContactPersonID
+SELECT 
+	OrderID, 
+	CustomerID, 
+	SalespersonPersonID, 
+	ContactPersonID
 FROM Sales.Orders
-WHERE ContactPersonID between 1024 and 1027
-OR CustomerID  between 10 and 20
+WHERE ContactPersonID BETWEEN 1024 AND 1027
+OR CustomerID  BETWEEN 10 AND 20
 OPTION (USE HINT ('FORCE_LEGACY_CARDINALITY_ESTIMATION')); 
 GO
 

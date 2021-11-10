@@ -30,7 +30,8 @@ Equality Operator
 Unique column will always be 1
 */
 
-DECLARE @OrderId AS SMALLINT = 1025;
+DECLARE @OrderId AS SMALLINT = 1030;
+
 SELECT 
 	OrderID, 
 	CustomerID, 
@@ -48,6 +49,7 @@ run time value using 'All density' 0.001508296 for column 'ContactPersonID'
 */
 
 DECLARE @cpid AS SMALLINT = 1025;
+
 SELECT 
 	OrderID, 
 	CustomerID, 
@@ -68,14 +70,14 @@ GO
 /*
 EQUALITY Operator
 Statistics not available such as table variable
-If we recompile the select statement the cardinality estimator knows about the number of rows
+If we recompile the select statement, the cardinality estimator knows about the number of rows
 in the table variable
 Look at 'Estimated number of rows' for 'Table scan' will be either 1 or 271.3
 Show this as is and after commenting our option(recompile).
 */
 
 DECLARE @OrderDetails TABLE (
-	ContactPersonID INT);
+	ContactPersonID int);
 
 INSERT INTO @OrderDetails
 	(ContactPersonID)
@@ -101,10 +103,10 @@ SET COMPATIBILITY_LEVEL = 150;
 GO
 
 DECLARE @OrderDetails TABLE (
-	ContactPersonID INT);
+	ContactPersonID int);
 
 INSERT INTO @OrderDetails
-	( ContactPersonID)
+	(ContactPersonID)
 SELECT 
 	ContactPersonID
 FROM Sales.Orders AS o;
@@ -113,26 +115,6 @@ SELECT
 	*
 FROM @OrderDetails AS od
 WHERE ContactPersonID=1025;
-GO
-
-/*
-In table variable if I only had the data for ContactPersonID=1025
-I will get same numbers for esitmated and actual number of rows
-*/
-
-DECLARE @OrderDetails TABLE (
-	ContactPersonID INT);
-
-INSERT INTO @OrderDetails
-	( ContactPersonID)
-SELECT 
-	ContactPersonID
-FROM Sales.Orders AS o
-WHERE ContactPersonID=1025;
-
-SELECT 
-	*
-FROM @OrderDetails AS od;
 GO
 
 /*
@@ -168,13 +150,17 @@ Following section shows how estimated rows were calculated pre 2014
 --2 Lines of hint to show the difference in estimation when recompile happens
 --1 without recompile because no idea about how many rows in the table variable.
 
-DECLARE @OrderDetails2012 TABLE ( ContactPersonID INT)
-INSERT INTO @OrderDetails2012 ( ContactPersonID)
+DECLARE @OrderDetails2012 TABLE (ContactPersonID int);
 
-SELECT ContactPersonID
-FROM Sales.Orders AS o
+INSERT INTO @OrderDetails2012 
+	(ContactPersonID)
+SELECT 
+	ContactPersonID
+FROM Sales.Orders AS o;
 
-SELECT * FROM @OrderDetails2012 AS od 
+SELECT 
+	* 
+FROM @OrderDetails2012 AS od 
 WHERE ContactPersonID=1025
 --OPTION (USE HINT ('FORCE_LEGACY_CARDINALITY_ESTIMATION')); 
 OPTION(RECOMPILE, USE HINT ('FORCE_LEGACY_CARDINALITY_ESTIMATION'));
@@ -194,19 +180,23 @@ Estimated rows 22078.5, which is 30 percent of total number fo rows in the table
 
 DECLARE @LowerContactPersonID INT=1024;
 
-SELECT ContactPersonID
+SELECT 
+	ContactPersonID
 FROM Sales.Orders
 WHERE ContactPersonID < @LowerContactPersonID;
 
-SELECT ContactPersonID
+SELECT 
+	ContactPersonID
 FROM Sales.Orders
 WHERE ContactPersonID <= @LowerContactPersonID;
 
-SELECT ContactPersonID
+SELECT 
+	ContactPersonID
 FROM Sales.Orders
 WHERE ContactPersonID > @LowerContactPersonID;
 
-SELECT ContactPersonID
+SELECT 
+	ContactPersonID
 FROM Sales.Orders
 WHERE ContactPersonID >= @LowerContactPersonID;
 GO
@@ -225,7 +215,8 @@ For LIKE Operator
 
 DECLARE @CustomerPurchaseOrderNumber INT=17521;
 
-SELECT CustomerPurchaseOrderNumber
+SELECT 
+	CustomerPurchaseOrderNumber
 FROM Sales.Orders
 WHERE CustomerPurchaseOrderNumber LIKE @CustomerPurchaseOrderNumber;
 GO
@@ -246,15 +237,16 @@ Pre 2014  9% = 6623.55
 DECLARE @LowerContactPersonID1 INT=1024;
 DECLARE @UpperContactPersonID INT=1027;
 
-SELECT ContactPersonID
+SELECT 
+	ContactPersonID
 FROM Sales.Orders
 WHERE ContactPersonID BETWEEN @LowerContactPersonID1 AND @UpperContactPersonID;
 
-SELECT ContactPersonID
+SELECT 
+	ContactPersonID
 FROM Sales.Orders
 WHERE ContactPersonID BETWEEN @LowerContactPersonID1 AND @UpperContactPersonID
-OPTION
-(USE HINT ('FORCE_LEGACY_CARDINALITY_ESTIMATION')); 
+OPTION (USE HINT ('FORCE_LEGACY_CARDINALITY_ESTIMATION')); 
 GO
 
 /*
