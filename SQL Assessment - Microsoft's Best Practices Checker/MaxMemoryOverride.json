@@ -1,0 +1,12 @@
+{
+    "schemaVersion": "1.0",
+    "version": "1.0",
+    "name": "Custom Ruleset",
+    "rules": [
+        {
+            "itemType": "override",
+            "id": "MaxMemory",
+            "recommended": 32000
+        }
+    ]
+}

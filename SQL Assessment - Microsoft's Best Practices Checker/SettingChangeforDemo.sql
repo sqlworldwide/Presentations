@@ -78,12 +78,12 @@ CREATE INDEX idx_testtable2_col3col4_1 on testtable2 (col3  asc, col4 asc);
 --Adjust Max Memory
 USE [master];
 GO
-EXEC sys.sp_configure N'max server memory (MB)', N'13000';
+EXEC sys.sp_configure N'max server memory (MB)', N'32000';
 GO
 RECONFIGURE WITH OVERRIDE;
 GO
 --Revert
-EXEC sys.sp_configure N'max server memory (MB)', N'12000';
+EXEC sys.sp_configure N'max server memory (MB)', N'28000';
 GO
 RECONFIGURE WITH OVERRIDE;
 GO
