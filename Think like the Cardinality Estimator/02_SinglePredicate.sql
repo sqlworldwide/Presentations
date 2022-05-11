@@ -118,12 +118,26 @@ GO
 Selectivity * New row count
 (EQ_ROWS/Total rows in statistics) * (New Row Count)
 92.3365109048
+
+Count query borrowed from:
+https://sqlperformance.com/2014/10/t-sql-queries/bad-habits-count-the-hard-way
 */
 
 SELECT
-	(89.0000/73595) * (SELECT COUNT(0)
-	FROM Sales.Orders);
+	(89.0000/73595) * 
+	(SELECT 
+		SUM(p.rows)
+	FROM sys.partitions AS p
+	INNER JOIN sys.tables AS t
+	ON p.[object_id] = t.[object_id]
+	INNER JOIN sys.schemas AS s
+	ON t.[schema_id] = s.[schema_id]
+	WHERE p.index_id IN (0,1) -- heap or clustered index
+	AND t.name = N'Orders'
+	AND s.name = N'Sales');
 GO
+
+
 
 /*
 Run PutThingsBackForDemo.sql
