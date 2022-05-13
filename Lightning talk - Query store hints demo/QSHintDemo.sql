@@ -153,7 +153,7 @@ GO
 
 /*
 Execute both at the same time and show actual query execution plan  
-You should see one plan again
+You should see both query using the same plan again
 */
 
 EXEC [dbo].[PropertySearchByAgent] 101;
