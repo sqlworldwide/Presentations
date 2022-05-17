@@ -14,7 +14,7 @@ Data discovery and Classification--How it is done?
 http://sqlworldwide.com/data-discovery-and-classification-how-it-is-done/
 */
 
---To view the data from Discovery
+/* To view the data from Discovery */
 USE [AdventureWorks];
 GO
 SELECT t.name AS TableName

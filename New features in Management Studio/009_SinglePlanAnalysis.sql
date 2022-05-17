@@ -12,39 +12,49 @@ Demo
 
 How to reduce runtime by 90% just by using information exposed in SSMS
 */
---Turn on Actual Execution Plan (Ctrl+M)
+
+/* Turn on Actual Execution Plan (Ctrl+M) */
 
 USE [AdventureWorks];
 GO
 
---Changing compatibility level to SQL 2017
---Demo purpose only
+/*
+Changing compatibility level to SQL 2017
+Demo purpose only
+*/
 ALTER DATABASE CURRENT SET COMPATIBILITY_LEVEL = 140; 
 GO
 
 USE [AdventureWorks];
 GO
 DECLARE @ProductID TABLE (ProductID INT)
---populating table variable
+/* populating table variable */
 INSERT INTO @ProductID (ProductID)
 SELECT ProductID
 FROM dbo.bigTransactionHistory;
---Now selecting from the table variable.
+/* Now selecting from the table variable */
 SELECT DISTINCT	ProductID FROM @ProductID 
 WHERE ProductID>1700
 ORDER BY ProductID;
 
---Right Click-->Analyze execution plan
---Looking at the table scan Estimated =1 and Actual=31005899
---Memory granted 1024kb and Spill about 2460 pages
---Add recomile with increase the Estimated number of rows and will decrease the amount of spill
---Decrease runtime by about 25%
+/*
+Right Click-->Analyze execution plan
+Looking at the table scan Estimated =1 and Actual=31005899
+Memory granted 1024kb and Spill about 2453 pages
+Add recomile with increase the Estimated number of rows and will decrease the amount of spill
+Decrease runtime by about 25%
 
---Turn on Actual Execution Plan (Ctrl+M)
+Turn on Actual Execution Plan (Ctrl+M)
+*/
+
 USE [AdventureWorks];
 GO
---Changing compatibility level to SQL 2017
---Demo purpose only
+
+/*
+Changing compatibility level to SQL 2017
+Demo purpose only
+*/
+
 ALTER DATABASE CURRENT SET COMPATIBILITY_LEVEL = 140; 
 GO
 DECLARE @ProductID TABLE (ProductID INT);
@@ -58,19 +68,25 @@ WHERE ProductID>1700
 ORDER BY ProductID
 OPTION (RECOMPILE);
 
---Analyze the plan again
---Your numbers may vary slightly
---Looking at the table scan Estimated=9379080 Actual=31005899
---Memory granted 1360kb and Spilled about 26 pages
+/*
+Analyze the plan again
+Your numbers may vary slightly
+Looking at the table scan Estimated=9379080 Actual=31005899
+*/
 
---Get rid of spill using temp table instead of table variable
---This will increase run time due creating the index
---Will be a better option only if you are using the temp table multiple times
+/*
+Get rid of spill using temp table instead of table variable
+This will increase run time due creating the index
+Will be a better option only if you are using the temp table multiple times
+*/
+
 
 USE [AdventureWorks];
 GO
---Changing compatibility level to SQL 2017
---Demo purpose only
+/*
+Changing compatibility level to SQL 2017
+Demo purpose only
+*/
 ALTER DATABASE CURRENT SET COMPATIBILITY_LEVEL = 140; 
 GO
 IF OBJECT_ID('tempdb..#ProductId') IS NOT NULL 
@@ -85,14 +101,15 @@ FROM dbo.bigTransactionHistory;
 CREATE NONCLUSTERED INDEX NCI_ProductID
 ON dbo.#ProductID (ProductID);
 
-
---Turn on Actual Execution Plan (Ctrl+M)
---No spill
+/*
+Turn on Actual Execution Plan (Ctrl+M)
+No spill
+*/
 SELECT DISTINCT	ProductID FROM #ProductID
 WHERE ProductID>1700
 ORDER BY ProductID;
 GO
 
---Changing compatibility level to SQL 2019
+/* Changing compatibility level to SQL 2019 */
 ALTER DATABASE CURRENT SET COMPATIBILITY_LEVEL = 150; 
 GO

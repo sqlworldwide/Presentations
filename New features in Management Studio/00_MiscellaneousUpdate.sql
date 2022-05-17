@@ -36,4 +36,6 @@ SSMS 18.9 Added support for greatest and least in IntelliSense
 SSMS 18.10 Support for peer to peer publication with Last Writer Win (LWW) conflict detection
            Support for Ledger syntax in XEvents interface
 					 Support for rich data types in Import Flat File wizard, including money
+SSMS 18.11 Added a dialog box to display the status of an extended open transaction check when closing a T-SQL Query Editor tab.
+SSMS 18.11.1 Link feature for Azure SQL Managed Instance
 */

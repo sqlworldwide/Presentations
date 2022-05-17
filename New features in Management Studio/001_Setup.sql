@@ -192,7 +192,8 @@ INCLUDE
 	ActualCost
 );
 GO
---Set MAXDOP=2
+
+/* Set MAXDOP=2 */
 USE [master];
 GO
 EXEC sp_configure 'show advanced options', 1;  
@@ -203,24 +204,32 @@ EXEC sp_configure 'max degree of parallelism', 2;
 GO  
 RECONFIGURE;  
 GO
---Turn on query store 
---Ref: https://docs.microsoft.com/en-us/sql/relational-databases/performance/best-practice-with-the-query-store?view=sql-server-2017
-ALTER DATABASE [AdventureWorks]  
+
+/*
+Turn on query store 
+Ref: https://docs.microsoft.com/en-us/sql/relational-databases/performance/best-practice-with-the-query-store?view=sql-server-2017
+*/
+
+USE [AdventureWorks];
+GO
+
+ALTER DATABASE AdventureWorks
 SET QUERY_STORE = ON 
-    (
-      OPERATION_MODE = READ_WRITE, 
-      CLEANUP_POLICY = ( STALE_QUERY_THRESHOLD_DAYS = 90 ),
-      DATA_FLUSH_INTERVAL_SECONDS = 60, --changed from 900 to 10 for demo purpose
-      MAX_STORAGE_SIZE_MB = 1000, 
-      INTERVAL_LENGTH_MINUTES = 60,
-      SIZE_BASED_CLEANUP_MODE = AUTO, 
-      MAX_PLANS_PER_QUERY = 200,
-      WAIT_STATS_CAPTURE_MODE = ON,
-      QUERY_CAPTURE_MODE = CUSTOM,
-      QUERY_CAPTURE_POLICY = (
-        STALE_CAPTURE_POLICY_THRESHOLD = 24 HOURS,
-        EXECUTION_COUNT = 30,
-        TOTAL_COMPILE_CPU_TIME_MS = 1000,
-        TOTAL_EXECUTION_CPU_TIME_MS = 100 
-      )
-    );
+(
+  OPERATION_MODE = READ_WRITE, 
+  CLEANUP_POLICY = ( STALE_QUERY_THRESHOLD_DAYS = 90 ),
+  DATA_FLUSH_INTERVAL_SECONDS = 60,
+  MAX_STORAGE_SIZE_MB = 1000, 
+  INTERVAL_LENGTH_MINUTES = 60,
+  SIZE_BASED_CLEANUP_MODE = AUTO, 
+  MAX_PLANS_PER_QUERY = 200,
+  WAIT_STATS_CAPTURE_MODE = ON,
+  QUERY_CAPTURE_MODE = CUSTOM,
+  QUERY_CAPTURE_POLICY = 
+		(
+		  STALE_CAPTURE_POLICY_THRESHOLD = 24 HOURS,
+      EXECUTION_COUNT = 30,
+      TOTAL_COMPILE_CPU_TIME_MS = 1000,
+      TOTAL_EXECUTION_CPU_TIME_MS = 100 
+    )
+);

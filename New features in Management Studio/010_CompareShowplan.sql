@@ -8,11 +8,16 @@ Demo:
 
 USE [AdventureWorks];
 GO
---making sure it is reverted from previous demo
---Changing compatibility level to SQL 2019
+
+/*
+Making sure it is reverted from previous demo
+Changing compatibility level to SQL 2019
+*/
 ALTER DATABASE CURRENT SET COMPATIBILITY_LEVEL = 150; 
 GO
---Create a stored procedure 
+
+/* Create a stored procedure */
+
 DROP PROCEDURE IF EXISTS Sales.SalesFromDate;
 GO
 
@@ -23,18 +28,24 @@ INNER JOIN Sales.SalesOrderDetail AS d ON h.SalesOrderID = d.SalesOrderID
 WHERE (h.OrderDate >= @StartOrderdate);
 GO
 
---Turn on Actual Execution Plan (Ctrl+M)
---Run only first one
---Save execution plan
---Note run time
+/*
+Turn on Actual Execution Plan (Ctrl+M)
+Run only first one
+Save execution plan
+Note run time
+*/
 EXEC sp_executesql N'exec Sales.SalesFromDate @P1',N'@P1 datetime2(0)','2014-6-15 00:00:00';
 GO
 
---Run second one
---Note run time
---If time permits show with recompile
---SP_RECOMPILE  N'Sales.SalesFromDate'
+/*
+Run second one
+Note run time
+If time permits show with recompile
+SP_RECOMPILE  N'Sales.SalesFromDate'
+*/
 EXEC sp_executesql N'exec Sales.SalesFromDate @P1',N'@P1 datetime2(0)','2012-3-28 00:00:00'
 GO
 
---Compare plan and see runtime, parameter, estimated vs actual row
+/*
+Compare plan and see runtime, parameter, estimated vs actual row
+*/

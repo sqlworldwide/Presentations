@@ -11,7 +11,9 @@ Read details: https://blogs.msdn.microsoft.com/sql_server_team/sql-server-2017-s
 Code is copied from 
 --https://github.com/Microsoft/tigertoolbox/blob/master/Sessions/PASS2017/Upgrade-to-SQL-Server-2017-Intelligent-Diagnostics-Just-Built-in/Demo-Showplan-Stats-info.zip
 */
--- Setup
+
+
+/* Setup code */
 USE [Adventureworks];
 GO
 
@@ -33,7 +35,7 @@ GO
 UPDATE STATISTICS CustomersStatus WITH NORECOMPUTE, ALL;
 GO 
 
--- Update again
+/* Update again */
 UPDATE CustomersStatus SET [PurchasesLst30d] = 1 WHERE CustomerID % 100 <> 0;
 UPDATE CustomersStatus SET [PurchasesLst30d] = 0 WHERE CustomerID IN (SELECT TOP 100 CustomerID FROM CustomersStatus WHERE CustomerID % 100 = 0);
 GO
@@ -46,8 +48,10 @@ BEGIN
 END;
 GO
 
--- Start demo
---Turn on Actual Execution Plan (Ctrl+M)
+/*
+Start demo
+Turn on Actual Execution Plan (Ctrl+M)
+*/
 EXEC CustomersByStatus 0;
 GO
 
@@ -55,13 +59,13 @@ GO
 Note skew estimated vs actual rows. Where are they coming from?
 Estimated: 19773
 Actual: 100
-*/
 
--- ANSWER: a little thing called statistics.
--- Look at OptimizerStatsUsage in root node of showplan
--- Get name of used statistics
--- dm_db_stats_histogram- new in SQL2016 SP1 CU2
--- Details here https://blogs.msdn.microsoft.com/sql_server_team/easy-way-to-get-statistics-histogram-programmatically/
+ANSWER: a little thing called statistics.
+Look at OptimizerStatsUsage in root node of showplan
+Get name of used statistics
+dm_db_stats_histogram- new in SQL2016 SP1 CU2
+Details here https://blogs.msdn.microsoft.com/sql_server_team/easy-way-to-get-statistics-histogram-programmatically/
+*/
 SELECT
   stats_name = S.[name], 
   DDSP.stats_id,
@@ -84,23 +88,30 @@ GO
 DBCC SHOW_STATISTICS ('CustomersStatus','IX_CustomersStatus');
 GO
 
--- Shows 19773 eq rows - so that's clearly the histogram. 
--- So why are estimates vs actuals so off?
+/*
+Shows 19773 eq rows - so that's clearly the histogram. 
+So why are estimates vs actuals so off?
+*/
 
--- Execute again and notice other stats properties
+/* Execute again and notice other stats properties */
 EXEC CustomersByStatus 0
 GO
 
--- Observe the mod counter - maybe stats are not updated? 
--- Let's update stats
+/*
+Observe the mod counter - maybe stats are not updated? 
+Let's update stats
+*/
 UPDATE STATISTICS CustomersStatus WITH FULLSCAN, ALL;
 GO
 
--- Execute again and notice stats properties
+/* Execute again and notice stats properties */
 EXEC CustomersByStatus 0;
 GO
 
--- Accurate now? Look at stats again
+/*
+Accurate now? 
+Look at stats again
+*/
 SELECT hist.*
 FROM sys.stats AS s
 CROSS APPLY sys.dm_db_stats_histogram(s.[object_id], s.stats_id) AS hist
@@ -156,7 +167,7 @@ GO
 CREATE INDEX IX_CustomersStatus ON CustomersStatusDemo([PurchasesLst30d]);
 GO
 
---Check Table statistics with clustered and nonclustered index stats
+/* Check Table statistics with clustered and nonclustered index stats */
 SELECT
   obj.name,
   ST.name,
@@ -171,13 +182,13 @@ ON obj.object_id = st.object_id
 CROSS APPLY sys.dm_db_stats_properties(OBJECT_ID(obj.name), st.stats_id) AS stprop
 WHERE obj.NAME = N'CustomersStatusDemo';
 
---Run a query with predicate in a non-indexed column to auto create statistics for it 
+/* Run a query with predicate in a non-indexed column to auto create statistics for it */
 SELECT 
 	EmailAddress 
 FROM CustomersStatusDemo 
 WHERE EmailAddress LIKE 'aaron1%';
 
---Now we have an autocreated statistic
+/* Now we have an autocreated statistic */
 SELECT
   obj.name,
   ST.name,
@@ -192,7 +203,10 @@ ON obj.object_id = st.object_id
 CROSS APPLY sys.dm_db_stats_properties(OBJECT_ID(obj.name), st.stats_id) AS stprop
 WHERE obj.NAME = N'CustomersStatusDemo';
 
---Run this with actual plan enabled to check the auto created stats information in the properties of the root node
+/* 
+Turn on Actual Execution Plan (Ctrl+M)
+to check the auto created stats information in the properties of the root node
+*/
 SELECT 
 	EmailAddress 
 FROM CustomersStatus 

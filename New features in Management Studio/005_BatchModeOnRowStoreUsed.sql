@@ -17,27 +17,33 @@ when processing big amounts of data (millions and billions of rows).
 */
 
 
---Changing compatibility level to SQL 2017
---Turn on Actual Execution Plan (Ctrl+M)
---Look at the properties of the index scan
---Look at the elapsed time from QueryTimeStats
+/*
+Changing compatibility level to SQL 2017
+Turn on Actual Execution Plan (Ctrl+M)
+Look at the properties of the index scan
+Look at the elapsed time from QueryTimeStats
+For DEMO only, please do not do this in producito
+*/
 USE [AdventureWorks];
 GO
-DBCC FREESYSTEMCACHE ('Adventureworks');  --For DEMO only, please do not do this in produciton
+DBCC FREESYSTEMCACHE ('Adventureworks');
 GO
 ALTER DATABASE Adventureworks SET COMPATIBILITY_LEVEL = 140;
 GO
 SELECT COUNT_BIG(*) AS [NumberOfRows] FROM dbo.bigTransactionHistory;
 GO
 
---Changing compatibility level to SQL 2019
---Turn on Actual Execution Plan (Ctrl+M)
---Look at the properties of the index scan
---Look at properties of select statement and you will see BatchModeOnRowStoreUsed=True
---Look at the elapsed time from QueryTimeStats
+/*
+Changing compatibility level to SQL 2019
+Turn on Actual Execution Plan (Ctrl+M)
+Look at the properties of the index scan
+Look at properties of select statement and you will see BatchModeOnRowStoreUsed=True
+Look at the elapsed time from QueryTimeStats
+For DEMO only, please do not do this in produciton
+*/
 USE [AdventureWorks];
 GO
-DBCC FREESYSTEMCACHE ('Adventureworks'); --For DEMO only, please do not do this in produciton
+DBCC FREESYSTEMCACHE ('Adventureworks'); 
 GO
 ALTER DATABASE Adventureworks SET COMPATIBILITY_LEVEL = 150;
 GO

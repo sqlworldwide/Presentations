@@ -6,8 +6,12 @@ DEMO:
 Script copied form:
 https://blogs.msdn.microsoft.com/sql_server_team/more-showplan-enhancements-udfs/
 */
--- Run this in SQL2017 and then in SQL2019
--- Create UDF
+
+/*
+Run this in SQL2017 and then in SQL2019
+Create UDF
+*/
+
 USE [AdventureWorks];
 GO
 DROP FUNCTION IF EXISTS ufn_CategorizePrice;

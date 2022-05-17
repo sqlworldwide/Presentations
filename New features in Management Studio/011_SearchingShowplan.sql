@@ -5,7 +5,7 @@ Demo
 	Query_thread_profile new XE event (SQL2014 SP2, SQL2016)
 	per-operator and thread level performance stats
 
-Until 2014
+Until 2014 (Clustered index scan)
 <RunTimeInformation>
    <RunTimeCountersPerThread Thread="0" ActualRows="8001" ActualEndOfScans="1" 
    ActualExecutions="1" />
@@ -18,13 +18,31 @@ Until 2014
    ActualElapsedms="965" ActualCPUms="965" ActualScans="1" ActualLogicalReads="26073" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" />
 </RunTimeInformation>
 
+And looking at the same Index Scan running in parallel:
+<RunTimeInformation>
+   <RunTimeCountersPerThread Thread="6" ActualRows="0" ActualRowsRead="932085" Batches="0" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" ActualElapsedms="160" ActualCPUms="158" ActualScans="1" ActualLogicalReads="2466" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" />
+   <RunTimeCountersPerThread Thread="8" ActualRows="0" ActualRowsRead="886279" Batches="0" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" ActualElapsedms="138" ActualCPUms="137" ActualScans="1" ActualLogicalReads="2341" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" />
+   <RunTimeCountersPerThread Thread="10" ActualRows="0" ActualRowsRead="828520" Batches="0" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" ActualElapsedms="121" ActualCPUms="120" ActualScans="1" ActualLogicalReads="2192" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" />
+   <RunTimeCountersPerThread Thread="12" ActualRows="0" ActualRowsRead="932085" Batches="0" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" ActualElapsedms="155" ActualCPUms="155" ActualScans="1" ActualLogicalReads="2466" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" />
+   <RunTimeCountersPerThread Thread="11" ActualRows="0" ActualRowsRead="828520" Batches="0" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" ActualElapsedms="133" ActualCPUms="132" ActualScans="1" ActualLogicalReads="2192" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" />
+   <RunTimeCountersPerThread Thread="9" ActualRows="0" ActualRowsRead="724955" Batches="0" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" ActualElapsedms="124" ActualCPUms="124" ActualScans="1" ActualLogicalReads="1918" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" />
+   <RunTimeCountersPerThread Thread="1" ActualRows="0" ActualRowsRead="724955" Batches="0" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" ActualElapsedms="121" ActualCPUms="120" ActualScans="1" ActualLogicalReads="1918" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" />
+   <RunTimeCountersPerThread Thread="7" ActualRows="0" ActualRowsRead="414260" Batches="0" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" ActualElapsedms="111" ActualCPUms="109" ActualScans="1" ActualLogicalReads="1096" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" />
+   <RunTimeCountersPerThread Thread="5" ActualRows="0" ActualRowsRead="1035650" Batches="0" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" ActualElapsedms="168" ActualCPUms="165" ActualScans="1" ActualLogicalReads="2740" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" />
+   <RunTimeCountersPerThread Thread="4" ActualRows="8001" ActualRowsRead="932086" Batches="0" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" ActualElapsedms="160" ActualCPUms="158" ActualScans="1" ActualLogicalReads="2466" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" />
+   <RunTimeCountersPerThread Thread="2" ActualRows="0" ActualRowsRead="828520" Batches="0" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" ActualElapsedms="156" ActualCPUms="130" ActualScans="1" ActualLogicalReads="2192" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" />
+   <RunTimeCountersPerThread Thread="3" ActualRows="0" ActualRowsRead="932085" Batches="0" ActualEndOfScans="1" ActualExecutions="1" ActualExecutionMode="Row" ActualElapsedms="159" ActualCPUms="158" ActualScans="1" ActualLogicalReads="2466" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" />
+   <RunTimeCountersPerThread Thread="0" ActualRows="0" Batches="0" ActualEndOfScans="0" ActualExecutions="0" ActualExecutionMode="Row" ActualElapsedms="0" ActualCPUms="0" ActualScans="1" ActualLogicalReads="2" ActualPhysicalReads="0" ActualReadAheads="0" ActualLobLogicalReads="0" ActualLobPhysicalReads="0" ActualLobReadAheads="0" />
+</RunTimeInformation>
+
 How can I caputure the same information to analyze later on?
 
 Details below about Query_thread_profile
 https://blogs.msdn.microsoft.com/sql_server_team/added-per-operator-level-performance-stats-for-query-processing/
 */
 
---Run this in another window and start the trace
+/* Run this in another window and start the trace */
+
 IF EXISTS(SELECT * FROM sys.server_event_sessions WHERE name='PerfStats_XE')  
   DROP EVENT session [PerfStats_XE] ON SERVER;  
 GO
@@ -37,11 +55,11 @@ WITH (MAX_MEMORY=4096 KB,EVENT_RETENTION_MODE=ALLOW_SINGLE_EVENT_LOSS,MAX_DISPAT
 	MEMORY_PARTITION_MODE=NONE,TRACK_CAUSALITY=OFF,STARTUP_STATE=OFF);
 GO
 
-
---Once the trace is running, start watch live data 
---Run following qeury
---Turn on Actual Execution Plan (Ctrl+M)
 /*
+Once the trace is running, start watch live data 
+Run following qeury
+Turn on Actual Execution Plan (Ctrl+M)
+
 Code copied from 
 https://dba.stackexchange.com/questions/135455/what-does-option-fast-in-select-statement-do
 */

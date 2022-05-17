@@ -2,6 +2,8 @@
 Script Name:003_InfamousCXPacket.sql
 	Infamous CXPacket
 	CXCONSUMER Waittype (SQL2017 CU3, SQL2016 SP2) 
+Making parallelism waits actionable:
+https://docs.microsoft.com/en-us/archive/blogs/sql_server_team/making-parallelism-waits-actionable
 */
 
 --Changing MaxDOP to 0
@@ -44,10 +46,12 @@ ORDER BY Style;
 GO
 
 
---Do not assume 100% of CXCONSUMER WAIT is harmless.
---https://www.brentozar.com/archive/2018/07/cxconsumer-is-harmless-not-so-fast-tiger/ by Erik Darling 
+/*
+Do not assume 100% of CXCONSUMER WAIT is harmless.
+https://www.brentozar.com/archive/2018/07/cxconsumer-is-harmless-not-so-fast-tiger/ by Erik Darling 
+*/
 
---Revert to pre demo satatus
+/* Revert to pre demo satatus */
 EXEC sp_configure 'max degree of parallelism', 2;  
 GO  
 RECONFIGURE;  
