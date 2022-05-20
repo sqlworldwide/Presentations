@@ -5,7 +5,7 @@ Setting up database for all the demo
 Download WideWorldImportersDW-Full.bak from https://aka.ms/wwidwbak
 */
 
---Changing MAXDOP as this query can advantage of parallel execution
+/* Changing MAXDOP as this query can advantage of parallel execution */
 USE [master]
 GO
 EXEC sp_configure 'show advanced options', 1;  

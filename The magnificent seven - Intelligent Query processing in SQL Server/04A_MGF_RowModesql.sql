@@ -1,10 +1,10 @@
--- ******************************************************** --
+/*****************************************************************
 -- Scirpt Name: 04A_MFG_RowModesql.sql
 -- This code is copied from
 -- https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
 
 -- Modified by Taiob Ali
--- July 20, 2020
+-- May 19, 2022
 
 -- Row mode memory grant feedback
 
@@ -15,7 +15,7 @@
 -- SSMS v17.9 or higher
 
 -- Email IntelligentQP@microsoft.com for questions\feedback
--- ******************************************************** --
+****************************************************************/
 
 USE [master];
 GO
@@ -29,7 +29,7 @@ GO
 ALTER DATABASE SCOPED CONFIGURATION CLEAR PROCEDURE_CACHE;
 GO
 
--- Simulate out-of-date stats
+/* Simulate out-of-date stats */
 UPDATE STATISTICS Fact.OrderHistory 
 WITH ROWCOUNT = 1;
 GO
@@ -58,7 +58,7 @@ INNER HASH JOIN Dimension.[Stock Item] AS si
 WHERE fo.[Lineage Key] = 9
 	AND si.[Lead Time Days] > 19;
 
--- Cleanup
+/* Cleanup */
 UPDATE STATISTICS Fact.OrderHistory 
 WITH ROWCOUNT = 3702672;
 GO

@@ -1,10 +1,10 @@
--- ******************************************************** --
+/**************************************************************
 -- Scirpt Name: 05_ScalarUDFInlining.sql
 -- This code is copied from
 -- https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
 
 -- Modified by Taiob Ali
--- October 14 20, 2021
+-- May 19, 2022
 
 -- Scalar UDF Inlining
 
@@ -15,7 +15,7 @@
 -- Demo uses SQL Server 2019 and Azure SQL DB
 
 -- Email IntelligentQP@microsoft.com for questions\feedback
--- ******************************************************** --
+*************************************************************/
 USE [master];
 GO
 
@@ -55,7 +55,7 @@ BEGIN
 END
 GO
 
---Checking if the UDF is inlineable by looking at the value of is_inlineable column
+/* Checking if the UDF is inlineable by looking at the value of is_inlineable column */
 SELECT 
   object_id,
   definition,
@@ -70,7 +70,6 @@ Before (show actual query execution plan for legacy behavior)
 In SSMS QueryTimeStats show the cpu and elapsed time for UDF
 During inlining you can see this in the properties or XML plan  ContainsInlineScalarTsqlUdfs="true"
 */
-
 SELECT TOP 100
   [Customer Key], 
 	[Customer],
@@ -80,7 +79,7 @@ ORDER BY [Customer Key]
 OPTION (RECOMPILE,USE HINT('DISABLE_TSQL_SCALAR_UDF_INLINING'));
 GO
 
--- After (show actual query execution plan for Scalar UDF Inlining)
+/* After (show actual query execution plan for Scalar UDF Inlining) */
 SELECT TOP 100
   [Customer Key], 
   [Customer],

@@ -1,10 +1,10 @@
--- ******************************************************** --
+/***************************************************************
 -- Scirpt Name: 04_MGF_BatchModesql.sql
 -- This code is copied from
 -- https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
 
 -- Modified by Taiob Ali
--- October 14 20, 2021
+-- May 19, 2022
 
 -- Batch mode Memory Grant Feedback
 
@@ -15,7 +15,7 @@
 -- This demo is on SQL Server 2017 and Azure SQL DB
 
 -- Email IntelligentQP@microsoft.com for questions\feedback
--- ******************************************************** --
+*************************************************************/
 
 USE [master];
 GO
@@ -29,7 +29,7 @@ GO
 ALTER DATABASE SCOPED CONFIGURATION CLEAR PROCEDURE_CACHE;
 GO
 
--- Intentionally forcing a row underestimate
+/* Intentionally forcing a row underestimate */
 CREATE OR ALTER PROCEDURE [FactOrderByLineageKey]
 	@LineageKey INT 
 AS
@@ -62,3 +62,4 @@ https://docs.microsoft.com/en-us/sql/relational-databases/performance/intelligen
 
 EXEC [FactOrderByLineageKey] 9;
 GO
+

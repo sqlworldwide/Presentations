@@ -1,10 +1,10 @@
--- ******************************************************** --
+/********************************************************** 
 -- Scirpt Name: 02_TableVarDefCompilaiton.sql
 -- This code is copied from
 -- https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
 
 -- Modified by Taiob Ali
--- July 20, 2020
+-- May 19, 2022
 
 -- Table variable deferred compilation
 
@@ -15,7 +15,7 @@
 -- This demo is on SQL Server 2019 and Azure SQL DB
 
 -- Email IntelligentQP@microsoft.com for questions\feedback
--- ******************************************************** --
+************************************************************/
 
 USE [master];
 GO
@@ -37,6 +37,7 @@ Actual number of row: 490928
 Thick flow going to Nested loop join
 Row ID lookup
 Low memory grant caused a sort spill
+Takes about ~20 seconds in my laptop
 */
 
 DECLARE @Order TABLE 
@@ -61,7 +62,7 @@ GO
 USE [master]
 GO
 
---Changing MAXDOP as this query can advantage of parallel execution
+/* Changing MAXDOP as this query can advantage of parallel execution */
 EXEC sp_configure 'show advanced options', 1;  
 GO  
 RECONFIGURE WITH OVERRIDE;  
@@ -74,8 +75,7 @@ GO
 ALTER DATABASE [WideWorldImportersDW] SET COMPATIBILITY_LEVEL = 150
 GO
 
---Disconnect and connect
-
+/* Disconnect and connect */
 USE [WideWorldImportersDW];
 GO
 ALTER DATABASE SCOPED CONFIGURATION CLEAR PROCEDURE_CACHE;
@@ -108,7 +108,7 @@ WHERE oh.[Unit Price] > 0.10
 ORDER BY oh.[Unit Price] DESC;
 GO
 
---Revert MAXDOP Setting
+/* Revert MAXDOP Setting */
 EXEC sp_configure 'max degree of parallelism', 2;  
 GO  
 RECONFIGURE WITH OVERRIDE;  

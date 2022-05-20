@@ -1,10 +1,10 @@
--- ******************************************************** --
+/*************************************************************
 -- Scirpt Name: 06_BatchModeOnRowstore.sql
 -- This code is copied from
 -- https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
 
 -- Modified by Taiob Ali
--- July 20, 2020
+-- May 19, 2022
 
 -- Batch mode on rowstore
 
@@ -15,7 +15,7 @@
 -- This demo is on SQL Server 2019 and Azure SQL DB
 
 -- Email IntelligentQP@microsoft.com for questions\feedback
--- ******************************************************** --
+*************************************************************/
 
 USE [master];
 GO
@@ -51,7 +51,7 @@ ORDER BY [Tax Rate],
 	[Salesperson Key]
 OPTION (RECOMPILE, USE HINT('DISALLOW_BATCH_MODE'));
 
--- Batch mode on rowstore eligible
+/* Batch mode on rowstore eligible */
 SELECT [Tax Rate],
 	[Lineage Key],
 	[Salesperson Key],
@@ -68,7 +68,7 @@ ORDER BY [Tax Rate],
 	[Salesperson Key]
 OPTION (RECOMPILE);
 
---If you want to see that this feature is not available pre 2019 (15.x)
+/* If you want to see that this feature is not available pre 2019 (15.x) */
 
 ALTER DATABASE [WideWorldImportersDW] SET COMPATIBILITY_LEVEL = 140;
 GO
@@ -90,5 +90,6 @@ ORDER BY [Tax Rate],
 OPTION (RECOMPILE);
 GO
 
+/* Revert compatibility level for next demo */
 ALTER DATABASE [WideWorldImportersDW] SET COMPATIBILITY_LEVEL = 150;
 GO
