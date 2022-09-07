@@ -88,6 +88,18 @@ GO
 RECONFIGURE WITH OVERRIDE;
 GO
 
+--Change autogrowth to percent
+USE [master]
+GO
+ALTER DATABASE [SqlAssessmentDemo] MODIFY FILE ( NAME = N'SqlAssessmentDemo', FILEGROWTH = 10%)
+GO
+--Revert
+USE [master]
+GO
+ALTER DATABASE [SqlAssessmentDemo] MODIFY FILE ( NAME = N'SqlAssessmentDemo', FILEGROWTH = 65536KB )
+GO
+
+
 --Turn on Trace Flag 634
 USE [master];
 GO
