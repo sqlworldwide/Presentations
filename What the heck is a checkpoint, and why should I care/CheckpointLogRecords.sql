@@ -19,13 +19,13 @@ USE master;
 GO
 DECLARE @SQL nvarchar(1000);
 
-IF EXISTS (SELECT 1 FROM sys.databases WHERE [name] = N'sqlfridaydemo')
+IF EXISTS (SELECT 1 FROM sys.databases WHERE [name] = N'sqlsat1039')
   BEGIN
     SET @SQL = 
       N'USE [master];
-       ALTER DATABASE sqlfridaydemo SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+       ALTER DATABASE sqlsat1039 SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
        USE [master];
-       DROP DATABASE sqlfridaydemo;';
+       DROP DATABASE sqlsat1039;';
     EXEC (@SQL);
   END;
 ELSE
@@ -34,7 +34,7 @@ ELSE
   END
 GO
 
-CREATE DATABASE sqlfridaydemo;
+CREATE DATABASE sqlsat1039;
 GO
 
 /*
@@ -42,9 +42,9 @@ Change settings to reduce number of log records
 */
 USE master;
 GO
-ALTER DATABASE sqlfridaydemo SET RECOVERY SIMPLE;
+ALTER DATABASE sqlsat1039 SET RECOVERY SIMPLE;
 GO
-ALTER DATABASE sqlfridaydemo SET AUTO_CREATE_STATISTICS OFF;
+ALTER DATABASE sqlsat1039 SET AUTO_CREATE_STATISTICS OFF;
 GO
 
 /*
@@ -52,7 +52,7 @@ Drop table if exists
 Create an empty table
 Insert one record with implicit transaction
 */
-USE sqlfridaydemo;
+USE sqlsat1039;
 GO
 SET NOCOUNT ON;
 GO
@@ -75,17 +75,17 @@ SELECT
   COUNT(*) AS [Total Pages In Buffer],
   COUNT(*) * 8 / 1024 AS [Buffer Size in MB],
   SUM(CASE dm_os_buffer_descriptors.is_modified 
-              WHEN 1 THEN 1 ELSE 0
-      END) AS [Dirty Pages],
+    WHEN 1 THEN 1 ELSE 0
+    END) AS [Dirty Pages],
   SUM(CASE dm_os_buffer_descriptors.is_modified 
-              WHEN 1 THEN 0 ELSE 1
-      END) AS [Clean Pages],
+    WHEN 1 THEN 0 ELSE 1
+    END) AS [Clean Pages],
   SUM(CASE dm_os_buffer_descriptors.is_modified 
-              WHEN 1 THEN 1 ELSE 0
-      END) * 8 / 1024 AS [Dirty Page (MB)],
+    WHEN 1 THEN 1 ELSE 0
+    END) * 8 / 1024 AS [Dirty Page (MB)],
   SUM(CASE dm_os_buffer_descriptors.is_modified 
-              WHEN 1 THEN 0 ELSE 1
-      END) * 8 / 1024 AS [Clean Page (MB)]
+    WHEN 1 THEN 0 ELSE 1
+    END) * 8 / 1024 AS [Clean Page (MB)]
 FROM sys.dm_os_buffer_descriptors
 INNER JOIN sys.allocation_units ON allocation_units.allocation_unit_id = dm_os_buffer_descriptors.allocation_unit_id
 INNER JOIN sys.partitions ON
@@ -124,7 +124,7 @@ Do another checkpoint
 Check log records
 Excluding records, mostly related to system object modification
 Show the log record of Operation = "LOP_XACT_CKPT" Context = "LCX_NULL"
-Log record consist the LSN of the oldest uncommited transaction
+Log record consist the LSN of the oldest uncommitted transaction
 */
 CHECKPOINT;
 GO
@@ -134,11 +134,16 @@ FROM fn_dblog (NULL, NULL)
 WHERE  [Operation] <> 'LOP_COUNT_DELTA';
 GO
 
+SELECT 
+	Operation, Context, [Log Record] 
+FROM fn_dblog (NULL, NULL)
+WHERE  [Operation] <> 'LOP_COUNT_DELTA';
+GO
+
 /*
 Commit transaction
 Issue a chekcpoint
 Look at the records
-Clean up
 */
 COMMIT TRAN;
 CHECKPOINT;
@@ -155,5 +160,5 @@ Drop the database
 */
 USE master;
 GO
-DROP DATABASE IF EXISTS sqlfridaydemo;
+DROP DATABASE IF EXISTS sqlsat1039;
 GO
