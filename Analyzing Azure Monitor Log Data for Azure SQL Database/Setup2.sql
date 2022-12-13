@@ -1,7 +1,7 @@
 /*
 Setup2.sql
 Written by Taiob  Ali
-PASS Data Community SUMMIT 2022
+Lexington Data Technology Group
 SqlWorldWide.com
 */
 
@@ -54,7 +54,7 @@ WHERE SupplierId = 1;
 UPDATE dbo.dt_Employees
 SET Phone = N'555-9999'
 WHERE EmpId = 1;
-
+--COMMIT TRAN;
 /*
 Continue here
 */

@@ -1,6 +1,6 @@
 // ConsumeDataWithKQL.kql
 // Written by Taiob  Ali
-// PASS Data Community SUMMIT 2022
+// Lexington Data Technology Group
 // SqlWorldWide.com
 
 
@@ -15,7 +15,7 @@ AzureMetrics
 | summarize CPU_Maximum_last15mins = max(Maximum), CPU_Minimum_last15mins = min(Minimum), CPU_Average_last15mins = avg(Average) by Resource , MetricName
 
 // Performance troubleshooting 
-// Potentially query or deadlock on the system that could lead to poor performance. 
+// Potentially query or deadlock on the system that could lead to poor performance
 // Potentially a query or deadlock on the system that could lead to poor performance
 AzureMetrics
 | where ResourceProvider == "MICROSOFT.SQL"
@@ -25,7 +25,8 @@ AzureMetrics
 | summarize Deadlock_max_60Mins = max(Maximum) by Resource, MetricName
 
 // Loading Data 
-// Monitor data loading in the last hour. 
+// Monitor data loading in the last hour
+// log_write_percent is one of the important counter you can monitor for Azure SQL Database
 AzureMetrics
 | where ResourceProvider == "MICROSOFT.SQL"
 | where TimeGenerated >= ago(60min)
@@ -34,7 +35,7 @@ AzureMetrics
 | summarize Log_Maximum_last60mins = max(Maximum), Log_Minimum_last60mins = min(Minimum), Log_Average_last60mins = avg(Average) by Resource, MetricName
 
 // Wait stats 
-// Wait stats over the last hour, by Logical Server and Database. 
+// Wait stats over the last hour, by Logical Server and Database
 AzureDiagnostics
 | where ResourceProvider == "MICROSOFT.SQL"
 | where TimeGenerated >= ago(60min)
@@ -44,8 +45,8 @@ AzureDiagnostics
 
 // Who DROPPED my table?
 // Ref: https://techcommunity.microsoft.com/t5/azure-database-support-blog/azure-sql-db-and-log-analytics-better-together-part-3-query/ba-p/1034222
-let ServerName = "sqlpassdemoservertaiob";
-let DBName = "sqlpassdemodatabase";
+let ServerName = "ldtgdemoservertaiob";
+let DBName = "ldtgdemodatabase";
 AzureDiagnostics
 | where TimeGenerated >= ago(1d)
 | where LogicalServerName_s =~ ServerName

@@ -1,7 +1,7 @@
 /*
 Setup3.sql
 Written by Taiob Ali
-PASS Data Community SUMMIT 2022
+Lexington Data Technology Group
 SqlWorldWide.com
 */
 

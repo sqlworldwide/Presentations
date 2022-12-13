@@ -1,6 +1,6 @@
 // Baseline.kql
 // Written by Taiob  Ali
-// PASS Data Community SUMMIT 2022
+// Lexington Data Technology Group
 // SqlWorldWide.com
 
 // baseline
@@ -13,7 +13,7 @@ AzureMetrics
 | extend ResourcePath = strcat(ResourceGroup ,"/" , replace_string(substring(ResourceId, indexof(ResourceId, "SERVERS", 2) + 8), "DATABASES/", ""))
 | project TimeGenerated, Maximum, Minimum, Average
 
-//baseline
+// baseline
 // Log Write Percent in last one hour
 AzureMetrics
 | where ResourceProvider == "MICROSOFT.SQL"
