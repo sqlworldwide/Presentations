@@ -18,13 +18,13 @@ USE master;
 GO
 DECLARE @SQL nvarchar(1000);
 
-IF EXISTS (SELECT 1 FROM sys.databases WHERE [name] = N'sqlsat1039demo22')
+IF EXISTS (SELECT 1 FROM sys.databases WHERE [name] = N'cassugdemo2')
   BEGIN
     SET @SQL = 
       N'USE [master];
-       ALTER DATABASE sqlsat1039demo2 SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+       ALTER DATABASE cassugdemo2 SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
        USE [master];
-       DROP DATABASE sqlsat1039demo2;';
+       DROP DATABASE cassugdemo2;';
     EXEC (@SQL);
   END;
 ELSE
@@ -33,7 +33,7 @@ ELSE
   END
 GO
 
-CREATE DATABASE sqlsat1039demo2;
+CREATE DATABASE cassugdemo2;
 GO
 
 /*
@@ -41,15 +41,15 @@ Change settings to reduce number of log records
 */
 USE master;
 GO
-ALTER DATABASE sqlsat1039demo2 SET RECOVERY SIMPLE;
+ALTER DATABASE cassugdemo2 SET RECOVERY SIMPLE;
 GO
-ALTER DATABASE sqlsat1039demo2 SET AUTO_CREATE_STATISTICS OFF;
+ALTER DATABASE cassugdemo2 SET AUTO_CREATE_STATISTICS OFF;
 GO
 
 /*
 Create an empty table
 */
-USE sqlsat1039demo2;
+USE cassugdemo2;
 GO
 SET NOCOUNT ON;
 GO
@@ -134,17 +134,19 @@ GO
 
 /*
 Open Performance Monitor and add these counters for your test databse
--Log File(s) Used Size (KB)
--Disk Write Bytes/sec (for the drive where testdatabse log file reside)
--Percent Log Used
+-SQLServer:Databases - 
+	Log File(s) Used Size (KB)
+	Percent Log Used
+-LogicalDisk
+	Disk Write Bytes/sec (for the drive where testdatabse log file reside)
 
 You can add two more if you are interested
 -Log File(s) Size (KB)
 -checkpoint pages/sec (not database specific)
 
 Run this from query stress tool
-EXEC sqlsat1039demo2..p_StressTestTable_ins
-EXEC sqlsat1039demo2..p_StressTestTable_upd
+EXEC cassugdemo2..p_StressTestTable_ins
+EXEC cassugdemo2..p_StressTestTable_upd
 https://github.com/ErikEJ/SqlQueryStress
 Chose server name, database
 Set number of threads = 20
@@ -195,9 +197,9 @@ Demo:Automatic vs Indirect checkpoint IO behavior
 Change TARGET_RECOVERY_TIME to 15 seconds and see the change in write pattern
 Change TARGET_RECOVERY_TIME to 120 seconds and see the change in write pattern
 */
-ALTER DATABASE sqlsat1039demo2 SET TARGET_RECOVERY_TIME = 15 SECONDS;
+ALTER DATABASE cassugdemo2 SET TARGET_RECOVERY_TIME = 15 SECONDS;
 GO
-ALTER DATABASE sqlsat1039demo2 SET TARGET_RECOVERY_TIME = 120 SECONDS;
+ALTER DATABASE cassugdemo2 SET TARGET_RECOVERY_TIME = 120 SECONDS;
 GO
 
 /*
@@ -207,5 +209,5 @@ Drop the database
 */
 USE master;
 GO
-DROP DATABASE IF EXISTS sqlsat1039demo2;
+DROP DATABASE IF EXISTS cassugdemo2;
 GO

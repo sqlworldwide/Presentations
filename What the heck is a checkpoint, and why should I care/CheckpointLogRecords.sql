@@ -19,13 +19,13 @@ USE master;
 GO
 DECLARE @SQL nvarchar(1000);
 
-IF EXISTS (SELECT 1 FROM sys.databases WHERE [name] = N'sqlsat1039')
+IF EXISTS (SELECT 1 FROM sys.databases WHERE [name] = N'cassugdemo')
   BEGIN
     SET @SQL = 
       N'USE [master];
-       ALTER DATABASE sqlsat1039 SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+       ALTER DATABASE cassugdemo SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
        USE [master];
-       DROP DATABASE sqlsat1039;';
+       DROP DATABASE cassugdemo;';
     EXEC (@SQL);
   END;
 ELSE
@@ -34,7 +34,7 @@ ELSE
   END
 GO
 
-CREATE DATABASE sqlsat1039;
+CREATE DATABASE cassugdemo;
 GO
 
 /*
@@ -42,9 +42,9 @@ Change settings to reduce number of log records
 */
 USE master;
 GO
-ALTER DATABASE sqlsat1039 SET RECOVERY SIMPLE;
+ALTER DATABASE cassugdemo SET RECOVERY SIMPLE;
 GO
-ALTER DATABASE sqlsat1039 SET AUTO_CREATE_STATISTICS OFF;
+ALTER DATABASE cassugdemo SET AUTO_CREATE_STATISTICS OFF;
 GO
 
 /*
@@ -52,7 +52,7 @@ Drop table if exists
 Create an empty table
 Insert one record with implicit transaction
 */
-USE sqlsat1039;
+USE cassugdemo;
 GO
 SET NOCOUNT ON;
 GO
@@ -135,7 +135,10 @@ WHERE  [Operation] <> 'LOP_COUNT_DELTA';
 GO
 
 SELECT 
-	Operation, Context, [Log Record] 
+	[Current LSN],
+	Operation, 
+	Context, 
+	[Log Record] 
 FROM fn_dblog (NULL, NULL)
 WHERE  [Operation] <> 'LOP_COUNT_DELTA';
 GO
@@ -160,5 +163,5 @@ Drop the database
 */
 USE master;
 GO
-DROP DATABASE IF EXISTS sqlsat1039;
+DROP DATABASE IF EXISTS cassugdemo;
 GO
