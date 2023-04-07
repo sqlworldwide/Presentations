@@ -18,22 +18,22 @@ USE master;
 GO
 DECLARE @SQL nvarchar(1000);
 
-IF EXISTS (SELECT 1 FROM sys.databases WHERE [name] = N'cassugdemo2')
+IF EXISTS (SELECT 1 FROM sys.databases WHERE [name] = N'sqlbitsdemo2')
   BEGIN
     SET @SQL = 
       N'USE [master];
-       ALTER DATABASE cassugdemo2 SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+       ALTER DATABASE sqlbitsdemo2 SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
        USE [master];
-       DROP DATABASE cassugdemo2;';
+       DROP DATABASE sqlbitsdemo2;';
     EXEC (@SQL);
   END;
 ELSE
   BEGIN
-    PRINT 'Database does not exist'
+    PRINT 'Database does not exist, creating a new one'
   END
 GO
 
-CREATE DATABASE cassugdemo2;
+CREATE DATABASE sqlbitsdemo2;
 GO
 
 /*
@@ -41,15 +41,15 @@ Change settings to reduce number of log records
 */
 USE master;
 GO
-ALTER DATABASE cassugdemo2 SET RECOVERY SIMPLE;
+ALTER DATABASE sqlbitsdemo2 SET RECOVERY SIMPLE;
 GO
-ALTER DATABASE cassugdemo2 SET AUTO_CREATE_STATISTICS OFF;
+ALTER DATABASE sqlbitsdemo2 SET AUTO_CREATE_STATISTICS OFF;
 GO
 
 /*
 Create an empty table
 */
-USE cassugdemo2;
+USE sqlbitsdemo2;
 GO
 SET NOCOUNT ON;
 GO
@@ -145,8 +145,8 @@ You can add two more if you are interested
 -checkpoint pages/sec (not database specific)
 
 Run this from query stress tool
-EXEC cassugdemo2..p_StressTestTable_ins
-EXEC cassugdemo2..p_StressTestTable_upd
+EXEC sqlbitsdemo2..p_StressTestTable_ins
+EXEC sqlbitsdemo2..p_StressTestTable_upd
 https://github.com/ErikEJ/SqlQueryStress
 Chose server name, database
 Set number of threads = 20
@@ -197,9 +197,9 @@ Demo:Automatic vs Indirect checkpoint IO behavior
 Change TARGET_RECOVERY_TIME to 15 seconds and see the change in write pattern
 Change TARGET_RECOVERY_TIME to 120 seconds and see the change in write pattern
 */
-ALTER DATABASE cassugdemo2 SET TARGET_RECOVERY_TIME = 15 SECONDS;
+ALTER DATABASE sqlbitsdemo2 SET TARGET_RECOVERY_TIME = 15 SECONDS;
 GO
-ALTER DATABASE cassugdemo2 SET TARGET_RECOVERY_TIME = 120 SECONDS;
+ALTER DATABASE sqlbitsdemo2 SET TARGET_RECOVERY_TIME = 120 SECONDS;
 GO
 
 /*
@@ -209,5 +209,5 @@ Drop the database
 */
 USE master;
 GO
-DROP DATABASE IF EXISTS cassugdemo2;
+DROP DATABASE IF EXISTS sqlbitsdemo2;
 GO
