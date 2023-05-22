@@ -19,22 +19,22 @@ USE master;
 GO
 DECLARE @SQL nvarchar(1000);
 
-IF EXISTS (SELECT 1 FROM sys.databases WHERE [name] = N'sqlbitsdemo')
+IF EXISTS (SELECT 1 FROM sys.databases WHERE [name] = N'eightkbonline')
   BEGIN
     SET @SQL = 
       N'USE [master];
-       ALTER DATABASE sqlbitsdemo SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+       ALTER DATABASE eightkbonline SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
        USE [master];
-       DROP DATABASE sqlbitsdemo;';
+       DROP DATABASE eightkbonline;';
     EXEC (@SQL);
   END;
 ELSE
   BEGIN
-    PRINT 'Database does not exist, creating a new one'
+    PRINT 'Database does not exist,creating a new one'
   END
 GO
 
-CREATE DATABASE sqlbitsdemo;
+CREATE DATABASE eightkbonline;
 GO
 
 /*
@@ -43,9 +43,9 @@ Change settings to reduce number of log records
 
 USE master;
 GO
-ALTER DATABASE sqlbitsdemo SET RECOVERY SIMPLE;
+ALTER DATABASE eightkbonline SET RECOVERY SIMPLE;
 GO
-ALTER DATABASE sqlbitsdemo SET AUTO_CREATE_STATISTICS OFF;
+ALTER DATABASE eightkbonline SET AUTO_CREATE_STATISTICS OFF;
 GO
 
 /*
@@ -54,7 +54,7 @@ Create an empty table
 Insert one record with implicit transaction
 */
 
-USE sqlbitsdemo;
+USE eightkbonline;
 GO
 SET NOCOUNT ON;
 GO
@@ -171,5 +171,5 @@ Drop the database
 
 USE master;
 GO
-DROP DATABASE IF EXISTS sqlbitsdemo;
+DROP DATABASE IF EXISTS eightkbonline;
 GO

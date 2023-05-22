@@ -18,22 +18,22 @@ USE master;
 GO
 DECLARE @SQL nvarchar(1000);
 
-IF EXISTS (SELECT 1 FROM sys.databases WHERE [name] = N'sqlbitsdemo2')
+IF EXISTS (SELECT 1 FROM sys.databases WHERE [name] = N'eightkbonlinedemo2')
   BEGIN
     SET @SQL = 
       N'USE [master];
-       ALTER DATABASE sqlbitsdemo2 SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+       ALTER DATABASE eightkbonlinedemo2 SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
        USE [master];
-       DROP DATABASE sqlbitsdemo2;';
+       DROP DATABASE eightkbonlinedemo2;';
     EXEC (@SQL);
   END;
 ELSE
   BEGIN
-    PRINT 'Database does not exist, creating a new one'
+    PRINT 'Database does not exist,creating a new one'
   END
 GO
 
-CREATE DATABASE sqlbitsdemo2;
+CREATE DATABASE eightkbonlinedemo2;
 GO
 
 /*
@@ -41,15 +41,15 @@ Change settings to reduce number of log records
 */
 USE master;
 GO
-ALTER DATABASE sqlbitsdemo2 SET RECOVERY SIMPLE;
+ALTER DATABASE eightkbonlinedemo2 SET RECOVERY SIMPLE;
 GO
-ALTER DATABASE sqlbitsdemo2 SET AUTO_CREATE_STATISTICS OFF;
+ALTER DATABASE eightkbonlinedemo2 SET AUTO_CREATE_STATISTICS OFF;
 GO
 
 /*
 Create an empty table
 */
-USE sqlbitsdemo2;
+USE eightkbonlinedemo2;
 GO
 SET NOCOUNT ON;
 GO
@@ -72,6 +72,8 @@ GO
 /*
 Create store procedures
 */
+USE eightkbonlinedemo2;
+GO
 DROP PROCEDURE IF EXISTS [dbo].[p_StressTestTable_ins];
 GO
 SET ANSI_NULLS ON;
@@ -145,8 +147,8 @@ You can add two more if you are interested
 -checkpoint pages/sec (not database specific)
 
 Run this from query stress tool
-EXEC sqlbitsdemo2..p_StressTestTable_ins
-EXEC sqlbitsdemo2..p_StressTestTable_upd
+EXEC eightkbonlinedemo2..p_StressTestTable_ins
+EXEC eightkbonlinedemo2..p_StressTestTable_upd
 https://github.com/ErikEJ/SqlQueryStress
 Chose server name, database
 Set number of threads = 20
@@ -197,9 +199,9 @@ Demo:Automatic vs Indirect checkpoint IO behavior
 Change TARGET_RECOVERY_TIME to 15 seconds and see the change in write pattern
 Change TARGET_RECOVERY_TIME to 120 seconds and see the change in write pattern
 */
-ALTER DATABASE sqlbitsdemo2 SET TARGET_RECOVERY_TIME = 15 SECONDS;
+ALTER DATABASE eightkbonlinedemo2 SET TARGET_RECOVERY_TIME = 15 SECONDS;
 GO
-ALTER DATABASE sqlbitsdemo2 SET TARGET_RECOVERY_TIME = 120 SECONDS;
+ALTER DATABASE eightkbonlinedemo2 SET TARGET_RECOVERY_TIME = 120 SECONDS;
 GO
 
 /*
@@ -209,5 +211,5 @@ Drop the database
 */
 USE master;
 GO
-DROP DATABASE IF EXISTS sqlbitsdemo2;
+DROP DATABASE IF EXISTS eightkbonlinedemo2;
 GO
