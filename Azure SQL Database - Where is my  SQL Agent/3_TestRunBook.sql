@@ -26,7 +26,7 @@ CREATE TABLE dbo.testRebuild
 GO
 
 --Create clustered index
-CREATE CLUSTERED INDEX ci ON testRebuild (c1);
+CREATE CLUSTERED INDEX idx_ci ON testRebuild (c1);
 GO
 
 --Inserting 1000 rows, takes about 8 seconds
@@ -57,5 +57,5 @@ SELECT
   avg_fragment_size_in_pages,
   fragment_count,
   avg_page_space_used_in_percent
-FROM sys.Dm_db_index_physical_stats(DB_ID(), OBJECT_ID('testRebuild'), NULL, NULL, 'DETAILED');
+FROM sys.dm_db_index_physical_stats(DB_ID(), OBJECT_ID('testRebuild'), NULL, NULL, 'DETAILED');
 GO

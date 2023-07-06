@@ -13,7 +13,7 @@ This script will
 Import-module SqlServer
 Import-Module dbatools
 
-Set-AzContext -SubscriptionId '18d92f52-ac34-4379-ab8b-5a5106f1c54e'
+Set-AzContext -SubscriptionId '6f8db000-8416-43f0-a2db-cbfb7c945982'
 # Putting my query in a variable
 $databaseQuery = 
 "
@@ -30,7 +30,7 @@ SELECT
 		a.physical_name AS physicalName 
 FROM sys.database_files a
 "
-$localInstanceName = 'DESKTOP-50O69FS\SQL2019'
+$localInstanceName = 'DESKTOP-50O69FS'
 $localDatabaseName = 'dbadatabase'
 $localTableName = 'databasesize'
 

@@ -9,10 +9,10 @@ DemoWhereIsMySqlAgent.ipynb
 
 You can do the same using PowerShell
 'Create an Elastic Job agent using PowerShell'
-https://docs.microsoft.com/en-us/azure/sql-database/elastic-jobs-powershell
+https://learn.microsoft.com/en-us/azure/azure-sql/database/elastic-jobs-powershell-create?view=azuresql
 
 Following tsql script was created using below reference.
-https://docs.microsoft.com/en-us/azure/sql-database/elastic-jobs-tsql
+https://learn.microsoft.com/en-us/azure/azure-sql/database/elastic-jobs-tsql-create-manage?view=azuresql
 ============================================================================*/
 
 --Connect to ugdemojobserver.database.windows.net
@@ -62,7 +62,7 @@ GO
 EXEC sp_addrolemember N'db_owner', N'elasticJobTarget';
 GO
 
---Connect to udgemotargetserver.database.windows.net
+--Connect to ugdemotargetserver.database.windows.net
 --USE master
 CREATE LOGIN elasticJobMaster WITH PASSWORD = 'Pa$$w0rd123'
 GO
@@ -91,6 +91,7 @@ GO
 --Connect to ugdemojobserver.database.windows.net
 --Change context to jobdatabase
 --Add a target group containing server(s)
+--EXEC jobs.sp_delete_target_group 'ServerGroup1'
 EXEC jobs.sp_add_target_group 'ServerGroup1'
 
 -- Add a server target member
@@ -212,6 +213,7 @@ SELECT
 FROM [dbo].[perfResults];
 
 --Change context to jobdatabase--Add a target group containing server(s)
+--EXEC jobs.sp_delete_target_group 'ServerGroup2';
 EXEC jobs.sp_add_target_group 'ServerGroup2';
 
 -- Add a server as target member
