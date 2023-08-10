@@ -1,6 +1,7 @@
 // Baseline.kql
-// Written by Taiob  Ali
-// Lexington Data Technology Group
+// Rhode Island Data Platform User Group
+// August 09, 2023
+// Taiob Ali 
 // SqlWorldWide.com
 
 // baseline
@@ -11,7 +12,7 @@ AzureMetrics
 | where ResourceProvider  == "MICROSOFT.SQL"
 | where TimeGenerated > duration
 | extend ResourcePath = strcat(ResourceGroup ,"/" , replace_string(substring(ResourceId, indexof(ResourceId, "SERVERS", 2) + 8), "DATABASES/", ""))
-| project TimeGenerated, Maximum, Minimum, Average
+| project TimeGenerated, Maximum, Minimum, Average;
 
 // baseline
 // Log Write Percent in last one hour
@@ -20,7 +21,7 @@ AzureMetrics
 | where TimeGenerated >= ago(60min)
 | where MetricName in ('log_write_percent')
 | parse _ResourceId with * "/microsoft.sql/servers/" Resource// subtract Resource name for _ResourceId
-| summarize Log_Maximum_last60mins = max(Maximum), Log_Minimum_last60mins = min(Minimum), Log_Average_last60mins = avg(Average) by Resource, MetricName
+| summarize Log_Maximum_last60mins = max(Maximum), Log_Minimum_last60mins = min(Minimum), Log_Average_last60mins = avg(Average) by Resource, MetricName;
 
 // baseline and tending
 // cpu average slice by a fixed interval, for example every 5 minute
@@ -31,16 +32,18 @@ AzureMetrics
 | where ResourceProvider  == "MICROSOFT.SQL"
 | where TimeGenerated > duration
 | extend ResourcePath = strcat(ResourceGroup ,"/" , replace_string(substring(ResourceId, indexof(ResourceId, "SERVERS", 2) + 8), "DATABASES/", ""))
-| summarize avg(Average) by bin (TimeGenerated, slicer)
+| summarize avg(Average) by bin (TimeGenerated, slicer);
 
 // alert 
 // on CPU percent
+let duration2 = ago(60min);
 AzureMetrics
 | where MetricName == "cpu_percent" 
 | where ResourceProvider  == "MICROSOFT.SQL"
+| where TimeGenerated > duration2
 | extend ResourcePath = strcat(ResourceGroup ,"/" , replace_string(substring(ResourceId, indexof(ResourceId, "SERVERS", 2) + 8), "DATABASES/", ""))
 | summarize measure = avg(Maximum), min(TimeGenerated), max(TimeGenerated), samples = sum(Count)  by Resource, MetricName, ResourcePath
-| where measure >= 20
+| where measure >= 10;
 
 // alert 
 // on Storage usage percent
@@ -50,4 +53,4 @@ AzureMetrics
 | extend ResourcePath = strcat(ResourceGroup ,"/" , replace_string(substring(ResourceId, indexof(ResourceId, "SERVERS", 2) + 8), "DATABASES/", ""))
 | sort by TimeGenerated desc nulls first
 | summarize measure = max(Maximum), min(TimeGenerated), max(TimeGenerated), max(Maximum), occurances = sum(Count)  by Resource, MetricName, ResourcePath
-| where measure >= 20
+| where measure >= 20;

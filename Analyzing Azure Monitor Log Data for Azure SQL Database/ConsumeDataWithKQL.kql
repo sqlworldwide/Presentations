@@ -1,8 +1,8 @@
 // ConsumeDataWithKQL.kql
-// Written by Taiob  Ali
-// Lexington Data Technology Group
+// Rhode Island Data Platform User Group
+// August 09, 2023
+// Taiob Ali 
 // SqlWorldWide.com
-
 
 // Avg CPU usage 
 // Avg CPU usage in the last hour by resource name. 
@@ -12,17 +12,21 @@ AzureMetrics
 | where TimeGenerated >= ago(15min)
 | where MetricName in ('cpu_percent') 
 | parse _ResourceId with * "/microsoft.sql/servers/" Resource  // subtract Resource name for _ResourceId
-| summarize CPU_Maximum_last15mins = max(Maximum), CPU_Minimum_last15mins = min(Minimum), CPU_Average_last15mins = avg(Average) by Resource , MetricName
+| summarize
+    CPU_Maximum_last15mins = max(Maximum),
+    CPU_Minimum_last15mins = min(Minimum),
+    CPU_Average_last15mins = avg(Average)
+    by Resource, MetricName;
 
 // Performance troubleshooting 
 // Potentially query or deadlock on the system that could lead to poor performance
 // Potentially a query or deadlock on the system that could lead to poor performance
 AzureMetrics
 | where ResourceProvider == "MICROSOFT.SQL"
-| where TimeGenerated >=ago(60min)
+| where TimeGenerated >= ago(120min)
 | where MetricName in ('deadlock')
 | parse _ResourceId with * "/microsoft.sql/servers/" Resource // subtract Resource name for _ResourceId
-| summarize Deadlock_max_60Mins = max(Maximum) by Resource, MetricName
+| summarize Deadlock_max_60Mins = max(Maximum) by Resource, MetricName;
 
 // Loading Data 
 // Monitor data loading in the last hour
@@ -32,7 +36,11 @@ AzureMetrics
 | where TimeGenerated >= ago(60min)
 | where MetricName in ('log_write_percent')
 | parse _ResourceId with * "/microsoft.sql/servers/" Resource// subtract Resource name for _ResourceId
-| summarize Log_Maximum_last60mins = max(Maximum), Log_Minimum_last60mins = min(Minimum), Log_Average_last60mins = avg(Average) by Resource, MetricName
+| summarize
+    Log_Maximum_last60mins = max(Maximum),
+    Log_Minimum_last60mins = min(Minimum),
+    Log_Average_last60mins = avg(Average)
+    by Resource, MetricName;
 
 // Wait stats 
 // Wait stats over the last hour, by Logical Server and Database
@@ -40,13 +48,12 @@ AzureDiagnostics
 | where ResourceProvider == "MICROSOFT.SQL"
 | where TimeGenerated >= ago(60min)
 | parse _ResourceId with * "/microsoft.sql/servers/" LogicalServerName "/databases/" DatabaseName
-| summarize Total_count_60mins = sum(delta_waiting_tasks_count_d) by LogicalServerName, DatabaseName, wait_type_s
-
+| summarize Total_count_60mins = sum(delta_wait_time_ms_d) by LogicalServerName, DatabaseName, wait_type_s;
 
 // Who DROPPED my table?
 // Ref: https://techcommunity.microsoft.com/t5/azure-database-support-blog/azure-sql-db-and-log-analytics-better-together-part-3-query/ba-p/1034222
-let ServerName = "ldtgdemoservertaiob";
-let DBName = "ldtgdemodatabase";
+let ServerName = "risqldemoservertaiob";
+let DBName = "risqldemodatabase";
 AzureDiagnostics
 | where TimeGenerated >= ago(1d)
 | where LogicalServerName_s =~ ServerName
@@ -54,6 +61,18 @@ AzureDiagnostics
 | where Category =~ "SQLSecurityAuditEvents"
 | where action_name_s in ("BATCH COMPLETED", "RPC COMPLETED")
 | where statement_s has "DROP" or statement_s has "TRUNCATE" 
-| project TimeGenerated, event_time_t, LogicalServerName_s, database_name_s, succeeded_s, session_id_d, action_name_s,
-            client_ip_s, session_server_principal_name_s , database_principal_name_s, statement_s, additional_information_s, application_name_s
-| top 100 by TimeGenerated desc
+| project
+    TimeGenerated,
+    event_time_t,
+    LogicalServerName_s,
+    database_name_s,
+    succeeded_s,
+    session_id_d,
+    action_name_s,
+    client_ip_s,
+    session_server_principal_name_s,
+    database_principal_name_s,
+    statement_s,
+    additional_information_s,
+    application_name_s
+| top 100 by TimeGenerated desc;

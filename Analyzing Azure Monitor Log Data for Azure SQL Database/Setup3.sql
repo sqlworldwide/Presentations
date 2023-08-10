@@ -1,13 +1,14 @@
 /*
 Setup3.sql
-Written by Taiob Ali
-Lexington Data Technology Group
+Rhode Island Data Platform User Group
+August 09, 2023
+Taiob Ali 
 SqlWorldWide.com
 */
 
 /*
-Connect to server sqlpassdemoservertaiob.database.windows.net
-Change database context to sqlpassdemodatabase
+Connect to server risqldemoservertaiob.database.windows.net
+Change database context to nesqldemodatabase
 With Azure SQL Database cannot use 'USE DBName' statement
 Create an empty table
 */
@@ -50,7 +51,7 @@ SELECT @l_cola =char(@p_seed) , @l_colb =char(@p_seed) ,@l_colc =char(@p_seed) ,
 
 INSERT INTO [dbo].[StressTestTable]
   (
-		[ColA],
+    [ColA],
     [ColB],
     [ColC],
     [ColD]
@@ -58,7 +59,7 @@ INSERT INTO [dbo].[StressTestTable]
   VALUES
 	(
 	  REPLICATE(@l_cola,2000),
-    REPLICATE(@l_colb,2000),
+		REPLICATE(@l_colb,2000),
     REPLICATE(@l_colc,2000),
     REPLICATE(@l_cold,2000)
 	)

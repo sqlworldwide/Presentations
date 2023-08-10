@@ -1,13 +1,15 @@
 /*
 Setup2.sql
-Written by Taiob  Ali
-Lexington Data Technology Group
+Rhode Island Data Platform User Group
+August 09, 2023
+Taiob Ali 
 SqlWorldWide.com
 */
 
 /*
-Connect to sqlpassdemoservertaiob.database.windows.net
-Change database context to sqlpassdemodatabase
+Connect to risqldemoservertaiob.database.windows.net
+Change database context to nesqldemodatabase
+With Azure SQL Database cannot use 'USE DBName' statement
 */
 
 DROP TABLE IF EXISTS dbo.dt_Employees;
