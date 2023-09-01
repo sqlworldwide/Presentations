@@ -2,7 +2,7 @@
 	Scirpt Name: 00_Setup.sql
 	Setting up database for all the demo
 	Modified by Taiob Ali
-	June 02, 2023
+	August 15, 2023
 */
 
 /*
@@ -123,7 +123,9 @@ GO
 /*
 	Reality check... Starting count should be 231,412
 */
-SELECT COUNT(*) FROM Fact.OrderHistory;
+SELECT 
+	COUNT(*) 
+FROM Fact.OrderHistory;
 GO
 
 /*

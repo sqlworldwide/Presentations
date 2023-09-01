@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+<SqlWorkbenchSqlProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="IQP">
+  <Items>
+    <LogicalFolder Name="Connections" Type="2" Sorted="true">
+      <Items>
+        <ConnectionNode Name="DESKTOP-50O69FS:DESKTOP-50O69FS\taiob">
+          <Created>2023-05-31T17:32:16.3430035-04:00</Created>
+          <Type>SQL</Type>
+          <Server>DESKTOP-50O69FS</Server>
+          <UserName />
+          <Authentication>Windows Authentication</Authentication>
+          <InitialDB />
+          <LoginTimeout>30</LoginTimeout>
+          <ExecutionTimeout>0</ExecutionTimeout>
+          <ConnectionProtocol>NotSpecified</ConnectionProtocol>
+          <ApplicationName>Microsoft SQL Server Management Studio - Query</ApplicationName>
+        </ConnectionNode>
+      </Items>
+    </LogicalFolder>
+    <LogicalFolder Name="Queries" Type="0" Sorted="true">
+      <Items>
+        <FileNode Name="00_Setup.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:DESKTOP-50O69FS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>DESKTOP-50O69FS</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>00_Setup.sql</FullPath>
+        </FileNode>
+        <FileNode Name="01_AdaptiveJoin_BatchMode.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>01_AdaptiveJoin_BatchMode.sql</FullPath>
+        </FileNode>
+        <FileNode Name="02_InterleavedExecution.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>02_InterleavedExecution.sql</FullPath>
+        </FileNode>
+        <FileNode Name="03_MGF_BatchModesql.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>03_MGF_BatchModesql.sql</FullPath>
+        </FileNode>
+        <FileNode Name="03A_MGF_RowModesql.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>03A_MGF_RowModesql.sql</FullPath>
+        </FileNode>
+        <FileNode Name="04_CardinalityEstimationFeedback.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>04_CardinalityEstimationFeedback.sql</FullPath>
+        </FileNode>
+        <FileNode Name="05_DegreeOfParallelismFeedback.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>05_DegreeOfParallelismFeedback.sql</FullPath>
+        </FileNode>
+        <FileNode Name="06_TableVarDefCompilaiton.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>06_TableVarDefCompilaiton.sql</FullPath>
+        </FileNode>
+        <FileNode Name="07_BatchModeOnRowstore.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>07_BatchModeOnRowstore.sql</FullPath>
+        </FileNode>
+        <FileNode Name="08_AppxCountDistinct.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>08_AppxCountDistinct.sql</FullPath>
+        </FileNode>
+        <FileNode Name="09_ ApproxPercentileDisc.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>09_ ApproxPercentileDisc.sql</FullPath>
+        </FileNode>
+        <FileNode Name="10_ScalarUDFInlining.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>10_ScalarUDFInlining.sql</FullPath>
+        </FileNode>
+        <FileNode Name="11_ParameterSensitivePlanOptimization.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>11_ParameterSensitivePlanOptimization.sql</FullPath>
+        </FileNode>
+        <FileNode Name="12_OptimizedPlanForcing.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>12_OptimizedPlanForcing.sql</FullPath>
+        </FileNode>
+        <FileNode Name="13_QueryStoreHints.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>13_QueryStoreHints.sql</FullPath>
+        </FileNode>
+      </Items>
+    </LogicalFolder>
+    <LogicalFolder Name="Miscellaneous" Type="3" Sorted="true">
+      <Items>
+        <FileNode Name="The magnificent seven - Intelligent Query processing in SQL Server.pptx">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>The magnificent seven - Intelligent Query processing in SQL Server.pptx</FullPath>
+        </FileNode>
+        <FileNode Name="workload_index_scan.cmd">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>workload_index_scan.cmd</FullPath>
+        </FileNode>
+        <FileNode Name="workload_index_scan_users.cmd">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>workload_index_scan_users.cmd</FullPath>
+        </FileNode>
+        <FileNode Name="workload_index_seek.cmd">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>workload_index_seek.cmd</FullPath>
+        </FileNode>
+      </Items>
+    </LogicalFolder>
+  </Items>
+</SqlWorkbenchSqlProject>

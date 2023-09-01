@@ -3,7 +3,7 @@
 	https://github.com/microsoft/bobsql/tree/master/demos/sqlserver2022/IQP/dopfeedback
 	
 	Modified by Taiob Ali
-	May 29, 2023
+	August 17, 2023
 	Degree of parallelism (DOP) feedback
 	Applies to: SQL Server 2022 (16.x) and later, Azure SQL Managed Instance, Azure SQL Database (Preview)
 	Enterprise only
@@ -11,15 +11,20 @@
 
 /*
 	configure MAXDOP to 0 for the instance
+	configure max memory to higher value
 */
 
 sp_configure 'show advanced', 1;
 GO
-reconfigure;
+RECONFIGURE;
 GO
 sp_configure 'max degree of parallelism', 0;
-go
-reconfigure;
+GO
+RECONFIGURE;
+GO
+sp_configure 'max server memory (MB)', 32768;
+GO
+RECONFIGURE;
 GO
 
 /*
@@ -155,10 +160,14 @@ JOIN sys.query_store_plan_feedback AS qspf
 WHERE qspf.feature_id = 3
 
 /*
-	Revert MAXDOP Setting
+	Revert MAXDOP Setting, and max memory
 */
 
 EXEC sp_configure 'max degree of parallelism', 2;  
 GO  
 RECONFIGURE WITH OVERRIDE;  
-GO  
+GO 
+sp_configure 'max server memory (MB)', 8192;
+GO
+RECONFIGURE;
+GO

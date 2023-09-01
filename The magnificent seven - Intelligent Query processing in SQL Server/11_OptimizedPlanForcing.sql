@@ -4,7 +4,7 @@
 	https://github.com/microsoft/bobsql/tree/master/demos/sqlserver2022/IQP/opf
 	
 	Modified by Taiob Ali
-	May 29, 2023
+	August 17, 2023
 	Optimized plan forcing with Query Store
 	Applies to:  SQL Server 2022 (16.x)
 	Available in all Editions
@@ -23,6 +23,8 @@ GO
 	Turn on Actual Execution plan ctrl+M
 	Takes about 26 seconds
 	Notice compile time vs execution time and paste here
+	 SQL Server Execution Times:
+   CPU time = 3672 ms,  elapsed time = 50243 ms.
 */
 
 USE WideWorldImporters;
@@ -79,7 +81,9 @@ GO
 	Find the plan_id and query_id for the recent query. 
 	Notice the column has_compile_replay_script has a value = 1. 
 	This means this query is a candidate for optimized plan forcing. 
-	Take note of the numbers for compile duration and not here:
+	Take note of the numbers for compile duration and note here:
+	avg_compile_ms	last_compile_ms
+  322.417	        322
 */
 
 USE WideWorldImporters;
@@ -100,6 +104,7 @@ GO
 	Run the same join again. 
 	Notice the significant reduction in SQL Server parse and compile time from the initial execution as a % of CPU time for the query. 
 	It can drop down as low as 2-3%.
+	Compare with line 27
 */
 
 USE WideWorldImporters;
@@ -165,8 +170,8 @@ GO
 	Find the plan_id and query_id for the recent query. 
 	Notice the column has_compile_replay_script has a value = 1. 
 	This means this query is a candidate for optimized plan forcing. 
-	Take note of the numbers for compile duration and not here:
-	Comapre with line 81
+	Take note of the numbers for compile duration and note here:
+	Comapre with line 86
 */
 
 USE WideWorldImporters;

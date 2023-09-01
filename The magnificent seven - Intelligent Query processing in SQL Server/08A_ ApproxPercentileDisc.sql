@@ -5,7 +5,8 @@
 	
 	Approximate Percentile
 	Applies to: SQL Server (Starting with SQL Server 2022 (16.x)), Azure SQL Database
-	Available in all Editions
+	Available in all Editions with any Compatibility level
+	The function implementation guarantees up to a 1.33% error bounds within a 99% confidence
 	Using a table with 20,000,000 records
 *************************************************************/
 SET NOCOUNT ON;

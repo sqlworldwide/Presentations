@@ -4,7 +4,7 @@
 	https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
 	
 	Modified by Taiob Ali
-	May 29, 2023
+	August 17, 2023
 	
 	Row mode memory grant feedback
 	Applies to: SQL Server (Starting with SQL Server 2019 (15.x)), Azure SQL Database
@@ -24,6 +24,13 @@ USE [WideWorldImportersDW];
 GO
 
 ALTER DATABASE SCOPED CONFIGURATION CLEAR PROCEDURE_CACHE;
+GO
+
+/*
+	Clean up Query Store data by using the following statement
+*/
+
+ALTER DATABASE WideWorldImportersDW SET QUERY_STORE CLEAR;
 GO
 
 /* Simulate out-of-date stats */
@@ -56,6 +63,15 @@ INNER HASH JOIN Dimension.[Stock Item] AS si
 	ON fo.[Stock Item Key] = si.[Stock Item Key]
 WHERE fo.[Lineage Key] = 9
 	AND si.[Lead Time Days] > 19;
+
+/*
+	We want to ensure we have the latest persisted data in QDS 
+*/
+
+USE [WideWorldImportersDW];
+GO
+EXEC sys.sp_query_store_flush_db;
+GO
 
 /*
 	Is the memory grant value persisted in Query store?

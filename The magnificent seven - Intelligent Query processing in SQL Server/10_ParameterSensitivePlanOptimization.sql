@@ -4,7 +4,7 @@
 	https://github.com/microsoft/bobsql/tree/master/demos/sqlserver2022/IQP/pspopt
 	
 	Modified by Taiob Ali
-	May 29, 2023
+  August 18, 2023
 	Parameter Sensitive Plan optimization
 	Applies to:  SQL Server 2022 (16.x) and later versions
 	Available in all Editions
@@ -25,11 +25,11 @@ GO
 
 sp_configure 'show advanced', 1;
 GO
-reconfigure;
+RECONFIGURE;
 GO
 sp_configure 'max degree of parallelism', 0;
-go
-reconfigure;
+GO
+RECONFIGURE;
 GO
 
 
@@ -43,10 +43,10 @@ GO
 	Note the query plan uses an Index Seek and paste here
 	 First run
 	 SQL Server Execution Times:
-   CPU time = 0 ms,  elapsed time = 62 ms.
+   CPU time = 0 ms,  elapsed time = 71 ms.
 	 After
 	 SQL Server Execution Times:
-   CPU time = 3951 ms,  elapsed time = 719 ms.
+   CPU time = 1640 ms,  elapsed time = 252 ms.
 */
 
 USE WideWorldImporters;
