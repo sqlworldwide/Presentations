@@ -1,14 +1,14 @@
 /*
 Setup3.sql
-Rhode Island Data Platform User Group
-August 09, 2023
+Triangle SQL Server User Group
+October 17, 2023
 Taiob Ali 
 SqlWorldWide.com
 */
 
 /*
-Connect to server risqldemoservertaiob.database.windows.net
-Change database context to nesqldemodatabase
+Connect to server trisqldemoservertaiob.database.windows.net
+Change database context to trisqldemodatabase
 With Azure SQL Database cannot use 'USE DBName' statement
 Create an empty table
 */
