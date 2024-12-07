@@ -4,7 +4,7 @@
 	https://learn.microsoft.com/en-us/sql/relational-databases/performance/query-store-hints?view=azuresqldb-current
 
 	Modified by Taiob Ali
-	May 29, 2023
+	December 6th, 2024
 
 	Query Store Hints
 	Applies to:  SQL Server 2022 (16.x)  Azure SQL Database  Azure SQL Managed Instance
@@ -101,7 +101,7 @@ GO
 	Replace @query_id value from the above query
 */
 
-EXEC sp_query_store_set_hints @query_id=4, @value = N'OPTION(RECOMPILE)';
+EXEC sp_query_store_set_hints @query_id=28, @value = N'OPTION(RECOMPILE)';
 GO
 
 /*
@@ -145,7 +145,7 @@ GO
 	We can remove the hint using sp_query_store_clear_query_hints
 */
 
-EXEC sp_query_store_clear_hints @query_id = 4;
+EXEC sp_query_store_clear_hints @query_id = 28;
 GO
 
 /*

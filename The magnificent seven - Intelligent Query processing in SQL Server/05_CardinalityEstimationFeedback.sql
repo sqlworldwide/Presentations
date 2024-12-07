@@ -4,10 +4,17 @@
 	https://github.com/microsoft/bobsql/tree/master/demos/sqlserver2022/IQP/cefeedback
 	
 	Modified by Taiob Ali
-	May 29, 2023
+	December 6th, 2024
+
 	Cardinality estimation (CE) feedback
 	Applies to: SQL Server 2022 (16.x) and later
 	Enterprise only
+	For Azure SQL Database starting with database compatibility level 160
+
+	https://learn.microsoft.com/en-us/sql/t-sql/queries/hints-transact-sql-query?view=sql-server-ver16#use_hint
+	This demo will show CE feedback 'ASSUME_MIN_SELECTIVITY_FOR_FILTER_ESTIMATES'
+
+	Causes SQL Server to generate a plan using minimum selectivity when estimating AND predicates for filters to account for full correlation. This hint name is equivalent to Trace Flag 4137 when used with cardinality estimation model of SQL Server 2012 (11.x) and earlier versions, and has similar effect when Trace Flag 9471 is used with cardinality estimation model of SQL Server 2014 (12.x) and later versions.
 */
 
 USE master;

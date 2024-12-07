@@ -4,10 +4,10 @@
 	https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
 
 	Modified by Taiob Ali
-	May 29, 2023
+	December 6th, 2024
 
 	Batch mode Memory Grant Feedback
-	Applies to: SQL Server (Starting with SQL Server 2017 (14.x)), Azure SQL Database
+	Applies to: SQL Server (Starting with SQL Server 2017 (14.x)), Azure SQL Database with database compatibility level 140
 	Enterprise only
 	See https://aka.ms/IQP for more background
 	Demo scripts: https://aka.ms/IQPDemos 	
@@ -15,6 +15,12 @@
 	Percentile and persistence mode memory grant feedback
 	Applies to: SQL Server 2022 (16.x) and later
 	Database compatibility level 140 (introduced in SQL Server 2017) or higher
+	Enterprise edition only 
+	Enabled on all Azure SQL Databases by default
+
+	Not applicable for memory grant undre 1 MB
+	Granted memory is more than two times the size of the actual used memory, memory grant feedback will recalculate the memory grant and update the cached plan.
+	Insufficiently sized memory grant condition that result in a spill to disk for batch mode operators, memory grant feedback will trigger a recalculation of the memory grant. 
 
 	Email IntelligentQP@microsoft.com for questions\feedback
 *************************************************************/

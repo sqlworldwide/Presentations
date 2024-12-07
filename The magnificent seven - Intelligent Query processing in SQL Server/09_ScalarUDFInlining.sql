@@ -4,20 +4,22 @@
 	https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
 	
 	Modified by Taiob Ali
-	May 29, 2023
+	December 6th, 2024
 	
 	Scalar UDF inlining
-	Applies to: SQL Server (Starting with SQL Server 2019 (15.x)), Azure SQL Database
+	Applies to: SQL Server (Starting with SQL Server 2019 (15.x)), Azure SQL Database starting with database compatibility level 150
 	Available in all Edition
 	See https://aka.ms/IQP for more background
 	Demo scripts: https://aka.ms/IQPDemos 
+
+	Scalar UDFs are transformed into equivalent relational expressions that are "inlined" into the calling query, often resulting in significant performance gains.
 	Email IntelligentQP@microsoft.com for questions\feedback
 *************************************************************/
 
 USE [master];
 GO
 
-ALTER DATABASE [WideWorldImportersDW] SET COMPATIBILITY_LEVEL = 150;
+ALTER DATABASE [WideWorldImportersDW] SET COMPATIBILITY_LEVEL = 160;
 GO
 
 USE [WideWorldImportersDW];
@@ -28,7 +30,7 @@ GO
 
 /*
 	Adapted from SQL Server Books Online
-	https://docs.microsoft.com/sql/relational-databases/user-defined-functions/scalar-udf-inlining
+	https://learn.microsoft.com/en-us/sql/relational-databases/user-defined-functions/scalar-udf-inlining?view=sql-server-ver16
 */
 
 CREATE OR ALTER FUNCTION 

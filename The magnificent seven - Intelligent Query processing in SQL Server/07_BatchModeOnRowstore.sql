@@ -4,12 +4,24 @@
 	https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
 	
 	Modified by Taiob Ali
-	May 29, 2023
+	December 6th, 2024
+
 	Batch mode on rowstore
-	SQL Server (Starting with SQL Server 2019 (15.x)), Azure SQL Database
+	SQL Server (Starting with SQL Server 2019 (15.x)), Azure SQL Database starting with database compatibility level 160
 	Enterprise only
 	See https://aka.ms/IQP for more background
 	Demo scripts: https://aka.ms/IQPDemos 
+
+	Uses heuristics – during estimation phase
+	-Table sizes
+	-Operators used
+	-Estimated cardinalities 
+
+	Won’t kick in for
+	-Large Object (LOB) column
+	-XML column
+	-Sparse column sets
+
 	mail IntelligentQP@microsoft.com for questions\feedback
 *************************************************************/
 

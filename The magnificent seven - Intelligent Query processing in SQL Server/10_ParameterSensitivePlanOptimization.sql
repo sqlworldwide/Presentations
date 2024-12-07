@@ -4,10 +4,13 @@
 	https://github.com/microsoft/bobsql/tree/master/demos/sqlserver2022/IQP/pspopt
 	
 	Modified by Taiob Ali
-  August 18, 2023
+  December 6th, 2024
+
 	Parameter Sensitive Plan optimization
-	Applies to:  SQL Server 2022 (16.x) and later versions
+	Applies to:  SQL Server 2022 (16.x) and later versions, Azure SQL Database starting with database compatibility level 160
 	Available in all Editions
+
+	Parameter Sensitive Plan optimization addresses the scenario where a single cached plan for a parameterized query is not optimal for all possible incoming parameter values, for example non-uniform data distributions.
 */
 
 USE WideWorldImporters;
@@ -64,13 +67,7 @@ GO
 	Note the query plan uses an Clustered Index Scan and parallelism.
 */
 
-USE WideWorldImporters;
-GO
-ALTER DATABASE SCOPED CONFIGURATION CLEAR PROCEDURE_CACHE;
-GO
--- The best plan for this parameter is an index scan
-EXEC Warehouse.GetStockItemsbySupplier 4;
-GO
+
 
 /*
 	Now go back and run the previous query again. 

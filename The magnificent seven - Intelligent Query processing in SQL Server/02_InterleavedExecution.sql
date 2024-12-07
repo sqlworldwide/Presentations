@@ -4,11 +4,12 @@
 	 https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
 	
 	 Modified by Taiob Ali
-	 May 29, 2023
+	 December 3rd, 2024
 	
 	 Interleaved Execution
-	 Applies to: SQL Server (Starting with SQL Server 2017 (14.x)), Azure SQL Database
+	 Applies to: SQL Server (Starting with SQL Server 2017 (14.x)), Azure SQL Database starting with database compatibility level 140
 	 Available in all editions
+	 
 	 See https://aka.ms/IQP for more background
 	 Demo scripts: https://aka.ms/IQPDemos	 
 	

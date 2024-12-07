@@ -4,10 +4,10 @@
 	https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
 
 	Modified by Taiob Ali
-	June 02, 2023
+	December 3rd, 2024
 	Batch mode Adaptive Join
-	Applies to: SQL Server (Starting with SQL Server 2017 (14.x)), Azure SQL Database
-	Enterprise only
+	Applies to: SQL Server (Starting with SQL Server 2017 (14.x)), Azure SQL Database starting with database compatibility level 140
+	Enterprise edition only
 	
 	See https://aka.ms/IQP for more background
 	Demo scripts: https://aka.ms/IQPDemos 

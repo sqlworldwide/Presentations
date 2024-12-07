@@ -2,7 +2,7 @@
 	Scirpt Name: 00_Setup.sql
 	Setting up database for all the demo
 	Modified by Taiob Ali
-	August 15, 2023
+	December 3rd, 2024
 */
 
 /*
@@ -55,6 +55,8 @@ ALTER DATABASE [WideWorldImportersDW] SET COMPATIBILITY_LEVEL = 160
 GO
 
 /*
+Source: https://github.com/microsoft/sql-server-samples/blob/master/samples/features/intelligent-query-processing/IQP%20Demo%20Setup%20-%20Enlarging%20WideWorldImportersDW.sql
+
 Purpose of this script: make WideWorldImportersDW bigger so you can see more impactful 
 Intelligent QP demonstrations (aka.ms/iqp)
 

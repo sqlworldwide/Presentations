@@ -4,12 +4,14 @@
 	https://github.com/microsoft/sqlworkshops-sql2022workshop/tree/main/sql2022workshop/03_BuiltinQueryIntelligence/persistedmgf
 
 	Modified by Taiob Ali
-	August 17, 2023
+	December 6th, 2024
 
 	Memory Grant Feedback Persistence
-	Applies to: SQL Server 2022 (16.x) and later
-	Database compatibility level 140 (introduced in SQL Server 2017) or higher
+	Applies to: SQL Server 2022 (16.x) and later with	Database compatibility level 140
 	Enterprise only
+	Enabled by default in Azure SQL database
+
+	The initial phases of this project only stored the memory grant adjustment with the plan in the cache – if a plan is evicted from the cache, the feedback process must start again, resulting in poor performance the first few times a query is executed after eviction. The new solution is to persist the grant information with the other query information in the Query Store so that the benefits last across cache evictions.
 	
 	Email IntelligentQP@microsoft.com for questions\feedback
 *************************************************************/
@@ -39,6 +41,16 @@ GO
 UPDATE STATISTICS Fact.OrderHistory 
 WITH ROWCOUNT = 1000;
 GO
+
+/*
+Clean up Query store data
+USE master
+GO
+
+ALTER DATABASE WideWorldImportersdw SET QUERY_STORE CLEAR ALL
+GO
+*/
+
 
 /*
 	Turn on Actual Execution plan ctrl+M
@@ -88,6 +100,7 @@ ON qq.query_text_id = qt.query_text_id
 JOIN sys.query_store_runtime_stats qrs
 ON qp.plan_id = qrs.plan_id;
 GO
+
 
 /*
 	Run the select statement again.
@@ -155,4 +168,10 @@ INNER HASH JOIN Dimension.[Stock Item] AS si
 ON fo.[Stock Item Key] = si.[Stock Item Key]
 WHERE fo.[Lineage Key] = 9
 AND si.[Lead Time Days] > 19;
+GO
+
+/* Cleanup */
+
+UPDATE STATISTICS Fact.OrderHistory 
+WITH ROWCOUNT = 3702672;
 GO

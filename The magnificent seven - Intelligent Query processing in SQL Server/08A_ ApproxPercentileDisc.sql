@@ -1,11 +1,11 @@
 /**************************************************************
 	Scirpt Name: 08A_ ApproxPercentileDisc.sql
 	Written by Taiob Ali
-	June 01, 2023
+  December 6th, 2024
 	
 	Approximate Percentile
-	Applies to: SQL Server (Starting with SQL Server 2022 (16.x)), Azure SQL Database
-	Available in all Editions with any Compatibility level
+	Applies to: SQL Server (Starting with SQL Server 2022 (16.x)) with compatibility level 110, Azure SQL Database with compatibility level 110
+	Available in all Editions
 	The function implementation guarantees up to a 1.33% error bounds within a 99% confidence
 	Using a table with 20,000,000 records
 *************************************************************/
@@ -30,6 +30,7 @@ GO
 /*
 	Turn on Actual Execution plan ctrl+M
 	Using existing PERCENTILE_DISC
+	Computes a specific percentile for sorted values in an entire rowset or within a rowset's distinct partitions in SQL Server. 
 	Takes 2 min 59 seconds to run
 	Estimated subtree cost 10131
 	Memory Grant 822 MB
@@ -69,6 +70,7 @@ GO
 /*
 	Turn on Actual Execution plan ctrl+M
 	Using existing PERCENTILE_CONT
+	Calculates a percentile based on a continuous distribution of the column value in the SQL Server Database Engine. The result is interpolated, and might not equal any of the specific values in the column.
 	Takes 25 seconds to run
 	Estimated subtree cost 2927
 	Memory Grant 1467 MB

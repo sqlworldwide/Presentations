@@ -4,11 +4,12 @@
 	https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
 	
 	Modified by Taiob Ali
-	August 17, 2023
+	December 6th, 2024
 	
 	Row mode memory grant feedback
-	Applies to: SQL Server (Starting with SQL Server 2019 (15.x)), Azure SQL Database
-	Enterprise only
+	Applies to: SQL Server (Starting with SQL Server 2019 (15.x)), Azure SQL Database with database compatibility level 150
+	Enterprise edition only
+
 	See https://aka.ms/IQP for more background
 	Demo scripts: https://aka.ms/IQPDemos 	
 	Email IntelligentQP@microsoft.com for questions\feedback
@@ -44,7 +45,7 @@ GO
 	Execute once to see spills (row mode)
 	Execute a second time to see correction
 
-	First execution look at Table Scan or OrderHistory table
+	First execution look at Table Scan of OrderHistory table
 	Estimated number of rows =1
 	Actual number of rows = 3,702,592
 	Grnated Memory  =1056 KB

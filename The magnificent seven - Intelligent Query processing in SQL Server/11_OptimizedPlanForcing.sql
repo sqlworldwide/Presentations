@@ -4,10 +4,15 @@
 	https://github.com/microsoft/bobsql/tree/master/demos/sqlserver2022/IQP/opf
 	
 	Modified by Taiob Ali
-	August 17, 2023
+	December 6th, 2024
 	Optimized plan forcing with Query Store
 	Applies to:  SQL Server 2022 (16.x)
 	Available in all Editions
+
+	Optimized plan forcing is enabled by default for new databases created in SQL Server 2022 (16.x) and higher. The Query Store must be enabled for every database where optimized plan forcing is used. 
+
+	Only query plans that go through full optimization are eligible, which can be verified by the presence of the StatementOptmLevel="FULL" property.
+	Statements with RECOMPILE hint and distributed queries aren't eligible.
 */
 
 USE WideWorldImporters;
@@ -97,6 +102,7 @@ GO
 /*
 	Edit the script to put in the correct values for the @query_id and @plan_id parameter values. 
 */
+
 EXEC sp_query_store_force_plan @query_id = 1, @plan_id = 1;
 GO
 
@@ -160,6 +166,7 @@ GO
 /*
 	We want to ensure we have the latest persisted data in QDS 
 */
+
 USE WideWorldImporters;
 GO
 EXEC sys.sp_query_store_flush_db;

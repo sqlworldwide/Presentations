@@ -1,13 +1,15 @@
 /********************************************************** 
-	Scirpt Name: 02A_TableVarDefCompilaiton.sql
+	Scirpt Name: 03_TableVarDefCompilaiton.sql
 	This code is copied from
 	https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
 	
 	Modified by Taiob Ali
-	June 02, 2023
+	December 3rd, 2024
 	
 	Table variable deferred compilation
-	Applies to: SQL Server (Starting with SQL Server 2019 (15.x)), Azure SQL Database
+	Applies to: SQL Server (Starting with SQL Server 2019 (15.x)), starting with database compatibility level 150
+	Available in all editions
+
 	See https://aka.ms/IQP for more background
 	Demo scripts: https://aka.ms/IQPDemos 
 	Email IntelligentQP@microsoft.com for questions\feedback

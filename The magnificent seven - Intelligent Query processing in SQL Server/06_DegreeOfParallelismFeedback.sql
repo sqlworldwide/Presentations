@@ -2,10 +2,12 @@
 	Script Name: 06_DegreeOfParallelismFeedback.sql
 	https://github.com/microsoft/bobsql/tree/master/demos/sqlserver2022/IQP/dopfeedback
 	
-	Modified by Taiob Ali
-	August 17, 2023
+  Modified by Taiob Ali
+	December 6th, 2024
+
 	Degree of parallelism (DOP) feedback
-	Applies to: SQL Server 2022 (16.x) and later, Azure SQL Managed Instance, Azure SQL Database (Preview)
+	Applies to: SQL Server 2022 (16.x) and later, Azure SQL Managed Instance, 
+	Azure SQL Database (Preview) starting with database compatibility level 160
 	Enterprise only
 */
 
@@ -22,7 +24,7 @@ sp_configure 'max degree of parallelism', 0;
 GO
 RECONFIGURE;
 GO
-sp_configure 'max server memory (MB)', 32768;
+sp_configure 'max server memory (MB)', 28000;
 GO
 RECONFIGURE;
 GO
@@ -127,7 +129,8 @@ SELECT
 	avg_cpu_time/1000 as avg_cpu_ms, 
 	last_dop, 
 	min_dop, max_dop, 
-	qsrs.count_executions
+	qsrs.count_executions,
+	qsrs.last_execution_time
 FROM sys.query_store_runtime_stats qsrs
 JOIN sys.query_store_plan qsp
 ON qsrs.plan_id = qsp.plan_id
@@ -170,4 +173,12 @@ GO
 sp_configure 'max server memory (MB)', 8192;
 GO
 RECONFIGURE;
+GO
+
+/*
+	Stop the extended event session
+*/
+
+ALTER EVENT SESSION [DOPFeedback] ON SERVER
+STATE = STOP;
 GO
