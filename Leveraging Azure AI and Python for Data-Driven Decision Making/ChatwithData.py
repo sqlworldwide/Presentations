@@ -34,7 +34,7 @@ final_prompt = ChatPromptTemplate.from_messages(
 
 os.environ["SQL_SERVER_USERNAME"] = "taiob"
 os.environ["SQL_SERVER_ENDPOINT"] = "ta-aidemosqlserver.database.windows.net"
-os.environ["SQL_SERVER_PASSWORD"] = "*********"
+os.environ["SQL_SERVER_PASSWORD"] = "*****************"
 os.environ["SQL_SERVER_DATABASE"] = "testdata"
 
 # And then environment variables for OpenAI
@@ -44,7 +44,7 @@ os.environ["AZURE_OPENAPI_API_VERSION"] = "2024-08-01-preview"
 os.environ["AZURE_ENDPOINT"] = "https://ta-openai.openai.azure.com/"
 os.environ["AZURE_OPENAI_ENDPOINT"] = "https://ta-openai.openai.azure.com/"
 # Get the key from openAI deployment in Azure. 
-os.environ["AZURE_OPENAI_API_KEY"] = "******************************************************"
+os.environ["AZURE_OPENAI_API_KEY"] = "******************************************************************"
 
 # Set up the dictionary to hold the database connection details
 db_config = {
