@@ -3,53 +3,62 @@
 Written by Taiob Ali
 taiob@sqlworlwide.com
 https://bsky.app/profile/sqlworldwide.bsky.social
-https://twitter.com/SqlWorldWide
 https://sqlworldwide.com/
 https://www.linkedin.com/in/sqlworldwide/
+
+Tested on:
+SQL Server 2022 CU20
+SSMS 21.4.8
 
 Code copied from this link and modified for this presentation
 https://www.red-gate.com/simple-talk/wp-content/uploads/RedGateBooks/ShawnMcGehee/sql-server-backup-restore.pdf
 
-Last Modiefied
-August 28, 2023
+Last Modified
+July 21, 2025
 	
-Tested on :
-SQL Server 2022 CU7
-SSMS 19.1
-
-We don't need to be taking file backups in order to perform a partial/piecemeal restore. 
+We don't need to be taking file backups in order to perform a partial/piecemeal restore
 If the database is small enough, we can still take full database backups and then restore just a certain filegroup from that backup file as shown in this demo
 */
 
+/*
+Ensure backup directory exists
+*/
+DECLARE @BackupPath NVARCHAR(256) = N'C:\Temp\backupOverview\';
+DECLARE @CreateDirCmd NVARCHAR(500) = N'mkdir "' + @BackupPath + '"';
+EXEC master.sys.xp_cmdshell @CreateDirCmd, NO_OUTPUT;
 
 /*
-Delete all old backups
+Clean up old backup files
 */
-
 EXEC master.sys.xp_delete_files N'C:\Temp\backupOverview\*'
 
 /*
 Setting up database and tables for demo
 */
-
 USE master;
 GO
-
-DECLARE @SQL nvarchar(1000);
-
 IF EXISTS (SELECT 1 FROM sys.databases WHERE [name] = N'piecemealRestoreTest')
-  BEGIN
-    SET @SQL = 
-      N'USE [master];
-       ALTER DATABASE piecemealRestoreTest SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-       USE [master];
-       DROP DATABASE piecemealRestoreTest;';
+BEGIN
+  PRINT 'Database piecemealRestoreTest exists, dropping it...'
+
+  -- Kill any active connections first
+  DECLARE @SQL NVARCHAR(1000) = 
+      N'ALTER DATABASE piecemealRestoreTest SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+        DROP DATABASE piecemealRestoreTest;';
+
+  BEGIN TRY
     EXEC (@SQL);
-  END;
+    PRINT 'Database dropped successfully.'
+  END TRY
+  BEGIN CATCH
+    PRINT 'Error dropping database: ' + ERROR_MESSAGE();
+    RETURN;
+  END CATCH
+END
 ELSE
-  BEGIN
-    PRINT 'Database piecemealRestoreTest does not exist, creating a new one'
-  END
+BEGIN
+  PRINT 'Database piecemealRestoreTest does not exist, creating a new one...'
+END
 GO
 
 CREATE DATABASE piecemealRestoreTest ON PRIMARY 
@@ -69,15 +78,21 @@ GO
 ALTER DATABASE piecemealRestoreTest SET RECOVERY FULL;
 GO
 
-IF NOT EXISTS 
-	(	SELECT  name                 
-		FROM sys.filegroups 
-		WHERE is_default = 1
-		AND name = N'Secondary'
-	)  
+/*
+Check if Secondary filegroup is the default
+*/
+IF NOT EXISTS (
+	SELECT  name                 
+	FROM sys.filegroups 
+	WHERE is_default = 1
+	AND name = N'Secondary'
+)  
 ALTER DATABASE piecemealRestoreTest MODIFY FILEGROUP [Secondary] DEFAULT;
 GO
 
+/*
+Create demo tables in both filegroups
+*/
 USE piecemealRestoreTest;
 GO  
 
@@ -89,11 +104,14 @@ CREATE TABLE dbo.messageSecondary
 (Message NVARCHAR(50) NOT NULL) ON  [SECONDARY];
 GO  
 
+/*
+Insert data into both tables
+*/
 INSERT INTO dbo.messagePrimary
 VALUES ('This is the data for the primary filegroup');
 GO
 
-INSERT INTO messageSecondary 
+INSERT INTO messageSecondary
 VALUES ('This is the data for the secondary filegroup');
 GO
 
@@ -102,7 +120,6 @@ Highly recommended to start with a full backup of the whole database
 We are skipping that for demo puroses
 Taking file backups followed by transaction log backup so transactions can be rolled forward
 */
-
 USE master;
 GO
 
@@ -155,7 +172,6 @@ GO
 /*
 Select from tables from both filegroups
 */
-
 USE piecemealRestoreTest;
 GO
 
@@ -168,7 +184,6 @@ GO
 /*
 Restore secondary filegroup only followed by subsequent log backups
 */
-
 USE master;
 GO 
 
@@ -185,7 +200,6 @@ GO
 /*
 Select from tables from both filegroups
 */
-
 USE piecemealRestoreTest;
 GO
 
@@ -198,7 +212,6 @@ GO
 /*
 Clean up
 */
-
 USE master;
 GO
 

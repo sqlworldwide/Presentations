@@ -3,20 +3,20 @@
 Written by Taiob Ali
 taiob@sqlworlwide.com
 https://bsky.app/profile/sqlworldwide.bsky.social
-https://twitter.com/SqlWorldWide
 https://sqlworldwide.com/
 https://www.linkedin.com/in/sqlworldwide/
+
+
+Tested on:
+SQL Server 2022 CU20
+SSMS 21.4.8
 
 Code copied from this link and modified for this presentation
 https://www.red-gate.com/simple-talk/wp-content/uploads/RedGateBooks/ShawnMcGehee/sql-server-backup-restore.pdf
 
-Last Modiefied
-August 28, 2023
+Last Modified
+July 21, 2025
 	
-Tested on :
-SQL Server 2022 CU7
-SSMS 19.1
-
 Read more about file backups
 https://learn.microsoft.com/en-us/sql/relational-databases/backup-restore/full-file-backups-sql-server?view=sql-server-ver16&redirectedfrom=MSDN
 
@@ -25,37 +25,50 @@ Transaction logs are necessary to roll forward transactions when restoring file 
 Reduce the number of log files that need processing can be achieved by taking differnetial file backups
 */
 
+/*
+Ensure backup directory exists
+*/
+DECLARE @BackupPath NVARCHAR(256) = N'C:\Temp\backupOverview\';
+DECLARE @CreateDirCmd NVARCHAR(500) = N'mkdir "' + @BackupPath + '"';
+EXEC master.sys.xp_cmdshell @CreateDirCmd, NO_OUTPUT;
 
 /*
-Delete all old backups
+Clean up old backup files
 */
-
 EXEC master.sys.xp_delete_files N'C:\Temp\backupOverview\*'
 
 /*
 Setting up database and tables for demo
 */
-
 USE master;
 GO
-
-DECLARE @SQL nvarchar(1000);
-
 IF EXISTS (SELECT 1 FROM sys.databases WHERE [name] = N'fileBackupTest')
-  BEGIN
-    SET @SQL = 
-      N'USE [master];
-       ALTER DATABASE fileBackupTest SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-       USE [master];
-       DROP DATABASE fileBackupTest;';
+BEGIN
+  PRINT 'Database fileBackupTest  exists, dropping it...'
+
+  -- Kill any active connections first
+  DECLARE @SQL NVARCHAR(1000) = 
+    N'ALTER DATABASE fileBackupTest SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+      DROP DATABASE fileBackupTest;';
+
+  BEGIN TRY
     EXEC (@SQL);
-  END;
+    PRINT 'Database dropped successfully.'
+  END TRY
+  BEGIN CATCH
+    PRINT 'Error dropping database: ' + ERROR_MESSAGE();
+    RETURN;
+  END CATCH   
+END
 ELSE
-  BEGIN
-    PRINT 'Database fileBackupTest does not exist, creating a new one'
-  END
+BEGIN
+  PRINT 'Database fileBackupTest does not exist, creating a new one...'
+END
 GO
 
+/*
+Create database fileBackupTest
+*/
 CREATE DATABASE fileBackupTest ON PRIMARY 
 	(	NAME = N'fileBackupTest', 
 		FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\fileBackupTest.mdf', 
@@ -73,6 +86,9 @@ GO
 ALTER DATABASE fileBackupTest SET RECOVERY FULL;
 GO
 
+/*
+Create tables for testing
+*/
 USE fileBackupTest;
 GO  
 
@@ -84,6 +100,9 @@ CREATE TABLE dbo.table_DF2
 (Message NVARCHAR(50) NOT NULL) ON  [SECONDARY];
 GO  
 
+/*
+Insert initial data into tables
+*/
 INSERT INTO table_DF1 
 VALUES ('This is the initial data load for the table_DF1');
 GO
@@ -96,7 +115,6 @@ GO
 Perform full file backups of each of our data files for the Database fileBackupTest
 Show it from the GUI first
 */
-
 BACKUP DATABASE fileBackupTest
 FILEGROUP = N'Primary' 
 TO  DISK = N'C:\Temp\backupOverview\fileBackupTest_FG1_Full.bak';
@@ -112,9 +130,8 @@ TO DISK = N'C:\Temp\backupOverview\fileBackupTest_log.trn';
 GO
 
 /*
-Insert another record into the tables
+Insert another set of records into the tables
 */
-
 USE fileBackupTest;
 GO  
  
@@ -131,7 +148,6 @@ Perform differential file backup
 Not using filegroup here, need to list all files in the filegroup
 In our case we only have one
 */
-
 BACKUP DATABASE fileBackupTest
 FILE = N'fileBackupTest' 
 TO  DISK = N'C:\Temp\backupOverview\fileBackupTest_FG1_Diff.bak'
@@ -146,9 +162,8 @@ GO
 
 /*
 Note the time here:
-2023-08-26 08:22:09.357
+2025-07-13 10:28:42.670
 */
-
 SELECT GETDATE();
 GO
 
@@ -156,7 +171,6 @@ GO
 Insert another record into the tables
 Take a transaction log backup
 */
-
 USE fileBackupTest;
 GO  
  
@@ -173,13 +187,12 @@ TO DISK = N'C:\Temp\backupOverview\fileBackupTest_log2.trn';
 GO
 
 /*
-Insert another record into the tables that is not in any backup
+Insert another set of records into the tables that is not in any backup
 */
-
 USE fileBackupTest;
-GO  
- 
-INSERT INTO table_DF1 
+GO
+
+INSERT INTO table_DF1
 VALUES ('This is the third data load for the table_DF1');
 GO
 
@@ -190,8 +203,8 @@ GO
 /*
 Look at restore scenarios
 Taking a tail log backup with NORECOVERY
+In SQL Server, performing a log backup with the NORECOVERY option is often done to prepare a database for a restore operation. This backup type preserves the transaction log and keeps the database in a "restoring" state, preventing further modifications until a recovery operation is performed.
 */
-
 USE master;
 GO
 
@@ -204,13 +217,12 @@ GO
 Restore first set of full bakcups
 Look at the message why SQL Server could not bring the database online
 */
-
 USE master;
 GO 
 
 RESTORE DATABASE fileBackupTest FILE = N'fileBackupTest'  
 FROM DISK = N'C:\Temp\backupOverview\fileBackupTest_FG1_Full.bak'
-WITH REPLACE; ; 
+WITH REPLACE;
 GO  
 
 RESTORE DATABASE fileBackupTest FILE = N'fileBackupTestUserData1'  
@@ -222,7 +234,6 @@ GO
 Restore differential
 skipping the first transaction log backup
 */
-
 USE master;
 GO 
 
@@ -239,7 +250,6 @@ GO
 /*
 Restoring the second transaction log backup
 */
-
 USE master;
 GO 
 
@@ -251,19 +261,17 @@ GO
 /*
 Restoring the tail log backup with RECOVERY
 */
-
 USE master;
 GO 
 
 RESTORE DATABASE fileBackupTest  
-FROM DISK = N'C:\Temp\backupOverview\fileBackupTest_tail-log.trn' 
+FROM DISK = N'C:\Temp\backupOverview\fileBackupTest_tail-log.trn'
 WITH RECOVERY; 
 GO
 
 /*
 Check if we restored all the data
 */
-
 USE fileBackupTest;
 GO
 
@@ -275,9 +283,8 @@ GO
 
 /*
 Restoring to a point in time
-Copy the time from 361 line and past at line 501
+Copy the time from 165 line and past at line 312
 */
-
 USE master;
 GO 
 
@@ -303,13 +310,12 @@ GO
 
 RESTORE DATABASE fileBackupTest 
 FROM DISK = N'C:\Temp\backupOverview\fileBackupTest_log2.trn' 
-WITH RECOVERY, STOPAT = '2023-08-26 08:22:09.357' 
+WITH RECOVERY, STOPAT = '2025-07-13 10:28:42.670' 
 GO
 
 /*
 We should only have the first two records in each table
 */
-
 USE fileBackupTest;
 GO
 
@@ -322,7 +328,6 @@ GO
 /*
 Simulate a file (not in Primary Group) damaged or missing
 */
-
 USE master;
 GO
 
@@ -334,6 +339,8 @@ delete this file
 C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\fileBackupTestUserData1.ndf
 Attempt to bring the database online
 */
+EXEC master.sys.xp_delete_files 'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\fileBackupTestUserData1.ndf';
+GO
 
 USE master;
 GO
@@ -341,9 +348,18 @@ ALTER DATABASE fileBackupTest SET ONLINE
 GO
 
 /*
+What is the status of database tailLogTest database?
+*/
+SELECT 
+	name, 
+	state,
+	state_desc
+FROM sys.databases 
+WHERE name ='fileBackupTest'
+
+/*
 Take a tail log backup
 */
-
 USE master;
 GO
 
@@ -355,7 +371,6 @@ GO
 /*
 Restore missing file only
 */
-
 USE master;
 GO 
 
@@ -370,11 +385,6 @@ WITH NORECOVERY;
 GO
 
 RESTORE DATABASE fileBackupTest 
-FROM DISK = N'C:\Temp\backupOverview\fileBackupTest_log2.trn' 
-WITH NORECOVERY;
-GO
-
-RESTORE DATABASE fileBackupTest 
 FROM DISK = N'C:\Temp\backupOverview\fileBackupTest_tail-log1.trn' 
 WITH RECOVERY;
 GO
@@ -383,7 +393,6 @@ GO
 /*
 Did it work?
 */
-
 USE fileBackupTest;
 GO
 
@@ -396,7 +405,6 @@ GO
 /*
 Clean up
 */
-
 USE master;
 GO
 

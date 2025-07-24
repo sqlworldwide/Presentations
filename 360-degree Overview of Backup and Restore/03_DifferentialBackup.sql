@@ -3,103 +3,119 @@
 Written by Taiob Ali
 taiob@sqlworlwide.com
 https://bsky.app/profile/sqlworldwide.bsky.social
-https://twitter.com/SqlWorldWide
 https://sqlworldwide.com/
 https://www.linkedin.com/in/sqlworldwide/
 
-Code copied from this link and modified for this presentation
-https://www.red-gate.com/simple-talk/wp-content/uploads/RedGateBooks/ShawnMcGehee/sql-server-backup-restore.pdf
 
-Last Modiefied
-August 28, 2023
-	
-Tested on :
-SQL Server 2022 CU7
-SSMS 19.1
+Tested on:
+SQL Server 2022 CU20
+SSMS 21.4.8
 
-We don't need to be taking file backups in order to perform a partial/piecemeal restore. 
-If the database is small enough, we can still take full database backups and then restore just a certain filegroup from that backup file as shown in this demo
+Last Modified
+July 21, 2025
 */
 
 /*
-Delete all old backups
+Ensure backup directory exists
 */
+DECLARE @BackupPath NVARCHAR(256) = N'C:\Temp\backupOverview\';
+DECLARE @CreateDirCmd NVARCHAR(500) = N'mkdir "' + @BackupPath + '"';
+EXEC master.sys.xp_cmdshell @CreateDirCmd, NO_OUTPUT;
 
+/*
+Clean up old backup files
+*/
 EXEC master.sys.xp_delete_files N'C:\Temp\backupOverview\*'
 
 /*
 Setting up database and tables for demo
 */
-
 USE master;
 GO
-DECLARE @SQL nvarchar(1000);
-
 IF EXISTS (SELECT 1 FROM sys.databases WHERE [name] = N'backupOverview')
-  BEGIN
-    SET @SQL = 
-      N'USE [master];
-       ALTER DATABASE backupOverview SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-       USE [master];
-       DROP DATABASE backupOverview;';
+BEGIN
+  PRINT 'Database backupOverview exists, dropping it...'
+    
+  -- Kill any active connections first
+  DECLARE @SQL NVARCHAR(1000) = 
+    N'ALTER DATABASE backupOverview SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+      DROP DATABASE backupOverview;';
+    
+  BEGIN TRY
     EXEC (@SQL);
-  END;
+    PRINT 'Database dropped successfully.'
+  END TRY
+  BEGIN CATCH
+    PRINT 'Error dropping database: ' + ERROR_MESSAGE();
+    RETURN;
+  END CATCH
+END
 ELSE
-  BEGIN
-    PRINT 'Database backupOverview does not exist, creating a new one'
-  END
+BEGIN
+  PRINT 'Database backupOverview does not exist, creating a new one...'
+END
 GO
 
+/*
+Create database backupOverview
+*/
 CREATE DATABASE backupOverview;
 GO
 
-ALTER DATABASE backupOverview SET RECOVERY FULL ;
+/*
+Set recovery model 
+*/
+ALTER DATABASE backupOverview SET RECOVERY FULL;
 GO
 
+/*
+Create demo table 
+*/
 USE backupOverview;
 GO
-SET NOCOUNT ON;
-GO
-DROP TABLE IF EXISTS dbo.backupTestTable ;
+DROP TABLE IF EXISTS dbo.backupTestTable;
 GO
 
 CREATE TABLE dbo.backupTestTable
 (
-  backupTestTableID bigint IDENTITY(1,1) NOT NULL,
-  insertTime datetime2 DEFAULT getdate() NOT NULL
+  backupTestTableID BIGINT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+  insertTime DATETIME2 DEFAULT GETDATE() NOT NULL,
+  sampleData NVARCHAR(100) DEFAULT 'Sample data for backup demo',
+  INDEX IX_backupTestTable_insertTime NONCLUSTERED (insertTime)
 );
 GO
 
+/*
+Create stored procedure
+*/
 DROP PROCEDURE IF EXISTS dbo.p_backupTestTable_ins;
 GO
 
-SET ANSI_NULLS ON;
-GO
-SET QUOTED_IDENTIFIER OFF;
-GO
-
 CREATE PROCEDURE dbo.p_backupTestTable_ins
+  @RecordCount INT = 1
 AS
-SET NOCOUNT ON 
-
-INSERT INTO backupOverview.dbo.backupTestTable
-	(
-		insertTime
-	)
-VALUES
-	(
-		getdate()
-	);
-SET NOCOUNT OFF
-RETURN 0;
+BEGIN
+  SET NOCOUNT ON;
+  
+  DECLARE @Counter INT = 1;
+  
+  WHILE @Counter <= @RecordCount
+  BEGIN
+      INSERT INTO dbo.backupTestTable (insertTime, sampleData)
+      VALUES (GETDATE(), 'Demo record ' + CAST(@Counter AS NVARCHAR(10)));
+      
+      SET @Counter = @Counter + 1;
+  END
+    
+  PRINT 'Inserted ' + CAST(@RecordCount AS NVARCHAR(10)) + ' records';
+END
 GO
 
 /*
 Insert 5 rows
 Take a full backup
 */
-
-USE master;
+USE backupOverview;
 GO 
 
 EXEC backupOverview.dbo.p_backupTestTable_ins;
@@ -114,7 +130,6 @@ Run this three times
 Insert 5 rows
 Take a diffential backup after each 5 row insert
 */
-
 EXEC backupOverview.dbo.p_backupTestTable_ins;
 GO 5
 
@@ -142,34 +157,47 @@ How many rows we have now?
 What backups I need to restore all 20 rows?
 Do we need to restore all three differential backup to get all twenty rows?
 */
-
 USE master;
-GO 
+GO
+-- Step 1: Kill connections and set single user mode
+BEGIN TRY
+  ALTER DATABASE backupOverview SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+  PRINT 'Database set to single user mode successfully.';
+END TRY
+BEGIN CATCH
+  PRINT 'Error setting single user mode: ' + ERROR_MESSAGE();
+END CATCH
 
+-- Step 2: Perform restore
+USE master;
+GO
 RESTORE DATABASE backupOverview
-FROM DISK =N'C:\Temp\backupOverview\backupOverview_full.bak'
+FROM DISK = N'C:\Temp\backupOverview\backupOverview_full.bak'
 WITH REPLACE, NORECOVERY; 
 GO  
 
+--Note which differential backup we are restoring?
 RESTORE DATABASE backupOverview
-FROM DISK =N'C:\Temp\backupOverview\backupOverview_diff3.diff'
+FROM DISK = N'C:\Temp\backupOverview\backupOverview_diff3.diff'
 WITH RECOVERY; 
 GO  
+
+-- Step 3: Set back to multi-user mode
+ALTER DATABASE backupOverview SET MULTI_USER;
+GO
 
 /*
 Confirm we have all the 20 records
 */
-
 USE backupOverview;
 GO
 
-SELECT * FROM backupTestTable;
+SELECT COUNT(*) AS TotalRecords FROM backupTestTable;
 GO
 
 /*
 Clean up
 */
-
 USE master;
 GO
 
