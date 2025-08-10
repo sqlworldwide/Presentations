@@ -1,28 +1,36 @@
 /*************************************************************
-	Scirpt Name: 07_BatchModeOnRowstore.sql
-	This code is copied from
-	https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
+07_BatchModeOnRowstore.sql
+Written by Taiob Ali
+taiob@sqlworlwide.com
+https://bsky.app/profile/sqlworldwide.bsky.social
+https://sqlworldwide.com/
+https://www.linkedin.com/in/sqlworldwide/
+
+Last Modiefied
+August 08, 2025
 	
-	Modified by Taiob Ali
-	December 6th, 2024
+Tested on :
+SQL Server 2022 CU20
+SSMS 21.4.8
 
-	Batch mode on rowstore
-	SQL Server (Starting with SQL Server 2019 (15.x)), Azure SQL Database starting with database compatibility level 160
-	Enterprise only
-	See https://aka.ms/IQP for more background
-	Demo scripts: https://aka.ms/IQPDemos 
+This code is copied from
+https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
+	
+Batch mode on rowstore
+SQL Server (Starting with SQL Server 2019 (15.x)), Azure SQL Database starting with database compatibility level 160
+Enterprise only
+See https://aka.ms/IQP for more background
+Demo scripts: https://aka.ms/IQPDemos 
 
-	Uses heuristics – during estimation phase
-	-Table sizes
-	-Operators used
-	-Estimated cardinalities 
+Uses heuristics – during estimation phase
+-Table sizes
+-Operators used
+-Estimated cardinalities 
 
-	Won’t kick in for
-	-Large Object (LOB) column
-	-XML column
-	-Sparse column sets
-
-	mail IntelligentQP@microsoft.com for questions\feedback
+Won’t kick in for
+-Large Object (LOB) column
+-XML column
+-Sparse column sets
 *************************************************************/
 
 USE [master];
@@ -42,6 +50,7 @@ Turn on Actual Execution plan ctrl+M
 Row mode due to hint
 Look at the properties of OrderHistoryExtended table scan
 Also notice storage type = RowStore
+Notice the CpuTime and ElapsedTime
 */
 
 SELECT [Tax Rate],
@@ -61,7 +70,8 @@ ORDER BY [Tax Rate],
 OPTION (RECOMPILE, USE HINT('DISALLOW_BATCH_MODE'));
 
 /* 
-	Batch mode on rowstore eligible 
+Batch mode on rowstore eligible 
+Notice the CpuTime and ElapsedTime and compare with previous run
 */
 
 SELECT [Tax Rate],
@@ -81,7 +91,8 @@ ORDER BY [Tax Rate],
 OPTION (RECOMPILE);
 
 /* 
-	If you want to see that this feature is not available pre 2019 (15.x) 
+If you want to see that this feature is not available pre 2019 (15.x) 
+CpuTime and ElapsedTime is back to rowmode run
 */
 
 ALTER DATABASE [WideWorldImportersDW] SET COMPATIBILITY_LEVEL = 140;
@@ -105,7 +116,7 @@ OPTION (RECOMPILE);
 GO
 
 /* 
-	Revert compatibility level for next demo 
+Revert compatibility level for next demo 
 */
 
 ALTER DATABASE [WideWorldImportersDW] SET COMPATIBILITY_LEVEL = 150;

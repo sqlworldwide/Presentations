@@ -1,17 +1,27 @@
 /************************************************************ 
-	Scirpt Name: 01_AdaptiveJoin_BatchMode.sql
-	This code is copied from
-	https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
+01_AdaptiveJoin_BatchMode.sql
+Will also demo that Bathmode on Rowstore qualifes for Adaptive Join from compatibility mode 150
+Written by Taiob Ali
+taiob@sqlworlwide.com
+https://bsky.app/profile/sqlworldwide.bsky.social
+https://twitter.com/SqlWorldWide
+https://sqlworldwide.com/
+https://www.linkedin.com/in/sqlworldwide/
 
-	Modified by Taiob Ali
-	December 3rd, 2024
-	Batch mode Adaptive Join
+Last Modiefied
+August 05, 2025
+	
+Tested on :
+SQL Server 2022 CU20
+SSMS 21.4.8
+	
+This code is copied from
+https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
+
+Batch mode Adaptive Join
 	Applies to: SQL Server (Starting with SQL Server 2017 (14.x)), Azure SQL Database starting with database compatibility level 140
 	Enterprise edition only
 	
-	See https://aka.ms/IQP for more background
-	Demo scripts: https://aka.ms/IQPDemos 
-	Email IntelligentQP@microsoft.com for questions\feedback
 *************************************************************/
 
 USE [master];
@@ -28,7 +38,14 @@ GO
 
 /*
  Turn on Actual Execution plan ctrl+M
- Order table has a clustered columnstore index 
+ Notice Order table has a clustered columnstore index 
+ Notice the operators related to adaptive join in propterties:
+ -Actual execution mode
+ -Estimated join type
+ -Actual join type
+ -Is adaptive
+ -Description
+ -Adaptive threshold rows
 */
 
 SELECT [fo].[Order Key], [si].[Lead Time Days], [fo].[Quantity]
@@ -74,8 +91,8 @@ GO
 /*
 	Question:
 	With the introduction of Batch Mode on Rowstore can I take adavantge of adaptive join in rowstore?
-	Yes 
-	Ref: https://www.sqlshack.com/sql-server-2019-new-features-batch-mode-on-rowstore/
+	Yes from SQL Server 2019 and with Compatibility level 150
+	
 	Set up before you can run the demo code:
 	Restore Adventureworks database
 	https://learn.microsoft.com/en-us/sql/samples/adventureworks-install-configure?view=sql-server-ver15&tabs=ssms
@@ -85,7 +102,6 @@ GO
 
 /*
 	Turn on Actual Execution plan ctrl+M
-	Show with Live Query Stats
 	SalesOrderDetailEnlarged table only rowstore, we get batch mode on rowstore and followed by
 	adaptive join
 */
@@ -151,6 +167,7 @@ GO
 	Turn on Actual Execution plan ctrl+M
 	Execute same stored procedure with 2 different parameter value
 	Turn on Actual Execution plan ctrl+M
+	Depends on if the first one will qualify for an adaptive join, the second one will use the same plan
 */
 
 EXEC dbo.countByQuantity 10;
@@ -177,6 +194,8 @@ GO
 
 /* 
 	Turn on Actual Execution plan ctrl+M 
+	This time we reverse the execution order
+	As the first query qualified for the adaptive join and the plan is cached, second query will use the same plan
 */
 
 EXEC dbo.countByQuantity 361;

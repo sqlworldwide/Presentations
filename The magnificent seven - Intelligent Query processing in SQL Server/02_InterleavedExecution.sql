@@ -1,27 +1,29 @@
 /*************************************************************
-	 Script Name: 02_InterleavedExecution.sql
-	 This code is copied from
-	 https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
+02_InterleavedExecution.sql
+Written by Taiob Ali
+taiob@sqlworlwide.com
+https://bsky.app/profile/sqlworldwide.bsky.social
+https://twitter.com/SqlWorldWide
+https://sqlworldwide.com/
+https://www.linkedin.com/in/sqlworldwide/
+
+Last Modiefied
+August 05, 2025
 	
-	 Modified by Taiob Ali
-	 December 3rd, 2024
+Tested on :
+SQL Server 2022 CU20
+SSMS 21.4.8
+
+This code is copied from
+https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
 	
-	 Interleaved Execution
-	 Applies to: SQL Server (Starting with SQL Server 2017 (14.x)), Azure SQL Database starting with database compatibility level 140
-	 Available in all editions
-	 
-	 See https://aka.ms/IQP for more background
-	 Demo scripts: https://aka.ms/IQPDemos	 
-	
-	 Last updated 1/29/2020 (Credit: Milos Radivojevic)
-	 Changed @event to varchar(30) from varchar(15)
-	 Added date range to 'Mild Recession' branch
-	
-	 Email IntelligentQP@microsoft.com for questions\feedback
+Interleaved Execution
+Applies to: SQL Server (Starting with SQL Server 2017 (14.x)), Azure SQL Database starting with database compatibility level 140
+Available in all editions	 
 **************************************************************/
 
 /*
-	Create a multi-statement table-valued functions (MSTVFs)
+Create a multi-statement table-valued functions (MSTVFs)
 */
 
 USE [WideWorldImportersDW];
@@ -43,10 +45,10 @@ AS
 BEGIN
 
 -- Valid @event values
-	-- 'Mild Recession'
-	-- 'Hurricane - South Atlantic'
-	-- 'Hurricane - East South Central'
-	-- 'Hurricane - West South Central'
+-- 'Mild Recession'
+-- 'Hurricane - South Atlantic'
+-- 'Hurricane - East South Central'
+-- 'Hurricane - West South Central'
 	IF @event = 'Mild Recession'
     INSERT  @OutlierEventQuantity
 	SELECT [o].[Order Key], [o].[City Key], [o].[Customer Key],
@@ -90,9 +92,9 @@ BEGIN
 		   END
 	FROM [Fact].[Order] AS [o]
 	INNER JOIN [Dimension].[City] AS [c]
-		ON [c].[City Key] = [o].[City Key]
+	ON [c].[City Key] = [o].[City Key]
 	INNER JOIN [Dimension].[Stock Item] AS [si]
-		ON [si].[Stock Item Key] = [o].[Stock Item Key]
+	ON [si].[Stock Item Key] = [o].[Stock Item Key]
 	WHERE [c].[State Province] IN
 	('Alabama', 'Kentucky', 'Mississippi', 'Tennessee')
 	AND [si].[Buying Package] = 'Carton'
@@ -111,9 +113,9 @@ BEGIN
 		   END
 	FROM [Fact].[Order] AS [o]
 	INNER JOIN [Dimension].[City] AS [c]
-		ON [c].[City Key] = [o].[City Key]
+	ON [c].[City Key] = [o].[City Key]
 	INNER JOIN [Dimension].[Customer] AS [cu]
-		ON [cu].[Customer Key] = [o].[Customer Key]
+	ON [cu].[Customer Key] = [o].[Customer Key]
 	WHERE [c].[State Province] IN
 	('Arkansas', 'Louisiana', 'Oklahoma', 'Texas')
 	AND [o].[Order Date Key] BETWEEN @beginOrderDateKey AND @endOrderDateKey
@@ -123,7 +125,7 @@ END
 GO
 
 /* 
-	Demo starts here 
+Demo starts here 
 */
 
 USE [master];
@@ -139,14 +141,18 @@ ALTER DATABASE SCOPED CONFIGURATION CLEAR PROCEDURE_CACHE;
 GO
 
 /*
-	Turn on Actual Execution plan ctrl+M
-	look at the new estimated number of rows=100 at Node Id =4, Table scan
-	Look at the spill warning due to low estimate
-	Show the new attribute 'ContainsInterleavedExecutionCandidates' but not executed
+Turn on Actual Execution plan ctrl+M
+look at the new estimated number of rows=100 at Node Id =4, Table scan
+Look at the spill warning due to low estimate
+Show the new attribute 'ContainsInterleavedExecutionCandidates' but not executed from rote node properties
 */
 
-SELECT [fo].[Order Key], [fo].[Description], [fo].[Package],
-		[fo].[Quantity], [foo].[OutlierEventQuantity]
+SELECT 
+	[fo].[Order Key], 
+	[fo].[Description], 
+	[fo].[Package],
+	[fo].[Quantity], 
+	[foo].[OutlierEventQuantity]
 FROM [Fact].[Order] AS [fo]
 INNER JOIN [Fact].[ufn_WhatIfOutlierEventQuantity]
  ('Mild Recession',
@@ -161,15 +167,15 @@ AND [fo].[Picked Date Key] = [foo].[Picked Date Key]
 AND [fo].[Salesperson Key] = [foo].[Salesperson Key]
 AND [fo].[Picker Key] = [foo].[Picker Key]
 INNER JOIN [Dimension].[Stock Item] AS [si] 
-	ON [fo].[Stock Item Key] = [si].[Stock Item Key]
+ON [fo].[Stock Item Key] = [si].[Stock Item Key]
 WHERE [si].[Lead Time Days] > 0
-	AND [fo].[Quantity] > 50;
+AND [fo].[Quantity] > 50;
 GO
 
 /*
-	We no longer have spill-warnings, as we're granting more memory based on the true row count 
-	flowing from the MSTVF table scan
-	look at the new estimated and actual row for the function call
+We no longer have spill-warnings, as we're granting more memory based on the true row count 
+flowing from the MSTVF table scan
+look at the new estimated and actual row for the function call
 */
 
 USE [master];
@@ -185,12 +191,17 @@ ALTER DATABASE SCOPED CONFIGURATION CLEAR PROCEDURE_CACHE;
 GO
 
 /*
-	Show the new attribute 'ContainsInterleavedExecutionCandidates' in the root node
-	Show the new attribute 'IsInterleavedExecuted' in the table valued function node id = 1
+Show estimated and actual number or rows are same at node 3 (table scan)
+Show the new attribute 'ContainsInterleavedExecutionCandidates' in the root node
+Show the new attribute 'IsInterleavedExecuted' in the table valued function node id = 1
 */
 
-SELECT [fo].[Order Key], [fo].[Description], [fo].[Package],
-		[fo].[Quantity], [foo].[OutlierEventQuantity]
+SELECT 
+	[fo].[Order Key], 
+	[fo].[Description], 
+	[fo].[Package],
+	[fo].[Quantity], 
+	[foo].[OutlierEventQuantity]
 FROM [Fact].[Order] AS [fo]
 INNER JOIN [Fact].[ufn_WhatIfOutlierEventQuantity]
  ('Mild Recession',
@@ -205,7 +216,7 @@ AND [fo].[Picked Date Key] = [foo].[Picked Date Key]
 AND [fo].[Salesperson Key] = [foo].[Salesperson Key]
 AND [fo].[Picker Key] = [foo].[Picker Key]
 INNER JOIN [Dimension].[Stock Item] AS [si] 
-	ON [fo].[Stock Item Key] = [si].[Stock Item Key]
+ON [fo].[Stock Item Key] = [si].[Stock Item Key]
 WHERE [si].[Lead Time Days] > 0
-	AND [fo].[Quantity] > 50;
+AND [fo].[Quantity] > 50;
 GO
