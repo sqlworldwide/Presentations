@@ -1,14 +1,24 @@
 /*
-	Scirpt Name: 00_Setup.sql
-	Setting up database for all the demo
-	Modified by Taiob Ali
-	December 3rd, 2024
+00_Setup.sql
+Written by Taiob Ali
+taiob@sqlworlwide.com
+https://bsky.app/profile/sqlworldwide.bsky.social
+https://twitter.com/SqlWorldWide
+https://sqlworldwide.com/
+https://www.linkedin.com/in/sqlworldwide/
+
+Last Modiefied
+August 05, 2025
+	
+Tested on :
+SQL Server 2022 CU20
+SSMS 21.4.8
 */
 
 /*
-	Changing MAXDOP as this query can advantage of parallel execution
-	Download WideWorldImportersDW-Full.bak from https://aka.ms/wwidwbak
-	Save here: C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\Backup\
+Changing MAXDOP as this query can advantage of parallel execution
+Download WideWorldImportersDW-Full.bak from https://aka.ms/wwidwbak
+Save here: C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\Backup\
 */
 
 USE [master]
@@ -123,7 +133,7 @@ WITH (DATA_COMPRESSION = PAGE);
 GO
 
 /*
-	Reality check... Starting count should be 231,412
+Reality check... Starting count should be 231,412
 */
 SELECT 
 	COUNT(*) 
@@ -131,8 +141,8 @@ FROM Fact.OrderHistory;
 GO
 
 /*
-	Make this table bigger (exec as desired)
-	Notice the "GO 4"
+Make this table bigger (exec as desired)
+Notice the "GO 4"
 */
 INSERT Fact.OrderHistory
 	([City Key], 
@@ -174,7 +184,7 @@ FROM Fact.OrderHistory;
 GO 4
 
 /*
-	Should be 3,702,592
+Should be 3,702,592
 */
 SELECT 
 	COUNT(*) 
@@ -217,8 +227,14 @@ ON Fact.OrderHistoryExtended([Stock Item Key])
 INCLUDE(Quantity);
 GO
 
+DROP INDEX IF EXISTS [IX_UnitPrice_Included] ON [Fact].[OrderHistoryExtended];
+GO
+CREATE NONCLUSTERED INDEX [IX_UnitPrice_Included] 
+ON [Fact].[OrderHistoryExtended] ([Unit Price]) INCLUDE ([Order Key],[City Key],[Quantity])
+GO
+
 /*
-	Should be 3,702,592
+Should be 3,702,592
 */
 
 SELECT 
@@ -227,8 +243,8 @@ FROM Fact.OrderHistoryExtended;
 GO
 
 /*
-	Make this table bigger (exec as desired)
-	Notice the "GO 3"
+Make this table bigger (exec as desired)
+Notice the "GO 3"
 */
 INSERT Fact.OrderHistoryExtended
 	([City Key], 
@@ -271,7 +287,7 @@ FROM Fact.OrderHistoryExtended;
 GO 3
 
 /*
-	Should be 29,620,736
+Should be 29,620,736
 */
 
 SELECT 
@@ -285,7 +301,7 @@ SET [WWI Order ID] = [Order Key];
 GO
 
 /*
-	Repeat the following until log shrinks. These demos don't require much log space
+Repeat the following until log shrinks. These demos don't require much log space
 */
 
 CHECKPOINT
@@ -300,6 +316,7 @@ GO
 /*
 	Set up this section for CE Feedback for SQL Server 2022
 	Code copied from https://github.com/microsoft/bobsql/tree/master/demos/sqlserver2022/IQP/cefeedback
+	
 	Download the AdventureWorks2016_EXT sample backup from https://github.com/Microsoft/sql-server-samples/releases/download/adventureworks/AdventureWorks2016_EXT.bak 
 	Copy it to C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\Backup folder
 	Restore AdventureWorks_EXT
@@ -341,12 +358,12 @@ CREATE NONCLUSTERED INDEX [IX_Address_City] ON [Person].[Address]
 GO
 
 /*
-	Set up this section for DOP Feedback in SQL Server 2022
-	Code copied from https://github.com/microsoft/bobsql/tree/master/demos/sqlserver2022/IQP/dopfeedback
-	Download the WideWorldImporters sample backup from https://github.com/Microsoft/sql-server-samples/releases/download/wide-world-importers-v1.0/WideWorldImporters-Full.bak 
-	Copy it to C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\Backup folder
-	Restore WideWorldImporters
-	Create and start an Extended Events session to view feedback events. Use SSMS in Object Explorer to view the session with Watch Live Data.
+Set up this section for DOP Feedback in SQL Server 2022
+Code copied from https://github.com/microsoft/bobsql/tree/master/demos/sqlserver2022/IQP/dopfeedback
+Download the WideWorldImporters sample backup from https://github.com/Microsoft/sql-server-samples/releases/download/wide-world-importers-v1.0/WideWorldImporters-Full.bak 
+Copy it to C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\Backup folder
+Restore WideWorldImporters
+Create and start an Extended Events session to view feedback events. Use SSMS in Object Explorer to view the session with Watch Live Data.
 */
 
 USE [master]
@@ -374,9 +391,9 @@ stats=5;
 GO
 
 /*
-	Extend the database
-	This will take ~10-15 mins to execute. Because of the large transaction the log will grow to ~30Gb and the user FG will grow to about ~6.5Gb.
-	Add StockItems to cause a data skew in Suppliers
+Extend the database
+This will take ~10-15 mins to execute. Because of the large transaction the log will grow to ~30Gb and the user FG will grow to about ~6.5Gb.
+Add StockItems to cause a data skew in Suppliers
 */
 
 USE WideWorldImporters;
@@ -405,7 +422,7 @@ SET NOCOUNT OFF;
 GO
 
 /*
-	Rebuild indexes
+Rebuild indexes
 */
 
 USE WideWorldImporters;
@@ -414,7 +431,7 @@ ALTER INDEX FK_Warehouse_StockItems_SupplierID ON Warehouse.StockItems REBUILD;
 GO
 
 /*
-	Repeat the following until log shrinks. These demos don't require much log space
+Repeat the following until log shrinks. These demos don't require much log space
 */
 
 CHECKPOINT
@@ -427,9 +444,9 @@ SELECT * FROM sys.dm_db_log_space_usage;
 GO
 
 /*
-	Set up this section for Parameter Sensitive Plan Optimization (PSP)in SQL Server 2022
-	Script to load more data into the Warehouse.StockItems table. 
-	This script will take 5-10 mins to run (timing depends on how many CPUs and the speed of your disk).
+Set up this section for Parameter Sensitive Plan Optimization (PSP)in SQL Server 2022
+Script to load more data into the Warehouse.StockItems table. 
+This script will take 5-10 mins to run (timing depends on how many CPUs and the speed of your disk).
 */
 
 DECLARE @StockItemID int;
@@ -860,6 +877,42 @@ JOIN @TableVar AS tv
 	ON sod.SalesOrderID = tv.OrigSalesOrderID
 ORDER BY sod.SalesOrderDetailID
 COMMIT
+
+/*
+Download 	AdventureWorksLT2022.bak from 
+https://learn.microsoft.com/en-us/sql/samples/adventureworks-install-configure?view=sql-server-ver17&tabs=ssms#download-backup-files
+Save here: C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\Backup\
+*/
+
+USE [master]
+GO
+DECLARE @dbname nvarchar(128)
+SET @dbname = N'	AdventureWorksLT2022'
+
+IF (EXISTS (SELECT name 
+FROM master.dbo.sysdatabases 
+WHERE ('[' + name + ']' = @dbname 
+OR name = @dbname)))
+BEGIN
+ALTER DATABASE [AdventureWorksLT2022] SET RESTRICTED_USER;
+END
+GO
+RESTORE DATABASE [AdventureWorksLT2022] FROM  
+DISK = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\Backup\AdventureWorksLT2022.bak'
+WITH  FILE = 1, 
+MOVE N'AdventureWorksLT2022_Data' TO N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\AdventureWorksLT2022.mdf',
+MOVE N'AdventureWorksLT2022_log' TO N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\AdventureWorksLT2022_log.ldf',
+NOUNLOAD,  REPLACE, STATS = 5;
+GO
+
+USE [AdventureWorksLT2022]
+GO
+ALTER AUTHORIZATION ON DATABASE::[AdventureWorksLT2022] TO [sa]
+GO
+USE [master]
+GO
+ALTER DATABASE [AdventureWorksLT2022] SET COMPATIBILITY_LEVEL = 160
+GO
 
 /*
 	Revert MAXDOP Setting

@@ -1,16 +1,26 @@
 /*
-	Script Name: 10_ParameterSensitivePlanOptimization.sql
-	This code is copied from
-	https://github.com/microsoft/bobsql/tree/master/demos/sqlserver2022/IQP/pspopt
+10_ParameterSensitivePlanOptimization.sql
+Written by Taiob Ali
+taiob@sqlworlwide.com
+https://bsky.app/profile/sqlworldwide.bsky.social
+https://sqlworldwide.com/
+https://www.linkedin.com/in/sqlworldwide/
+
+Last Modiefied
+August 09, 2025
 	
-	Modified by Taiob Ali
-  December 6th, 2024
+Tested on :
+SQL Server 2022 CU20
+SSMS 21.4.8
 
-	Parameter Sensitive Plan optimization
-	Applies to:  SQL Server 2022 (16.x) and later versions, Azure SQL Database starting with database compatibility level 160
-	Available in all Editions
+This code is copied from
+https://github.com/microsoft/bobsql/tree/master/demos/sqlserver2022/IQP/pspopt
+	
+Parameter Sensitive Plan optimization
+Applies to:  SQL Server 2022 (16.x) and later versions, Azure SQL Database starting with database compatibility level 160
+Available in all Editions
 
-	Parameter Sensitive Plan optimization addresses the scenario where a single cached plan for a parameterized query is not optimal for all possible incoming parameter values, for example non-uniform data distributions.
+Parameter Sensitive Plan optimization addresses the scenario where a single cached plan for a parameterized query is not optimal for all possible incoming parameter values, for example non-uniform data distributions.
 */
 
 USE WideWorldImporters;
@@ -23,7 +33,7 @@ ALTER DATABASE current SET QUERY_STORE CLEAR;
 GO
 
 /*
-	configure MAXDOP to 0 for the instance
+configure MAXDOP to 0 for the instance
 */
 
 sp_configure 'show advanced', 1;
@@ -63,11 +73,16 @@ GO
 /*
 	In a different query window set the actual execution option in SSMS. 
 	Run the Query in a new window in SSMS. 
-	It takes 5 minutes 36 seconds in my machine
+	It takes 33 seconds in my machine
 	Note the query plan uses an Clustered Index Scan and parallelism.
 */
-
-
+USE WideWorldImporters;
+GO
+ALTER DATABASE SCOPED CONFIGURATION CLEAR PROCEDURE_CACHE;
+GO
+-- The best plan for this parameter is an index scan
+EXEC Warehouse.GetStockItemsbySupplier 4;
+GO
 
 /*
 	Now go back and run the previous query again. 
@@ -77,15 +92,15 @@ GO
 
 /*
  Setup perfmon to capture % processor time and batch requests/second
- Run workload_index_seek.cmd 10 from the command prompt. This should finish very quickly. The parameter is the number of users. You may want to increase this for machines with 8 CPUs or more. Observe perfmon counters.
+ Run workload_index_seek.cmd 25 from the command prompt. This should finish very quickly. The parameter is the number of users. You may want to increase this for machines with 8 CPUs or more. Observe perfmon counters.
  Run workload_index_scan.cmd. This should take longer but now locks into cache a plan for a scan.
- Run workload_index_seek.cmd 10 again. Observe perfmon counters. Notice much higher CPU and much lower batch requests/sec. Also note the workload doesn't finish in a few seconds as before.
+ Run workload_index_seek.cmd 25 again. Observe perfmon counters. Notice much higher CPU and much lower batch requests/sec. Also note the workload doesn't finish in a few seconds as before.
  Hit + in the command window for workload_index_seek.cmd as it can take minutes to complete.
 */
 
 /*
-	See the skew in supplierID values in the table. 
-	This explains why "one size does not fit all" for the stored procedure based on parameter values.
+See the skew in supplierID values in the table. 
+This explains why "one size does not fit all" for the stored procedure based on parameter values.
 */
 
 USE WideWorldImporters;
@@ -96,7 +111,7 @@ GROUP BY SupplierID;
 GO
 
 /*
-	Solve the problem in SQL Server 2022 with no code changes
+Solve the problem in SQL Server 2022 with no code changes
 */
 
 USE WideWorldImporters;
@@ -109,24 +124,24 @@ ALTER DATABASE CURRENT SET QUERY_STORE CLEAR;
 GO
 
 /*
- Run workload_index_seek.cmd 10 from the command prompt. This should finish very quickly
+ Run workload_index_seek.cmd 25 from the command prompt. This should finish very quickly
  Run workload_index_scan.cmd
- Run workload_index_seek.cmd 10 again. See that it now finishes again in a few seconds. Observe perfmon counters and see consistent performance
+ Run workload_index_seek.cmd 25 again. See that it now finishes again in a few seconds. Observe perfmon counters and see consistent performance
  Run Top Resource Consuming Queries report from SSMS and see that there are two plans for the same stored procedure. The one difference is that there is new OPTION applied to the query for each procedure which is why there are two different "queries" in the Query Store.
 */
 
 /*
-	Look into the details of the results to see the query text is the same but slightly different with the option to use variants. 
-	But notice the query_hash is the same value.
+Look into the details of the results to see the query text is the same but slightly different with the option to use variants. 
+But notice the query_hash is the same value.
 */
 
 USE WideWorldImporters;
 GO
 
 /*
-	Look at the queries variants. Expand column query_sql_text and look at the QueryVariantID value in both rows
-	Look at the plans for variants. Click on both xml_plan.
-	Notice each query is from the same parent_query_id and the query_hash is the same
+Look at the queries variants. Expand column query_sql_text and look at the QueryVariantID value in both rows
+Look at the plans for variants. Click on both xml_plan.
+Notice each query is from the same parent_query_id and the query_hash is the same
 */
 
 SELECT qt.query_sql_text, qq.query_id, qv.query_variant_query_id, qv.parent_query_id, 
@@ -145,16 +160,16 @@ ORDER BY qv.parent_query_id;
 GO
 
 /*
-	Observe this is the text of the query from the stored procedure without variant options. 
-	This is the text from the parent plan.
+Observe this is the text of the query from the stored procedure without variant options. 
+This is the text from the parent plan.
 */
 
 USE WideWorldImporters;
 GO
 
 /*
-	Look at the "parent" query
-	Notice this is the SELECT statement from the procedure with no OPTION for variants
+Look at the "parent" query
+Notice this is the SELECT statement from the procedure with no OPTION for variants
 */
 SELECT qt.query_sql_text
 FROM sys.query_store_query_text qt
@@ -165,7 +180,7 @@ ON qq.query_id = qv.parent_query_id;
 GO
 
 /*
-	If you click on the dispatcher_plan value you will see a graphical plan operator called Multiple Plan.
+If you click on the dispatcher_plan value you will see a graphical plan operator called Multiple Plan.
 */
 
 USE WideWorldImporters;
@@ -180,7 +195,7 @@ GO
 
 
 /*
-	Revert MAXDOP Setting
+Revert MAXDOP Setting
 */
 
 EXEC sp_configure 'max degree of parallelism', 2;  

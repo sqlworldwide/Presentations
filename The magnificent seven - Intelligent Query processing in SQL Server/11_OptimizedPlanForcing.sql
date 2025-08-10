@@ -1,18 +1,29 @@
 /*
-	Script Name: 11_OptimizedPlanForcing.sql
-	This code is copied from
-	https://github.com/microsoft/bobsql/tree/master/demos/sqlserver2022/IQP/opf
+11_OptimizedPlanForcing.sql
+Written by Taiob Ali
+taiob@sqlworlwide.com
+https://bsky.app/profile/sqlworldwide.bsky.social
+https://sqlworldwide.com/
+https://www.linkedin.com/in/sqlworldwide/
+
+Last Modiefied
+August 10, 2025
 	
-	Modified by Taiob Ali
-	December 6th, 2024
-	Optimized plan forcing with Query Store
-	Applies to:  SQL Server 2022 (16.x)
-	Available in all Editions
+Tested on :
+SQL Server 2022 CU20
+SSMS 21.4.8
 
-	Optimized plan forcing is enabled by default for new databases created in SQL Server 2022 (16.x) and higher. The Query Store must be enabled for every database where optimized plan forcing is used. 
+This code is copied from
+https://github.com/microsoft/bobsql/tree/master/demos/sqlserver2022/IQP/opf
+	
+Optimized plan forcing with Query Store
+Applies to:  SQL Server 2022 (16.x)
+Available in all Editions
 
-	Only query plans that go through full optimization are eligible, which can be verified by the presence of the StatementOptmLevel="FULL" property.
-	Statements with RECOMPILE hint and distributed queries aren't eligible.
+Optimized plan forcing is enabled by default for new databases created in SQL Server 2022 (16.x) and higher. The Query Store must be enabled for every database where optimized plan forcing is used. 
+
+Only query plans that go through full optimization are eligible, which can be verified by the presence of the StatementOptmLevel="FULL" property.
+Statements with RECOMPILE hint and distributed queries aren't eligible.
 */
 
 USE WideWorldImporters;
@@ -25,11 +36,11 @@ ALTER DATABASE current SET QUERY_STORE CLEAR;
 GO
 
 /*
-	Turn on Actual Execution plan ctrl+M
-	Takes about 26 seconds
-	Notice compile time vs execution time and paste here
-	 SQL Server Execution Times:
-   CPU time = 3672 ms,  elapsed time = 50243 ms.
+Turn on Actual Execution plan ctrl+M
+Takes ~15 seconds
+Notice compile time vs execution time and paste here
+SQL Server Execution Times:
+CPU time = 3252 ms,  elapsed time = 11861 ms.
 */
 
 USE WideWorldImporters;
@@ -83,12 +94,12 @@ ORDER BY OrderID;
 GO
 
 /*
-	Find the plan_id and query_id for the recent query. 
-	Notice the column has_compile_replay_script has a value = 1. 
-	This means this query is a candidate for optimized plan forcing. 
-	Take note of the numbers for compile duration and note here:
-	avg_compile_ms	last_compile_ms
-  322.417	        322
+Find the plan_id and query_id for the recent query. 
+Notice the column has_compile_replay_script has a value = 1. 
+This means this query is a candidate for optimized plan forcing. 
+Take note of the numbers for compile duration and note here:
+avg_compile_ms	last_compile_ms
+169.313					169
 */
 
 USE WideWorldImporters;
@@ -100,17 +111,17 @@ FROM sys.query_store_plan;
 GO
 
 /*
-	Edit the script to put in the correct values for the @query_id and @plan_id parameter values. 
+Edit the script to put in the correct values for the @query_id and @plan_id parameter values. 
 */
 
 EXEC sp_query_store_force_plan @query_id = 1, @plan_id = 1;
 GO
 
 /*
-	Run the same join again. 
-	Notice the significant reduction in SQL Server parse and compile time from the initial execution as a % of CPU time for the query. 
-	It can drop down as low as 2-3%.
-	Compare with line 27
+Run the same join again. 
+Notice the significant reduction in SQL Server parse and compile time from the initial execution as a % of CPU time for the query. 
+It can drop down as low as 2-3%.
+Compare with line 43
 */
 
 USE WideWorldImporters;
@@ -164,7 +175,7 @@ ORDER BY OrderID;
 GO
 
 /*
-	We want to ensure we have the latest persisted data in QDS 
+We want to ensure we have the latest persisted data in QDS 
 */
 
 USE WideWorldImporters;
@@ -174,11 +185,11 @@ GO
 
 
 /*
-	Find the plan_id and query_id for the recent query. 
-	Notice the column has_compile_replay_script has a value = 1. 
-	This means this query is a candidate for optimized plan forcing. 
-	Take note of the numbers for compile duration and note here:
-	Comapre with line 86
+Find the plan_id and query_id for the recent query. 
+Notice the column has_compile_replay_script has a value = 1. 
+This means this query is a candidate for optimized plan forcing. 
+Take note of the numbers for compile duration and note here:
+Comapre with line 102
 */
 
 USE WideWorldImporters;

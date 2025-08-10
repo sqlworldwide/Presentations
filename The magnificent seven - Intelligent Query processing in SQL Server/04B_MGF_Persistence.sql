@@ -1,26 +1,36 @@
 /**************************************************************
-	Scirpt Name: 04B_MGF_Persistence.sql
-	This code is copied from
-	https://github.com/microsoft/sqlworkshops-sql2022workshop/tree/main/sql2022workshop/03_BuiltinQueryIntelligence/persistedmgf
+04B_MGF_Persistence.sql
+Written by Taiob Ali
+taiob@sqlworlwide.com
+https://bsky.app/profile/sqlworldwide.bsky.social
+https://sqlworldwide.com/
+https://www.linkedin.com/in/sqlworldwide/
 
-	Modified by Taiob Ali
-	December 6th, 2024
-
-	Memory Grant Feedback Persistence
-	Applies to: SQL Server 2022 (16.x) and later with	Database compatibility level 140
-	Enterprise only
-	Enabled by default in Azure SQL database
-
-	The initial phases of this project only stored the memory grant adjustment with the plan in the cache – if a plan is evicted from the cache, the feedback process must start again, resulting in poor performance the first few times a query is executed after eviction. The new solution is to persist the grant information with the other query information in the Query Store so that the benefits last across cache evictions.
+Last Modiefied
+August 08, 2025
 	
-	Email IntelligentQP@microsoft.com for questions\feedback
+Tested on :
+SQL Server 2022 CU20
+SSMS 21.4.8
+
+This code is copied from
+https://github.com/microsoft/sqlworkshops-sql2022workshop/tree/main/sql2022workshop/03_BuiltinQueryIntelligence/persistedmgf
+
+
+Memory Grant Feedback Persistence
+Applies to: SQL Server 2022 (16.x) and later with	Database compatibility level 140
+Enterprise only
+Enabled by default in Azure SQL database
+
+The initial phases of this project only stored the memory grant adjustment with the plan in the cache – if a plan is evicted from the cache, the feedback process must start again, resulting in poor performance the first few times a query is executed after eviction. The new solution is to persist the grant information with the other query information in the Query Store so that the benefits last across cache evictions.
+
 *************************************************************/
 
 USE [master];
 GO
 
 /*
-	Setup the demo
+Setup the demo
 */
 
 ALTER DATABASE [WideWorldImportersDW] SET COMPATIBILITY_LEVEL = 150;
@@ -32,8 +42,11 @@ GO
 ALTER DATABASE SCOPED CONFIGURATION CLEAR PROCEDURE_CACHE;
 GO
 
+ALTER DATABASE WideWorldImportersDW SET QUERY_STORE CLEAR ALL;
+GO
+
 /*
-	Simulate statistics out of date
+Simulate statistics out of date
 */
 
 USE WideWorldImportersDW;
@@ -43,27 +56,27 @@ WITH ROWCOUNT = 1000;
 GO
 
 /*
-Clean up Query store data
+Clean up Query Store data by using the following statement
+Please DO NOT do this in your production servers
+
 USE master
 GO
-
-ALTER DATABASE WideWorldImportersdw SET QUERY_STORE CLEAR ALL
+ALTER DATABASE WideWorldImportersdw SET QUERY_STORE CLEAR ALL;
 GO
 */
 
-
 /*
-	Turn on Actual Execution plan ctrl+M
-	Execute a query that will use a memory grant
-	The query will take about 30 seconds to complete
-	Select the Execution Plan in the results. 
-	You will see a graphical showplan. 
-	Notice the yellow warning on the hash join operator. 
-	If you hover over this operator with the cursor you will see a warning about a spill to tempdb. 
-	Notice the spill involves writing out ~400Mb of pages to tempdb. 
-	You can also see the estimated number of rows is far lower than the actual number of rows.
-*/
+Turn on Actual Execution plan ctrl+M
+Execute the query that will use a memory grant
+The query will take about 47 seconds to complete
 
+You will see a graphical showplan. 
+Notice the yellow warning on the hash join operator. 
+If you hover over this operator with the cursor you will see a warning about a spill to tempdb. 
+Notice the spill involves writing out ~406Mb of pages to tempdb. 
+Hash Match:
+You can also see the estimated number of rows is far lower than the actual number of rows.
+*/
 
 USE WideWorldImportersDW;
 GO
@@ -76,15 +89,17 @@ AND si.[Lead Time Days] > 19;
 GO
 
 /*
-	We want to ensure we have the latest persisted data in QDS 
+We want to ensure we have the latest persisted data in QDS 
+Flushes the in-memory portion of the Query Store data to disk.
 */
+
 USE [WideWorldImportersDW];
 GO
 EXEC sys.sp_query_store_flush_db;
 GO
 
 /*
-	You will see that feedback has been stored to allocate a significant larger memory grant on next query execution.
+You will see that feedback has been stored to allocate a significant larger memory grant on next query execution.
 */
 
 USE WideWorldImportersDW;
@@ -103,11 +118,12 @@ GO
 
 
 /*
-	Run the select statement again.
-	This time the query runs in seconds. 
-	Notice there is no spill warning for the hash join. 
-	Hovering over the SELECT operator will show a significantly larger grant. 
-	Right clicking on the SELECT operator and selecting properties will show in the MemoryGrantInfo section IsMemoryGrantFeedbackAdjusted = YesAdjusting.
+Run the select statement again.
+
+This time the query runs in seconds. 
+Notice there is no spill warning for the hash join. 
+Hovering over the SELECT operator will show a significantly larger grant. 
+Right clicking on the SELECT operator and selecting properties will show in the MemoryGrantInfo section IsMemoryGrantFeedbackAdjusted = YesAdjusting.
 */
 
 USE WideWorldImportersDW;
@@ -121,7 +137,8 @@ AND si.[Lead Time Days] > 19;
 GO
 
 /*
-	We want to ensure we have the latest persisted data in QDS 
+We want to ensure we have the latest persisted data in QDS 
+Flushes the in-memory portion of the Query Store data to disk.
 */
 
 USE [WideWorldImportersDW];
@@ -130,7 +147,7 @@ EXEC sys.sp_query_store_flush_db;
 GO
 
 /*
-	See the last_query_memory_kb reflect the new larger memory grant.
+See the last_query_memory_kb reflect the new larger memory grant.
 */
 
 USE WideWorldImportersDW;
@@ -147,8 +164,9 @@ JOIN sys.query_store_runtime_stats qrs
 ON qp.plan_id = qrs.plan_id;
 GO
 
+
 /*
-	This will clear the plan cache. Prior to SQL Server 2022, this would have "lost" the memory grant feedback.
+This will clear the plan cache. Prior to SQL Server 2022, this would have "lost" the memory grant feedback.
 */
 USE [WideWorldImportersDW];
 GO
@@ -156,8 +174,8 @@ ALTER DATABASE SCOPED CONFIGURATION CLEAR PROCEDURE_CACHE;
 GO
 
 /*
-	You will see the grant is still using the feedback now in the query store and runs in a few seconds
-	After executing a query that uses feedback from the Query Store the SELECT operator will not show IsMemoryGrantFeedbackAdjusted = YesAdjusting
+You will see the grant is still using the feedback now in the query store and runs in a few seconds
+After executing a query that uses feedback from the Query Store the SELECT operator will not show IsMemoryGrantFeedbackAdjusted = YesAdjusting
 */
 
 USE WideWorldImportersDW;

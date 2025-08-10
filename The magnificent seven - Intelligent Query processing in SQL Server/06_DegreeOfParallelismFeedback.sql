@@ -1,19 +1,28 @@
 /*
-	Script Name: 06_DegreeOfParallelismFeedback.sql
-	https://github.com/microsoft/bobsql/tree/master/demos/sqlserver2022/IQP/dopfeedback
-	
-  Modified by Taiob Ali
-	December 6th, 2024
+06_DegreeOfParallelismFeedback.sql
+Written by Taiob Ali
+taiob@sqlworlwide.com
+https://bsky.app/profile/sqlworldwide.bsky.social
+https://sqlworldwide.com/
+https://www.linkedin.com/in/sqlworldwide/
 
-	Degree of parallelism (DOP) feedback
-	Applies to: SQL Server 2022 (16.x) and later, Azure SQL Managed Instance, 
-	Azure SQL Database (Preview) starting with database compatibility level 160
-	Enterprise only
+Last Modiefied
+August 08, 2025
+	
+Tested on :
+SQL Server 2022 CU20
+SSMS 21.4.8
+https://github.com/microsoft/bobsql/tree/master/demos/sqlserver2022/IQP/dopfeedback
+	
+Degree of parallelism (DOP) feedback
+Applies to: SQL Server 2022 (16.x) and later, Azure SQL Managed Instance, 
+Azure SQL Database (Preview) starting with database compatibility level 160
+Enterprise only
 */
 
 /*
-	configure MAXDOP to 0 for the instance
-	configure max memory to higher value
+configure MAXDOP to 0 for the instance
+configure max memory to higher value
 */
 
 sp_configure 'show advanced', 1;
@@ -24,13 +33,13 @@ sp_configure 'max degree of parallelism', 0;
 GO
 RECONFIGURE;
 GO
-sp_configure 'max server memory (MB)', 28000;
+sp_configure 'max server memory (MB)', 26000;
 GO
 RECONFIGURE;
 GO
 
 /*
-	Make sure Query Store is on and set runtime collection lower than default
+Make sure Query Store is on and set runtime collection lower than default
 */
 
 USE WideWorldImporters;
@@ -44,28 +53,30 @@ ALTER DATABASE WideWorldImporters SET QUERY_STORE CLEAR ALL;
 GO
 
 /*
-	You must change dbcompat to 160
+You must change dbcompat to 160
 */
 
 ALTER DATABASE WideWorldImporters SET COMPATIBILITY_LEVEL = 160;
 GO
  
 /*
-	Enable DOP feedback
+Enable DOP feedback
+On by default in SQL Server 2025
 */
 
 ALTER DATABASE SCOPED CONFIGURATION SET DOP_FEEDBACK = ON;
 GO
 
 /* 
-	Clear proc cache to start with new plans
+Clear proc cache to start with new plans
+Please do not do this in your production SQL Server
 */
 
 ALTER DATABASE SCOPED CONFIGURATION CLEAR PROCEDURE_CACHE;
 GO
 
 /*
-	create a stored procedure
+create a stored procedure
 */
 
 USE WideWorldImporters;
@@ -81,7 +92,7 @@ END;
 GO
 
 /*
-	Create an XEvent session
+Create an XEvent session
 */
 
 IF EXISTS (SELECT * FROM sys.server_event_sessions WHERE name = 'DOPFeedback')
@@ -102,9 +113,9 @@ WITH (MAX_MEMORY=4096 KB,EVENT_RETENTION_MODE=NO_EVENT_LOSS,MAX_DISPATCH_LATENCY
 GO
 
 /*
-	Start XE
-	Open Live data from SSMS
-	Mangement->Extended Events->Sessions->DOPFeedback->Watch Live Data
+Start XE
+Open Live data from SSMS
+Mangement->Extended Events->Sessions->DOPFeedback->Watch Live Data
 */
 
 ALTER EVENT SESSION [DOPFeedback] ON SERVER
@@ -112,16 +123,17 @@ STATE = START;
 GO
 
 /*
-	Run workload_index_scan_users.cmd from a command prompt.This will take around 15 minutes to run
+Run workload_index_scan_users.cmd from a command prompt.This will take around 10 minutes to run
 */
 
 /*
-	See the changes in DOP and resulting stats. 
-	Note the small decrease in avg duration and decrease in needed CPU across the various last_dop values
-	The hash value of 4128150668158729174 should be fixed for the plan from the workload
+See the changes in DOP and resulting stats. 
+Note the small decrease in avg duration and decrease in needed CPU across the various last_dop values
+The hash value of 4128150668158729174 should be fixed for the plan from the workload
 */
-
 USE WideWorldImporters;
+GO
+EXEC sys.sp_query_store_flush_db;
 GO
 SELECT 
 	qsp.query_plan_hash, 
@@ -139,11 +151,13 @@ ORDER by qsrs.last_execution_time;
 GO
 
 /*
-	See the persisted DOP feedback. 
-	Examine the values in the feedback_desc field to see the BaselineStats and LastGoodFeedback values.
+See the persisted DOP feedback. 
+Examine the values in the feedback_desc field to see the BaselineStats and LastGoodFeedback values.
 */
 
 USE WideWorldImporters;
+GO
+EXEC sys.sp_query_store_flush_db;
 GO
 SELECT 
 	qspf.plan_feedback_id,
@@ -163,7 +177,7 @@ JOIN sys.query_store_plan_feedback AS qspf
 WHERE qspf.feature_id = 3
 
 /*
-	Revert MAXDOP Setting, and max memory
+Revert MAXDOP Setting, and max memory
 */
 
 EXEC sp_configure 'max degree of parallelism', 2;  
@@ -176,7 +190,7 @@ RECONFIGURE;
 GO
 
 /*
-	Stop the extended event session
+Stop the extended event session
 */
 
 ALTER EVENT SESSION [DOPFeedback] ON SERVER
