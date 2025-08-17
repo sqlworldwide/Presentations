@@ -7,11 +7,11 @@ https://sqlworldwide.com/
 https://www.linkedin.com/in/sqlworldwide/
 
 Last Modiefied
-August 10, 2025
+August 17, 2025
 	
 Tested on :
 SQL Server 2022 CU20
-SSMS 21.4.8
+SSMS 21.4.12
 
 This code is copied from
 https://github.com/microsoft/bobsql/tree/master/demos/sqlserver2022/IQP/opf
@@ -39,8 +39,10 @@ GO
 Turn on Actual Execution plan ctrl+M
 Takes ~15 seconds
 Notice compile time vs execution time and paste here
-SQL Server Execution Times:
-CPU time = 3252 ms,  elapsed time = 11861 ms.
+SQL Server parse and compile time: 
+   CPU time = 125 ms, elapsed time = 157 ms.
+ SQL Server Execution Times:
+   CPU time = 1891 ms,  elapsed time = 10317 ms.
 */
 
 USE WideWorldImporters;
@@ -120,7 +122,6 @@ GO
 /*
 Run the same join again. 
 Notice the significant reduction in SQL Server parse and compile time from the initial execution as a % of CPU time for the query. 
-It can drop down as low as 2-3%.
 Compare with line 43
 */
 

@@ -1,5 +1,5 @@
 /*****************************************************************
-04A_MFG_RowModesql.sql
+04A_MGF_RowModesql.sql
 Written by Taiob Ali
 taiob@sqlworlwide.com
 https://bsky.app/profile/sqlworldwide.bsky.social
@@ -7,11 +7,11 @@ https://sqlworldwide.com/
 https://www.linkedin.com/in/sqlworldwide/
 
 Last Modiefied
-August 08, 2025
+August 17, 2025
 	
 Tested on :
 SQL Server 2022 CU20
-SSMS 21.4.8
+SSMS 21.4.12
 	
 This code is copied from
 https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
@@ -65,7 +65,6 @@ GrantedMemory="625072" LastRequestedMemory="1056" IsMemoryGrantFeedbackAdjusted=
 Third execution
 LastRequestedMemory="625072" IsMemoryGrantFeedbackAdjusted="Yes: Stable"
 */
-
 SELECT fo.[Order Key], fo.Description,
 	si.[Lead Time Days]
 FROM Fact.OrderHistory AS fo
@@ -74,15 +73,6 @@ INNER HASH JOIN Dimension.[Stock Item] AS si
 WHERE fo.[Lineage Key] = 9
 	AND si.[Lead Time Days] > 19;
 
-/*
-We want to ensure we have the latest persisted data in QDS 
-Flushes the in-memory portion of the Query Store data to disk.
-*/
-
-USE [WideWorldImportersDW];
-GO
-EXEC sys.sp_query_store_flush_db;
-GO
 
 /*
 Is the memory grant value persisted in Query store?
@@ -92,7 +82,13 @@ You will need SQL2022 and Compatibility level 140 for this feature to work
 Query store must be enabled with read_write
 Query copied and from  Grant Fritchey's website:
 https://www.scarydba.com/2022/10/17/monitor-cardinality-feedback-in-sql-server-2022/
+
+Run this on a separate window while below while loop keeps running
 */
+USE [WideWorldImportersDW];
+GO
+EXEC sys.sp_query_store_flush_db;
+GO
 
 SELECT 
 	qspf.plan_feedback_id,
@@ -110,6 +106,19 @@ ON qsqt.query_text_id = qsq.query_text_id
 JOIN sys.query_store_plan_feedback AS qspf
 ON qspf.plan_id = qsp.plan_id
 WHERE qspf.feature_id = 2
+
+-- set discard results after execution
+WHILE (1=1)
+BEGIN
+	SELECT fo.[Order Key], fo.Description,
+	si.[Lead Time Days]
+FROM Fact.OrderHistory AS fo
+INNER HASH JOIN Dimension.[Stock Item] AS si 
+	ON fo.[Stock Item Key] = si.[Stock Item Key]
+WHERE fo.[Lineage Key] = 9
+	AND si.[Lead Time Days] > 19;
+END
+GO
 
 /* Cleanup */
 

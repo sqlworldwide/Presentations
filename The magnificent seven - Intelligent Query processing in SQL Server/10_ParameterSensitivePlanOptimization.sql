@@ -7,11 +7,11 @@ https://sqlworldwide.com/
 https://www.linkedin.com/in/sqlworldwide/
 
 Last Modiefied
-August 09, 2025
+August 17, 2025
 	
 Tested on :
 SQL Server 2022 CU20
-SSMS 21.4.8
+SSMS 21.4.12
 
 This code is copied from
 https://github.com/microsoft/bobsql/tree/master/demos/sqlserver2022/IQP/pspopt
@@ -47,19 +47,19 @@ GO
 
 
 /*
-	Turn on Actual Execution plan ctrl+M
-	Run the query twice in a query window in SSMS. 
-	Note the query execution time is fast (< 1 second). 
-	Check the timings from SET STATISTICS TIME ON from the second execution. 
-	The query is run twice so the 2nd execution will not require a compile. 
-	This is the time we want to compare. 
-	Note the query plan uses an Index Seek and paste here
-	 First run
-	 SQL Server Execution Times:
-   CPU time = 0 ms,  elapsed time = 71 ms.
-	 After
-	 SQL Server Execution Times:
-   CPU time = 1640 ms,  elapsed time = 252 ms.
+Turn on Actual Execution plan ctrl+M
+Run the query twice in a query window in SSMS. 
+Note the query execution time is fast (< 1 second). 
+Check the timings from SET STATISTICS TIME ON from the second execution. 
+The query is run twice so the 2nd execution will not require a compile. 
+This is the time we want to compare. 
+Note the query plan uses an Index Seek and paste here
+	Second run
+	SQL Server Execution Times:
+	CPU time = 15 ms,  elapsed time = 71 ms.
+	After
+	SQL Server Execution Times:
+  CPU time = 1391 ms,  elapsed time = 288 ms.
 */
 
 USE WideWorldImporters;
@@ -71,10 +71,10 @@ EXEC Warehouse.GetStockItemsbySupplier 2;
 GO
 
 /*
-	In a different query window set the actual execution option in SSMS. 
-	Run the Query in a new window in SSMS. 
-	It takes 33 seconds in my machine
-	Note the query plan uses an Clustered Index Scan and parallelism.
+In a different query window set the actual execution option in SSMS. 
+Run the Query in a new window in SSMS. 
+It takes 23 seconds in my machine
+Note the query plan uses an Clustered Index Scan and parallelism.
 */
 USE WideWorldImporters;
 GO
@@ -85,17 +85,17 @@ EXEC Warehouse.GetStockItemsbySupplier 4;
 GO
 
 /*
-	Now go back and run the previous query again. 
-	Note that even though the query executes quickly (< 1 sec), the timing from SET STATISTICS TIME is significantly longer than the previous execution. 
-	Also note the query plan also uses a clustered index scan and parallelism.
+Now go back and run the previous query again. 
+Note that even though the query executes quickly (< 1 sec), the timing from SET STATISTICS TIME is significantly longer than the previous execution. 
+Also note the query plan also uses a clustered index scan and parallelism.
 */
 
 /*
- Setup perfmon to capture % processor time and batch requests/second
- Run workload_index_seek.cmd 25 from the command prompt. This should finish very quickly. The parameter is the number of users. You may want to increase this for machines with 8 CPUs or more. Observe perfmon counters.
- Run workload_index_scan.cmd. This should take longer but now locks into cache a plan for a scan.
- Run workload_index_seek.cmd 25 again. Observe perfmon counters. Notice much higher CPU and much lower batch requests/sec. Also note the workload doesn't finish in a few seconds as before.
- Hit + in the command window for workload_index_seek.cmd as it can take minutes to complete.
+Setup perfmon to capture % processor time and batch requests/second
+Run workload_index_seek.cmd 25 from the command prompt. This should finish very quickly. The parameter is the number of users. You may want to increase this for machines with 8 CPUs or more. Observe perfmon counters.
+Run workload_index_scan.cmd. This should take longer but now locks into cache a plan for a scan.
+Run workload_index_seek.cmd 25 again. Observe perfmon counters. Notice much higher CPU and much lower batch requests/sec. Also note the workload doesn't finish in a few seconds as before.
+Hit Ctrl+c in the command window for workload_index_seek.cmd as it can take minutes to complete.
 */
 
 /*
@@ -124,25 +124,23 @@ ALTER DATABASE CURRENT SET QUERY_STORE CLEAR;
 GO
 
 /*
- Run workload_index_seek.cmd 25 from the command prompt. This should finish very quickly
- Run workload_index_scan.cmd
- Run workload_index_seek.cmd 25 again. See that it now finishes again in a few seconds. Observe perfmon counters and see consistent performance
- Run Top Resource Consuming Queries report from SSMS and see that there are two plans for the same stored procedure. The one difference is that there is new OPTION applied to the query for each procedure which is why there are two different "queries" in the Query Store.
+Run workload_index_seek.cmd 25 from the command prompt. This should finish very quickly
+Run workload_index_scan.cmd
+Run workload_index_seek.cmd 25 again. See that it now finishes again in a few seconds. Observe perfmon counters and see consistent performance
+Run Top Resource Consuming Queries report from SSMS and see that there are two plans for the same stored procedure. The one difference is that there is new OPTION applied to the query for each procedure which is why there are two different "queries" in the Query Store.
 */
 
 /*
 Look into the details of the results to see the query text is the same but slightly different with the option to use variants. 
 But notice the query_hash is the same value.
-*/
 
-USE WideWorldImporters;
-GO
-
-/*
 Look at the queries variants. Expand column query_sql_text and look at the QueryVariantID value in both rows
 Look at the plans for variants. Click on both xml_plan.
 Notice each query is from the same parent_query_id and the query_hash is the same
 */
+
+USE WideWorldImporters;
+GO
 
 SELECT qt.query_sql_text, qq.query_id, qv.query_variant_query_id, qv.parent_query_id, 
 qq.query_hash,qr.count_executions, qp.plan_id, qv.dispatcher_plan_id, qp.query_plan_hash,
@@ -167,10 +165,6 @@ This is the text from the parent plan.
 USE WideWorldImporters;
 GO
 
-/*
-Look at the "parent" query
-Notice this is the SELECT statement from the procedure with no OPTION for variants
-*/
 SELECT qt.query_sql_text
 FROM sys.query_store_query_text qt
 JOIN sys.query_store_query qq

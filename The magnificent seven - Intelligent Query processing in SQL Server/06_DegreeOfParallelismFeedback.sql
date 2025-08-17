@@ -18,6 +18,12 @@ Degree of parallelism (DOP) feedback
 Applies to: SQL Server 2022 (16.x) and later, Azure SQL Managed Instance, 
 Azure SQL Database (Preview) starting with database compatibility level 160
 Enterprise only
+
+I could not reproduce this in my laptop
+So spinned up a Azure VM with 16 cpu and 64GM memory
+Maxdop = 0 
+Max Memory =48GB
+I will demo it in an Azure VM
 */
 
 /*

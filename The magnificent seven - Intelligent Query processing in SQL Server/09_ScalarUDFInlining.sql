@@ -7,11 +7,11 @@ https://sqlworldwide.com/
 https://www.linkedin.com/in/sqlworldwide/
 
 Last Modiefied
-August 09, 2025
+August 17, 2025
 	
 Tested on :
 SQL Server 2022 CU20
-SSMS 21.4.8
+SSMS 21.4.12
 
 This code is copied from
 https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
@@ -74,6 +74,7 @@ SELECT
   is_inlineable
 FROM sys.sql_modules
 WHERE is_inlineable = 1
+AND definition like '%ufn_customer_category%'
 GO
 
 /*
@@ -95,8 +96,8 @@ GO
 After (show actual query execution plan for Scalar UDF Inlining)
 During inlining you can see this in the properties or XML plan  ContainsInlineScalarTsqlUdfs="true"
 Show the properties of root node
-
-Even the inlining worked elapsed is increase by 15 fold
+Not much improvement on the cpu or elapsed time
+We will try another example
 */
 
 SELECT TOP 100
@@ -150,6 +151,9 @@ Runtime about 50 secs
 SELECT DISTINCT ([City Key]), dbo.GetRating([City Key]) AS CityRating
 FROM Dimension.[City]
 
+/*
+Change compatibility level to 150
+*/
 ALTER DATABASE WideWorldImportersDW SET COMPATIBILITY_LEVEL = 150;
 GO
 
@@ -158,6 +162,7 @@ Turn on Actual Execution plan ctrl+M
 After (show actual query execution plan for Scalar UDF Inlining)
 During inlining you can see this in the properties or XML plan  ContainsInlineScalarTsqlUdfs="true"
 Show the properties of root node
+Run in one second, 50 times faster
 */
 SELECT DISTINCT ([City Key]), dbo.GetRating([City Key]) AS CityRating
 FROM Dimension.[City]
@@ -190,6 +195,15 @@ BEGIN
 END
 GO
 
+SELECT 
+  object_id,
+  definition,
+  is_inlineable
+FROM sys.sql_modules
+WHERE definition like '%GetRating_Loop%'
+GO
+
+
 USE WideWorldImportersDW;
 GO
 
@@ -197,6 +211,7 @@ ALTER DATABASE WideWorldImportersDW SET COMPATIBILITY_LEVEL = 150;
 GO
 
 /*
+If you want to see for real run this query
 Turn on Actual Execution plan ctrl+M
 Test UDF With WHILE Loop it will not be inlined
 Runtime 48 seconds

@@ -7,11 +7,11 @@ https://sqlworldwide.com/
 https://www.linkedin.com/in/sqlworldwide/
 
 Last Modiefied
-August 08, 2025
+August 17, 2025
 	
 Tested on :
 SQL Server 2022 CU20
-SSMS 21.4.8
+SSMS 21.4.12
 
 This code is copied from
 https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
@@ -35,9 +35,9 @@ GO
 
 /*
 Turn on Actual Execution plan ctrl+M
-Look at estimated rows, speed, join algorithm
-Estimated number of rows: 1
-Actual number of row: 490928
+- Look at estimated rows, speed, join algorithm
+- Estimated number of rows: 1
+- Actual number of row: 490928
 Thick flow going to Nested loop join
 Row ID lookup
 Low memory grant caused a sort spill
@@ -67,6 +67,7 @@ GO
 /*
 Prior 'Table variable deferred compilation' feature was release we could mitigate 
 the estimation problem with trace flag 2453
+- Notice the parallel plan
 */
 ALTER DATABASE SCOPED CONFIGURATION CLEAR PROCEDURE_CACHE;
 GO
@@ -125,7 +126,10 @@ GO
 USE [master]
 GO
 
-/* Changing MAXDOP as this query can advantage of parallel execution */
+/* 
+Lets look at IQP feature started from Compatibility level 150+
+Changing MAXDOP as this query can advantage of parallel execution 
+*/
 EXEC sp_configure 'show advanced options', 1;  
 GO  
 RECONFIGURE WITH OVERRIDE;  
@@ -147,9 +151,9 @@ GO
 /*
 Turn on Actual Execution plan ctrl+M
 This will get a parllel execution which also help reducing runtime
-Estimated number of rows: 490928
-Actual number of row: 490928
-Hash join
+- Estimated number of rows: 490928
+- Actual number of row: 490928
+- Hash join
 */
 DECLARE @Order TABLE 
 	([Order Key] BIGINT NOT NULL,
@@ -161,7 +165,6 @@ SELECT [Order Key], [Quantity]
 FROM [Fact].[OrderHistory]
 WHERE [Quantity] > 99;
 
--- Look at estimated rows, speed, join algorithm
 SELECT oh.[Order Key], oh.[Order Date Key],
 	oh.[Unit Price], o.Quantity
 FROM Fact.OrderHistoryExtended AS oh
@@ -176,7 +179,7 @@ Does the problem really go away?
 */
 
 /*
-Write a stored procedure that returns record from Fact.OrderHistoryExtended
+Write a stored procedure that returns record from Fact.OrderHistoryExtended 
 based on the input parameter @UnitPrice
 Use a table variable to store the result set    
 Sample call:
@@ -213,6 +216,7 @@ Calling with three different values
 Number of records returned are in Ascending order
 Turn on Actual Execution plan ctrl+M
 Show the estimated vs actual numbers for select statement
+Show the memory granted vs used for the last call
 */
 
 ALTER DATABASE SCOPED CONFIGURATION CLEAR PROCEDURE_CACHE;

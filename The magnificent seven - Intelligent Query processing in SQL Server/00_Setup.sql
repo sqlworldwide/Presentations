@@ -8,11 +8,11 @@ https://sqlworldwide.com/
 https://www.linkedin.com/in/sqlworldwide/
 
 Last Modiefied
-August 05, 2025
+August 16, 2025
 	
 Tested on :
 SQL Server 2022 CU20
-SSMS 21.4.8
+SSMS 21.4.12
 */
 
 /*
@@ -473,8 +473,8 @@ SET NOCOUNT OFF;
 GO
 
 /*
-	Rebuild an index associated with the table using the script rebuild_index.sql. 
-	IMPORTANT: If you miss this step you will not be able to see the performance improvement for PSP optimization.
+Rebuild an index associated with the table using the script rebuild_index.sql. 
+IMPORTANT: If you miss this step you will not be able to see the performance improvement for PSP optimization.
 */
 
 USE WideWorldImporters;
@@ -483,7 +483,7 @@ ALTER INDEX FK_Warehouse_StockItems_SupplierID ON Warehouse.StockItems REBUILD;
 GO
 
 /*
-	Repeat the following until log shrinks. These demos don't require much log space
+Repeat the following until log shrinks. These demos don't require much log space
 */
 
 CHECKPOINT
@@ -496,12 +496,12 @@ SELECT * FROM sys.dm_db_log_space_usage;
 GO
 
 /*
-	Set up this section if you want to test adaptive join when batchmode in rowstore kicks in.
-	Test code is at the bottom of 01_AdaptiveJoin_BatchMode.sql
-	Restore Adventureworks database
-	https://learn.microsoft.com/en-us/sql/samples/adventureworks-install-configure?view=sql-server-ver15&tabs=ssms
-	Enlarge the restored adventureworks database
-	https://www.sqlskills.com/blogs/jonathan/enlarging-the-adventureworks-sample-databases/
+Set up this section if you want to test adaptive join when batchmode in rowstore kicks in.
+Test code is at the bottom of 01_AdaptiveJoin_BatchMode.sql
+Restore Adventureworks database
+https://learn.microsoft.com/en-us/sql/samples/adventureworks-install-configure?view=sql-server-ver15&tabs=ssms
+Enlarge the restored adventureworks database
+https://www.sqlskills.com/blogs/jonathan/enlarging-the-adventureworks-sample-databases/
 */
 
 USE [master]

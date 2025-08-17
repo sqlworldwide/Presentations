@@ -8,11 +8,11 @@ https://sqlworldwide.com/
 https://www.linkedin.com/in/sqlworldwide/
 
 Last Modiefied
-August 05, 2025
+August 16, 2025
 	
 Tested on :
 SQL Server 2022 CU20
-SSMS 21.4.8
+SSMS 21.4.12
 
 This code is copied from
 https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing

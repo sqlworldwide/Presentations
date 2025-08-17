@@ -8,13 +8,14 @@ https://twitter.com/SqlWorldWide
 https://sqlworldwide.com/
 https://www.linkedin.com/in/sqlworldwide/
 
+
 Last Modiefied
-August 05, 2025
+August 16, 2025
 	
 Tested on :
 SQL Server 2022 CU20
-SSMS 21.4.8
-	
+SSMS 21.4.12
+
 This code is copied from
 https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
 
@@ -56,7 +57,7 @@ WHERE [fo].[Quantity] = 360;
 GO
 
 /* 
-	Inserting five rows with Quantity =361 that doesn't exist in the table yet 
+Inserting five rows with Quantity =361 that doesn't exist in the table yet 
 */
 
 DELETE [Fact].[Order] 
@@ -77,7 +78,7 @@ FROM [Fact].[Order];
 GO
 
 /* 
-	Now run the same query with value 361 
+Now run the same query with value 361 
 */
 
 SELECT [fo].[Order Key], [si].[Lead Time Days], [fo].[Quantity]
@@ -87,23 +88,22 @@ INNER JOIN [Dimension].[Stock Item] AS [si]
 WHERE [fo].[Quantity] = 361;
 GO
 
-
 /*
-	Question:
-	With the introduction of Batch Mode on Rowstore can I take adavantge of adaptive join in rowstore?
-	Yes from SQL Server 2019 and with Compatibility level 150
+Question:
+With the introduction of Batch Mode on Rowstore can I take adavantge of adaptive join in rowstore?
+Yes from SQL Server 2019 and with Compatibility level 150
 	
-	Set up before you can run the demo code:
-	Restore Adventureworks database
-	https://learn.microsoft.com/en-us/sql/samples/adventureworks-install-configure?view=sql-server-ver15&tabs=ssms
-	Enlarge the restored adventureworks database (which we did using setup file)
-	https://www.sqlskills.com/blogs/jonathan/enlarging-the-adventureworks-sample-databases/
+Set up before you can run the demo code:
+Restore Adventureworks database
+https://learn.microsoft.com/en-us/sql/samples/adventureworks-install-configure?view=sql-server-ver15&tabs=ssms
+Enlarge the restored adventureworks database (which we did using setup file)
+https://www.sqlskills.com/blogs/jonathan/enlarging-the-adventureworks-sample-databases/
 */
 
 /*
-	Turn on Actual Execution plan ctrl+M
-	SalesOrderDetailEnlarged table only rowstore, we get batch mode on rowstore and followed by
-	adaptive join
+Turn on Actual Execution plan ctrl+M
+SalesOrderDetailEnlarged table only rowstore, we get batch mode on rowstore and followed by
+adaptive join
 */
 
 USE [master];
@@ -130,8 +130,8 @@ GROUP BY ProductID;
 GO
 
 /*
-	If you have a cached plan and you might not get the advantage of adaptive join.
-	It depends on the plan that is in cache
+If you have a cached plan and you might not get the advantage of adaptive join.
+It depends on the plan that is in cache
 */
 
 USE [master];
@@ -147,7 +147,7 @@ ALTER DATABASE SCOPED CONFIGURATION CLEAR PROCEDURE_CACHE;
 GO
 
 /*
-	Creating a stored procedure for demo
+Creating a stored procedure for demo
 */
 
 DROP PROCEDURE IF EXISTS dbo.countByQuantity;
@@ -164,10 +164,10 @@ RETURN 0;
 GO
 
 /*
-	Turn on Actual Execution plan ctrl+M
-	Execute same stored procedure with 2 different parameter value
-	Turn on Actual Execution plan ctrl+M
-	Depends on if the first one will qualify for an adaptive join, the second one will use the same plan
+Turn on Actual Execution plan ctrl+M
+Execute same stored procedure with 2 different parameter value
+Turn on Actual Execution plan ctrl+M
+Depends on if the first one will qualify for an adaptive join, the second one will use the same plan
 */
 
 EXEC dbo.countByQuantity 10;
@@ -176,9 +176,9 @@ EXEC dbo.countByQuantity 361;
 GO
 
 /*
-	Now evict the plan from the cache and run the same statement in reverse order
-	Removes the plan from cache for single stored procedure
-	Get plan handle
+Now evict the plan from the cache and run the same statement in reverse order
+Removes the plan from cache for single stored procedure
+Get plan handle
 */
 
 DECLARE @PlanHandle VARBINARY(64);
@@ -193,9 +193,9 @@ IF @PlanHandle IS NOT NULL
 GO
 
 /* 
-	Turn on Actual Execution plan ctrl+M 
-	This time we reverse the execution order
-	As the first query qualified for the adaptive join and the plan is cached, second query will use the same plan
+Turn on Actual Execution plan ctrl+M 
+This time we reverse the execution order
+As the first query qualified for the adaptive join and the plan is cached, second query will use the same plan
 */
 
 EXEC dbo.countByQuantity 361;

@@ -8,11 +8,11 @@ https://sqlworldwide.com/
 https://www.linkedin.com/in/sqlworldwide/
 
 Last Modiefied
-August 08, 2025
+August 17, 2025
 	
 Tested on :
 SQL Server 2022 CU20
-SSMS 21.4.8
+SSMS 21.4.12
 	
 This code is copied from
 https://github.com/Microsoft/sql-server-samples/tree/master/samples/features/intelligent-query-processing
@@ -32,8 +32,6 @@ Enabled on all Azure SQL Databases by default
 Not applicable for memory grant undre 1 MB
 Granted memory is more than two times the size of the actual used memory, memory grant feedback will recalculate the memory grant and update the cached plan.
 Insufficiently sized memory grant condition that result in a spill to disk for batch mode operators, memory grant feedback will trigger a recalculation of the memory grant. 
-
-
 *************************************************************/
 
 USE [master];
@@ -87,6 +85,39 @@ EXEC [FactOrderByLineageKey] 9;
 GO
 
 /*
+Is the memory grant value persisted in Query store?
+
+During the while loop execution run the below query on a separate window.
+See how "AdditionalMemoryKB" value changes in the feedback columm (JSON)
+
+You will need SQL2022 and Compatibility level 140 for this feature to work
+Query store must be enabled with read_write
+Query copied from  Grant Fritchey's website and modified by me.
+https://www.scarydba.com/2022/10/17/monitor-cardinality-feedback-in-sql-server-2022/
+*/
+USE [WideWorldImportersDW];
+GO
+EXEC sys.sp_query_store_flush_db;
+GO
+
+SELECT 
+	qspf.plan_feedback_id,
+	qsq.query_id,
+  qsqt.query_sql_text,
+	 qspf.feedback_data,
+  qsp.query_plan,
+  qspf.feature_desc,
+  qspf.state_desc
+FROM sys.query_store_query AS qsq
+JOIN sys.query_store_plan AS qsp
+ON qsp.query_id = qsq.query_id
+JOIN sys.query_store_query_text AS qsqt
+ON qsqt.query_text_id = qsq.query_text_id
+JOIN sys.query_store_plan_feedback AS qspf
+ON qspf.plan_id = qsp.plan_id
+WHERE qspf.feature_id = 2
+
+/*
 Execute this query a few times - each time looking at 
 the plan to see impact on spills, memory grant size, and run time
 New feature of SQL 2022 IsMemoryGrantFeedbackAdjusted = YesPercentileAdjusting
@@ -105,32 +136,5 @@ BEGIN
 END
 GO
 
-/*
-Is the memory grant value persisted in Query store?
 
-During the while loop execution run the below query on a separate window.
-See how "AdditionalMemoryKB" value changes in the feedback columm (JSON)
-
-You will need SQL2022 and Compatibility level 140 for this feature to work
-Query store must be enabled with read_write
-Query copied from  Grant Fritchey's website and modified by me.
-https://www.scarydba.com/2022/10/17/monitor-cardinality-feedback-in-sql-server-2022/
-*/
-
-SELECT 
-	qspf.plan_feedback_id,
-	qsq.query_id,
-  qsqt.query_sql_text,
-	 qspf.feedback_data,
-  qsp.query_plan,
-  qspf.feature_desc,
-  qspf.state_desc
-FROM sys.query_store_query AS qsq
-JOIN sys.query_store_plan AS qsp
-ON qsp.query_id = qsq.query_id
-JOIN sys.query_store_query_text AS qsqt
-ON qsqt.query_text_id = qsq.query_text_id
-JOIN sys.query_store_plan_feedback AS qspf
-ON qspf.plan_id = qsp.plan_id
-WHERE qspf.feature_id = 2
 

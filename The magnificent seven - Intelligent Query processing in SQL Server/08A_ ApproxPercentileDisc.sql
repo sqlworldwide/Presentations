@@ -92,7 +92,7 @@ Turn on Actual Execution plan ctrl+M
 Using existing PERCENTILE_CONT
 Calculates a percentile based on a continuous distribution of the column value in the SQL Server Database Engine. The result is interpolated, and might not equal any of the specific values in the column.
 Takes 25 seconds to run
-Estimated subtree cost 2927
+Estimated subtree cost 615
 Memory Grant 1467 MB
 */
 
@@ -111,8 +111,8 @@ GO
 Turn on Actual Execution plan ctrl+M
 Using new  APPROX_PERCENTILE_CONT
 Takes 6 seconds to run
-Estimated subtree cost 305
-Memory Grant 6.2 MB
+Estimated subtree cost 116
+Memory Grant 24 MB
 */
 
 USE WideWorldImporters;
