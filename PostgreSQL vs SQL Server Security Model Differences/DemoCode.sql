@@ -10,7 +10,7 @@ On Tour Pass Summit in New York City
 
 /*
 Connect to the localhost:54990/postgres database with user postgres
-psql -h 127.0.0.2 -p 54990 -U postgres -d postgres
+psql -h 127.0.0.2 -p 54866 -U postgres -d postgres
 \conninfo is a psql command to check what database and role you are connected to
 postgres user is the default superuser in PostgreSQL
 
@@ -22,6 +22,7 @@ DROP DATABASE IF EXISTS nyctourdemo;
 -- Create a new database named nyctourdemo
 CREATE DATABASE nyctourdemo;
 --Change connection to nyctourdemo database
+-- \c nyctourdemo
 
 /*
 This statement creates two new roles named 'devlogin' and 'readlogin' with login privileges and a password.
@@ -34,6 +35,7 @@ BEGIN
         DROP ROLE devlogin;
     END IF;
 END $$;
+-- Default attribute is NOLOGIN
 CREATE ROLE devlogin WITH LOGIN PASSWORD 'devlogin';
 DO $$ 
 BEGIN
@@ -129,7 +131,8 @@ SET ROLE NONE;
 
 /*
 Why did it fail?
-The readlogin role cannot read from the test_table2; created by the devlogin role because it does not have the SELECT privilege on this new table.
+The readlogin role cannot read from the test_table2; 
+created by the devlogin role because it does not have the SELECT privilege on this new table.
 To fix this, we need to grant the SELECT privilege on the new table to the readlogin role.
 GRANT SELECT ON test_table2 TO readlogin;
 
@@ -379,11 +382,11 @@ WHERE rolname IN ('parent_role', 'child_role_inherit', 'child_role_no_inherit');
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO parent_role;
 -- Test the privileges for each child role
 SET ROLE child_role_inherit;
-SELECT * FROM test_table;
-SET ROLE NONE;
+SELECT * FROM test_table5;
+    SET ROLE NONE;
 
 SET ROLE child_role_no_inherit;
-SELECT * FROM test_table3;
+SELECT * FROM test_table5;
 SET ROLE NONE;
 
 
