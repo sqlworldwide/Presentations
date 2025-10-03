@@ -1,0 +1,473 @@
+
+//------------------------------------------------------------------------------
+// 02_commonOperator.csl
+// Written by Taiob Ali
+// taiob@sqlworlwide.com
+// https://bsky.app/profile/sqlworldwide.bsky.social
+// https://sqlworldwide.com/
+// https://www.linkedin.com/in/sqlworldwide/
+//------------------------------------------------------------------------------
+// Go to: https://dataexplorer.azure.com/clusters/help/databases/SampleMetrics
+// Will mostly use RawServerMetrics table (loosely speaking)
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+// Search (https://learn.microsoft.com/en-us/kusto/query/search-operator)
+// by default not case senstive
+//------------------------------------------------------------------------------
+
+// Do not run this
+// Simple term search over all unrestricted tables and views of the database in scope
+let varName = 1000;
+search "cpu"
+| limit varName 
+
+// SWITCH TO DATABASE SampleMetrics
+// Will limit all columns of RawServerMetrics table
+// This search is not case sensitive, you can see uppper case 'CPU' in MetricName column
+let varName = 1000;
+RawServerMetrics
+| search "cpu"
+| limit varName 
+
+// Although you can make it sensitive using a switch 'case_sensitive'
+// Look at MetricName Column. Above query was showing record for 'cpu_percent'
+// where as below query will exclude those records
+let varName = 1000;
+RawServerMetrics
+| search kind=case_sensitive "CPU"
+| limit varName
+
+// Restricting search to one column in a table
+// "cpu" anywhere in the column
+let varName = 1000;
+RawServerMetrics
+| search tags : "cpu"   
+| limit varName
+
+//exact match
+let varName = 1000;
+RawServerMetrics
+| search name == "sqlserver_waitstats"  
+| limit varName
+
+// Searches can be combined logically
+let varName = 1000;
+RawServerMetrics
+| search "sqlserver_waitstats" and "adx-sql-db"
+| limit varName
+
+//------------------------------------------------------------------------------
+// Where (https://learn.microsoft.com/en-us/kusto/query/where-operator)
+//------------------------------------------------------------------------------
+
+// where limits the result set. 
+// Rather than looking across columns for values, where limits based on conditions
+// Look at the "Time Range" in the portal
+// Details about date time and ago operator https://learn.microsoft.com/en-us/kusto/query/ago-function
+let varName = 1000;
+RawServerMetrics
+| where timestamp >= ago(1h)
+| limit varName
+
+// Can build up the where by adding to it logically
+let varName = 1000;
+let varName1 = datetime('9/7/2022 2:04:20.2805561 AM');
+let varName2 = "sqlserver_waitstats";
+RawServerMetrics
+| where timestamp >= varName1
+    and name == varName2
+|limit varName
+
+// Stackable where operators
+let varName = 1000;
+let varName1 = datetime('9/7/2022 2:04:20.2805561 AM');
+let varName2 = "sqlserver_waitstats";
+let varName3 = "sqlserver_azuredb_waitstats";
+RawServerMetrics
+| where timestamp >= varName1
+| where (name == varName2
+    or
+    name == varName3
+    )
+| where tags has "adx-sql-db"
+| limit varName
+
+// You can simulate search using where. Here it searches all columns
+// in the input for the phrase CPU somewhere in a column's value
+let varName = 1000;
+RawServerMetrics
+// same as search "cpu"
+| where * has "cpu" 
+| limit varName 
+
+// Where supports regex as well
+let varName = 1000;
+let varName1 = "sqlserver_[req]";
+RawServerMetrics
+| where name matches regex varName1
+| limit varName
+
+//------------------------------------------------------------------------------
+// Take/Limit are synonyms (https://learn.microsoft.com/en-us/kusto/query/take-operator)
+//------------------------------------------------------------------------------
+
+// Take is used to grab a random number of rows from the input data
+// There is no guarantee which records are returned, unless the source data is sorted
+let varName = 1000;
+search "cpu"
+| take varName 
+
+//------------------------------------------------------------------------------
+// Count (https://learn.microsoft.com/en-us/kusto/query/count-operator)
+//------------------------------------------------------------------------------
+
+// Returns the number of records in the input record set
+RawServerMetrics
+| count 
+
+// Can also use with other filters
+let varName1 = datetime('9/7/2022 2:04:20.2805561 AM');
+let varName2 = "sqlserver_waitstats";
+let varName3 = "sqlserver_azuredb_waitstats";
+RawServerMetrics
+| where timestamp >= varName1
+| where (name == varName2
+    or
+    name == varName3
+    )
+| where tags has "adx-sql-db"
+| count
+
+//------------------------------------------------------------------------------
+// SWITCH TO SAMPLE DATABASE
+// Summarize (https://learn.microsoft.com/en-us/kusto/query/summarize-operator)
+//------------------------------------------------------------------------------
+
+// Summariaze allows you to aggregate by function
+// The following example determines what unique combinations of State and EventType there are for storms that resulted in direct injury. 
+// There are no aggregation functions, just group-by keys. 
+// The output displays only the columns for those results.
+
+StormEvents
+| where InjuriesDirect > 0
+| summarize by State, EventType
+
+//Optional name for a result column
+StormEvents
+| summarize CountByState = count() by State
+
+// Can break down by multiple columns
+StormEvents
+| summarize count() by State, EventType
+
+// With Summarize, you can use other aggregation functions
+StormEvents
+| where State == "HAWAII" and EventType == "Heavy Rain"
+| project Duration = EndTime - StartTime
+| summarize Min = min(Duration), Max = max(Duration)
+
+// The following example calculates a histogram storm event types that had storms lasting longer than 1 day. 
+// Because Duration has many values, use bin() to group its values into 1-day intervals.
+StormEvents
+| project EventType, Duration = EndTime - StartTime
+| where Duration > 1d
+| summarize EventCount=count() by EventType, Length=bin(Duration, 1d)
+| sort by Length
+
+//------------------------------------------------------------------------------
+// Extend (https://learn.microsoft.com/en-us/kusto/query/extend-operator)
+//------------------------------------------------------------------------------
+
+// The following example shows how to use the extend operator to create a new column called Duration 
+// that calculates the difference between the EndTime and StartTime columns in the StormEvents table.
+StormEvents
+| project EndTime, StartTime
+| extend Duration = EndTime - StartTime
+
+//------------------------------------------------------------------------------
+// Project (https://learn.microsoft.com/en-us/kusto/query/project-operator)
+// Project can simulate Extend
+//------------------------------------------------------------------------------
+
+// Project allows you to select a subset of columns
+StormEvents
+| project EventId, State, EventType
+
+
+// Combine Project with Extend
+StormEvents
+| project EndTime, StartTime
+| extend Duration = EndTime - StartTime
+
+// You can use extend prior to project to calculate on a field 
+// that you don't want in the final output 
+StormEvents
+| extend Duration = EndTime - StartTime
+| project EndTime, StartTime, Duration
+
+// There is a variant called project-away. It will project all except the 
+// project-away(https://learn.microsoft.com/en-us/kusto/query/project-away-operator)
+// columns listed
+PopulationData
+| project-away Population
+             
+//------------------------------------------------------------------------------
+// Distinct (https://learn.microsoft.com/en-us/kusto/query/distinct-operator)
+// Distnict is an expensive operation. 
+// You can use dcount() aggregation function to get an estimated count of distinct values
+// dcoutif() takes a predicate to evaluate
+//------------------------------------------------------------------------------
+
+// Produces a table with the distinct combination of the provided columns of the input table
+StormEvents
+| where InjuriesDirect > 45
+| distinct State, EventType
+
+// The following example shows how many types of storm events happened in each state.
+StormEvents
+| summarize DifferentEvents=dcount(EventType) by State
+| order by DifferentEvents
+
+//------------------------------------------------------------------------------
+// sample-distinct (https://learn.microsoft.com/en-us/kusto/query/sample-distinct-operator)
+//------------------------------------------------------------------------------
+
+//Returns a single column that contains up to the specified number of distinct values of the requested column
+StormEvents | sample-distinct 10 of EpisodeId
+
+// Further compute the sample values
+let sampleEpisodes = StormEvents | sample-distinct 10 of EpisodeId;
+StormEvents 
+| where EpisodeId in (sampleEpisodes) 
+| summarize totalInjuries=sum(InjuriesDirect) by EpisodeId
+
+//------------------------------------------------------------------------------
+// Top (https://learn.microsoft.com/en-us/kusto/query/top-operator)
+//------------------------------------------------------------------------------
+
+// Returns the first N records sorted by the specified columns
+StormEvents
+| top 3 by InjuriesDirect
+
+//------------------------------------------------------------------------------
+// Sort  (https://learn.microsoft.com/en-us/kusto/query/sort-operator)
+// Alias: Order
+//------------------------------------------------------------------------------
+StormEvents
+| sort by State asc, StartTime desc
+
+StormEvents
+| order  by State asc, StartTime desc
+
+
+//------------------------------------------------------------------------------
+// Extract (https://learn.microsoft.com/en-us/kusto/query/extract-function)
+//------------------------------------------------------------------------------
+
+// The following example extract the username, email, age from the string. 
+// The regular expression are used to extract the information.
+
+let Text = "User: JohnDoe, Email: johndoe@example.com, Age: 29";
+print UserName = extract("User: ([^,]+)", 1, Text),
+EmailId = extract(@"Email: (\S+),", 1, Text),
+Age = extract(@"\d+", 0, Text)
+
+//------------------------------------------------------------------------------
+// Parse (https://learn.microsoft.com/en-us/kusto/query/parse-operator)
+//------------------------------------------------------------------------------
+
+// In the following example, the column EventText of table Traces contains strings of the form Event: 
+// NotifySliceRelease (resourceName={0}, totalSlices={1}, sliceNumber={2}, lockTime={3}, releaseTime={4}, previousLockTime={5}). 
+// The operation extends the table with six columns: resourceName, totalSlices, sliceNumber, lockTime, releaseTime, and previousLockTime.
+let Traces = datatable(EventText: string)
+    [
+    "Event: NotifySliceRelease (resourceName=PipelineScheduler, totalSlices=27, sliceNumber=23, lockTime=02/17/2016 08:40:01, releaseTime=02/17/2016 08:40:01, previousLockTime=02/17/2016 08:39:01)",
+    "Event: NotifySliceRelease (resourceName=PipelineScheduler, totalSlices=27, sliceNumber=15, lockTime=02/17/2016 08:40:00, releaseTime=02/17/2016 08:40:00, previousLockTime=02/17/2016 08:39:00)",
+    "Event: NotifySliceRelease (resourceName=PipelineScheduler, totalSlices=27, sliceNumber=20, lockTime=02/17/2016 08:40:01, releaseTime=02/17/2016 08:40:01, previousLockTime=02/17/2016 08:39:01)",
+    "Event: NotifySliceRelease (resourceName=PipelineScheduler, totalSlices=27, sliceNumber=22, lockTime=02/17/2016 08:41:01, releaseTime=02/17/2016 08:41:00, previousLockTime=02/17/2016 08:40:01)",
+    "Event: NotifySliceRelease (resourceName=PipelineScheduler, totalSlices=27, sliceNumber=16, lockTime=02/17/2016 08:41:00, releaseTime=02/17/2016 08:41:00, previousLockTime=02/17/2016 08:40:00)"
+];
+Traces  
+| parse EventText with * "resourceName=" resourceName ", totalSlices=" totalSlices: long * "sliceNumber=" sliceNumber: long * "lockTime=" lockTime ", releaseTime=" releaseTime: date "," * "previousLockTime=" previousLockTime: date ")" *  
+| project resourceName, totalSlices, sliceNumber, lockTime, releaseTime, previousLockTime
+
+//------------------------------------------------------------------------------
+// Between (https://learn.microsoft.com/en-us/kusto/query/between-operator)
+//------------------------------------------------------------------------------
+
+StormEvents
+| where StartTime between (datetime(2007-07-27) .. datetime(2007-07-30))
+| count
+
+// There's also a "NOT" version
+// https://learn.microsoft.com/en-us/kusto/query/not-between-operator
+StormEvents
+| where StartTime !between (datetime(2007-07-27) .. datetime(2007-07-30))
+| count
+
+//------------------------------------------------------------------------------
+// parse_json() (https://learn.microsoft.com/en-us/kusto/query/parse-json-function)
+//------------------------------------------------------------------------------
+
+// Then the following query retrieves the value of the duration slot in the object, 
+// and from that it retrieves two slots, duration.value and duration.min (118.0 and 110.0, respectively).
+datatable(context_custom_metrics:string)
+[
+    '{"duration":{"value":118.0,"count":5.0,"min":100.0,"max":150.0,"stdDev":0.0,"sampledValue":118.0,"sum":118.0}}'
+]
+| extend d = parse_json(context_custom_metrics)
+| extend duration_value = d.duration.value, duration_min = d.duration.min
+
+
+//------------------------------------------------------------------------------
+// parse_xml (https://learn.microsoft.com/en-us/kusto/query/parse-xml-function)
+//------------------------------------------------------------------------------
+
+//copied from https://stackoverflow.com/questions/53873208/turn-series-to-columns-in-kusto-azure-data-explorer
+datatable(someColumn:string, xmlValue:string)
+["hello", '<EventData xmlns="http://schemas.microsoft.com/win/2004/08/events/event">\r\n'
+  '<Data Name="DomainBehaviorVersion">8</Data>\r\n'
+  '<Data Name="OemInformation">12</Data>\r\n'
+  '<Data Name="DomainPolicyChanged">Password Policy</Data>\r\n'
+  '<Data Name="DomainName">XXX</Data>\r\n'
+  '<Data Name="DomainSid">S-1-5-21-....</Data>\r\n'
+  '<Data Name="SubjectUserSid">S-1-5-18</Data>\r\n'
+  '<Data Name="SubjectUserName">SRV-XX-001$</Data>\r\n'
+  '<Data Name="SubjectDomainName">DOMAIN</Data>\r\n'
+  '<Data Name="SubjectLogonId">0x3e7</Data>\r\n'
+  '<Data Name="PrivilegeList">-</Data>\r\n'
+  '<Data Name="MinPasswordAge"></Data>\r\n'
+  '<Data Name="MaxPasswordAge"></Data>\r\n'
+  '<Data Name="ForceLogoff"></Data>\r\n'
+  '<Data Name="LockoutThreshold">耠</Data>\r\n'
+  '<Data Name="LockoutObservationWindow"></Data>\r\n'
+  '<Data Name="LockoutDuration"></Data>\r\n'
+  '<Data Name="PasswordProperties">耠-</Data>\r\n'
+  '<Data Name="MinPasswordLength">-</Data>\r\n'
+  '<Data Name="PasswordHistoryLength">-</Data>\r\n'
+  '<Data Name="MachineAccountQuota">-</Data>\r\n'
+  '<Data Name="MixedDomainMode">1</Data>\r\n'
+'</EventData>',
+"world", '<EventData xmlns="http://schemas.microsoft.com/win/2004/08/events/event">\r\n'
+  '<Data Name="DomainBehaviorVersion">876543</Data>\r\n'
+  '<Data Name="OemInformation">12345</Data>\r\n'
+'</EventData>'
+]
+| extend parsed = parse_xml(xmlValue).EventData.Data
+| mvexpand parsed
+| summarize d = make_bag(bag_pack(tostring(parsed['@Name']), parsed['#text'])) by someColumn
+| evaluate bag_unpack(d)
+
+//------------------------------------------------------------------------------
+// format_timespan 
+//------------------------------------------------------------------------------
+
+// Formats a timespan parameter based on the format pattern parameter
+print format_timespan(time(29.09:00:05.12345), 'dd.hh:mm:ss [FF]')
+
+//------------------------------------------------------------------------------
+// format_datetime (https://docs.microsoft.com/en-us/azure/kusto/query/format-datetimefunction)
+//------------------------------------------------------------------------------
+
+// Formats a datetime parameter based on the format pattern parameter.
+print format_datetime(datetime(2017-01-29 09:00:05), 'yy-MM-dd [HH:mm:ss]'),
+      format_datetime(datetime(2017-01-29 09:00:05), 'yyyy-M-dd [H:mm:ss]'), 
+      format_datetime(datetime(2017-01-29 09:00:05), 'yy-MM-dd [hh:mm:ss tt]') 
+
+//------------------------------------------------------------------------------
+// datetime_part (https://learn.microsoft.com/en-us/kusto/query/datetime-part-function)
+//------------------------------------------------------------------------------
+
+// The following example extracts the year, quarter, month, week of year, day, day of year, hour, minute, second, millisecond, microsecond, 
+// and nanosecond from a specified datetime value.
+let dt = datetime(2017-10-30 01:02:03.7654321); 
+print 
+year = datetime_part("year", dt),
+quarter = datetime_part("quarter", dt),
+month = datetime_part("month", dt),
+weekOfYear = datetime_part("week_of_year", dt),
+day = datetime_part("day", dt),
+dayOfYear = datetime_part("dayOfYear", dt),
+hour = datetime_part("hour", dt),
+minute = datetime_part("minute", dt),
+second = datetime_part("second", dt),
+millisecond = datetime_part("millisecond", dt),
+microsecond = datetime_part("microsecond", dt),
+nanosecond = datetime_part("nanosecond", dt)
+
+//------------------------------------------------------------------------------
+// split (https://learn.microsoft.com/en-us/kusto/query/split-function)
+//------------------------------------------------------------------------------
+
+// An array of substrings obtained by separating the source string by the specified delimiter, or a single substring at the specified requestedIndex.
+print
+    split("aa_bb", "_"),           // ["aa","bb"]
+    split("aaa_bbb_ccc", "_", 1),  // ["bbb"]
+    split("", "_"),                // [""]
+    split("a__b", "_"),            // ["a","","b"]
+    split("aabbcc", "bb")          // ["aa","cc"]
+
+//------------------------------------------------------------------------------
+// render (https://learn.microsoft.com/en-us/kusto/query/render-operator)
+// Instructs the user agent to render the results of the query in a particular way
+// The render operator is a client-side feature rather than part of the engine. 
+// It's integrated into the language for ease of use. 
+// The web application supports the following options: barchart, columnchart, piechart, timechart, and linechart.
+//------------------------------------------------------------------------------
+
+// Queries copied from https://github.com/MicrosoftDocs/azure-docs/blob/master/articles/data-explorer/write-queries.md
+// You can run these here:https://dataexplorer.azure.com/clusters/help/databases/Samples
+// The following query displays a column chart
+StormEvents
+| summarize event_count=count(), mid = avg(BeginLat) by State
+| sort by mid
+| where event_count > 1800
+| project State, event_count
+| render columnchart
+
+//The following query displays a simple time chart.
+StormEvents
+| summarize event_count=count() by bin(StartTime, 1d)
+| render timechart
+
+// The following query counts events by the time modulo one day, binned into hours, and displays a time chart.
+StormEvents
+| extend hour = floor(StartTime % 1d , 1h)
+| summarize event_count=count() by hour
+| sort by hour asc
+| render timechart
+
+// The following query compares multiple daily series on a time chart
+StormEvents
+| extend hour= floor( StartTime % 1d , 1h)
+| where State in ("GULF OF MEXICO","MAINE","VIRGINIA","WISCONSIN","NORTH DAKOTA","NEW JERSEY","OREGON")
+| summarize event_count=count() by hour, State
+| render timechart
+
+// Project only the year-month string and the event count
+// Copied from pluralsight example in portal
+// Putting some of the above example together
+StormEvents
+| where StartTime  between ( ago(7000d) .. startofmonth(now()) )
+| summarize EventCount = count() by calMonth=startofmonth(StartTime) 
+| sort by calMonth desc
+| extend MonthNumber = datetime_part("month", calMonth)
+       , YearNumber = datetime_part("year", calMonth)
+| extend MonthName = case( MonthNumber ==  1, "Jan "
+                         , MonthNumber ==  2, "Feb "
+                         , MonthNumber ==  3, "Mar "
+                         , MonthNumber ==  4, "Apr "
+                         , MonthNumber ==  5, "May "
+                         , MonthNumber ==  6, "Jun "
+                         , MonthNumber ==  7, "Jul "
+                         , MonthNumber ==  8, "Aug "
+                         , MonthNumber ==  9, "Sep "
+                         , MonthNumber == 10, "Oct "
+                         , MonthNumber == 11, "Nov "
+                         , MonthNumber == 12, "Dec "
+                         , "Unknown Month"
+                         )
+| extend YearMonth = strcat( MonthName, " - ", YearNumber) 
+| project YearMonth, EventCount 
+| render barchart 

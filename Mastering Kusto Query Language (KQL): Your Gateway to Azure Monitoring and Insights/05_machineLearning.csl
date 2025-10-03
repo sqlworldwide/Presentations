@@ -1,0 +1,53 @@
+//------------------------------------------------------------------------------
+// 05_machineLearning.csl
+// Written by Taiob Ali
+// taiob@sqlworlwide.com
+// https://bsky.app/profile/sqlworldwide.bsky.social
+// https://sqlworldwide.com/
+// https://www.linkedin.com/in/sqlworldwide/
+//------------------------------------------------------------------------------
+// Go to: https://dataexplorer.azure.com/clusters/help/databases/Samples
+//------------------------------------------------------------------------------
+
+// These are also called evaluate operators
+
+//------------------------------------------------------------------------------
+// basket plugin (https://learn.microsoft.com/en-us/kusto/query/basket-plugin)
+//------------------------------------------------------------------------------
+
+// Basket finds all frequent patterns of discrete attributes (dimensions) in the data 
+// and will return all frequent patterns that passed the frequency threshold in the original query. 
+// Association. Buying bread will most likely cuase buying butter, jam or egg.
+
+// Basket is based on the Apriori algorithm originally developed for basket analysis data mining
+
+// The following example uses the basket plugin to find frequent patterns in the data.
+
+// You can pass a paremeter 'threshold' which
+// Sets the minimal ratio of the rows to be considered frequent 
+StormEvents
+| where monthofyear(StartTime) == 5
+| extend Damage = iff(DamageCrops + DamageProperty > 0 , "YES" , "NO")
+| project State, EventType, Damage, DamageCrops
+| evaluate basket(0.2)
+
+
+//------------------------------------------------------------------------------
+// autocluster plugin (https://learn.microsoft.com/en-us/kusto/query/autocluster-plugin)
+// autocluster is largely based on the Seed-Expand algorithm from the following paper: 
+// Algorithms for Telemetry Data Mining using Discrete Attributes 
+// (https://www.scitepress.org/PublicationsDetail.aspx?ID=d5kcrO+cpEU=&t=1)
+//------------------------------------------------------------------------------
+
+// AutoCluster finds common patterns of discrete attributes (dimensions) in the data 
+// and will reduce the results of the original query (whether it's 100 or 100k rows) to a small number of patterns.
+// AutoCluster was developed to help analyze failures (e.g. exceptions, crashes) 
+// but can potentially work on any filtered data set
+
+// Use where and project in the input pipe to reduce the data to just what you're interested in.
+// Add threshold optional parameter 0.10 and see the change in data
+StormEvents
+| where monthofyear(StartTime) == 5
+| extend Damage = iff(DamageCrops + DamageProperty > 0 , "YES" , "NO")
+| project State , EventType , Damage
+| evaluate autocluster()

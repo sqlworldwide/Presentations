@@ -1,0 +1,141 @@
+//------------------------------------------------------------------------------
+// 04_workingWithDatasets.csl
+// Written by Taiob Ali
+// taiob@sqlworlwide.com
+// https://bsky.app/profile/sqlworldwide.bsky.social
+// https://sqlworldwide.com/
+// https://www.linkedin.com/in/sqlworldwide/
+//------------------------------------------------------------------------------
+// Go to: https://dataexplorer.azure.com/clusters/help/databases/Samples
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+// let (https://learn.microsoft.com/en-us/kusto/query/let-statement)
+//------------------------------------------------------------------------------
+
+// A let statement is used to set a variable name equal to an expression or a function, or to create views.
+
+//The following example uses a scalar expression statement.
+let threshold = 50;
+let region = "West";
+datatable(Name:string, Score:int, Region:string)
+[
+    "Alice", 45, "West",
+    "Bob", 60, "East",
+    "Charlie", 55, "West",
+    "Dana", 70, "North"
+]
+| where Score > threshold and Region == region
+
+// This example shows you how to use a let statement to create a view or virtual table.
+let Range10 = view () { range MyColumn from 1 to 10 step 1 };
+let Range20 = view () { range MyColumn from 1 to 20 step 1 };
+search MyColumn == 5
+
+//------------------------------------------------------------------------------
+// join (https://learn.microsoft.com/en-us/kusto/query/join-operator?)
+//------------------------------------------------------------------------------
+
+// innerunique --default
+// The example query combines rows from tables X and Y where the keys match, showing only the rows that exist in both tables 
+let X = datatable(Key:string, Value1:long)
+[
+    'a',1,
+    'b',2,
+    'b',3,
+    'c',4
+];
+let Y = datatable(Key:string, Value2:long)
+[
+    'b',10,
+    'c',20,
+    'c',30,
+    'd',40
+];
+X | join Y on Key
+
+// inner
+// The example query combines rows from tables X and Y where the keys match, showing only the rows that exist in both tables.
+let X = datatable(Key:string, Value1:long)
+[
+    'a',1,
+    'b',2,
+    'b',3,
+    'k',5,
+    'c',4
+];
+let Y = datatable(Key:string, Value2:long)
+[
+    'b',10,
+    'c',20,
+    'c',30,
+    'd',40,
+    'k',50
+];
+X | join kind=inner Y on Key
+
+//------------------------------------------------------------------------------
+// prev (https://learn.microsoft.com/en-us/kusto/query/prev-function)
+// next (https://learn.microsoft.com/en-us/kusto/query/next-function)
+//------------------------------------------------------------------------------
+
+// Switch to https://dataexplorer.azure.com/clusters/help/databases/SampleIoTData
+
+// The following query returns rows that show breaks longer than a quarter of a second between calls to sensor-9.
+
+TransformedSensorsData
+| where SensorName == 'sensor-9'
+| sort by Timestamp asc
+| extend timeDiffInMilliseconds = datetime_diff('millisecond', Timestamp, prev(Timestamp, 1))
+| where timeDiffInMilliseconds > 250
+
+//The following query calculates the average time difference in milliseconds between calls to sensor-9.
+TransformedSensorsData
+| where SensorName == 'sensor-9'
+| sort by Timestamp asc
+| extend timeDiffInMilliseconds = datetime_diff('millisecond', next(Timestamp, 1), Timestamp)
+| summarize avg(timeDiffInMilliseconds)
+
+//------------------------------------------------------------------------------
+// row_cumsum (https://learn.microsoft.com/en-us/kusto/query/row-cumsum-function)
+//------------------------------------------------------------------------------
+
+// Calculates the cumulative sum of a column in a serialized row set
+// notice the 2nd paremeter, can be used to indicate partition of the data
+// Following code is copied from https://learn.microsoft.com/en-us/kusto/query/row-cumsum-function
+datatable (name:string, month:int, salary:long)
+[
+    "Alice", 1, 1000,
+    "Bob",   1, 1000,
+    "Alice", 2, 2000,
+    "Bob",   2, 1950,
+    "Alice", 3, 1400,
+    "Bob",   3, 1450,
+]
+| order by name asc, month asc
+| extend total=row_cumsum(salary, name != prev(name))
+
+//------------------------------------------------------------------------------
+// materialize (https://learn.microsoft.com/en-us/kusto/query/materialize-function)
+// Azure Log Analytics does not support this when you use with Batch
+// Azure data explorer support this
+// See my questin in Stack Overflow:
+// https://stackoverflow.com/questions/58151159/azure-data-explorer-query-language-batches-and-materialize/58156011#58156011 
+//------------------------------------------------------------------------------
+
+// Switch to : https://dataexplorer.azure.com/clusters/help/databases/Samples
+
+// Allows caching a sub-query result during the time of query execution 
+// in a way that other subqueries can reference the partial result
+
+// Materialize can only be used in let statements if you give the cached result a name. 
+// Materialize has a cache size limit which is 5 GB
+
+// The expression _detailed_data is defined using materialize() function and therefore is calculated only once.
+let _detailed_data = materialize(StormEvents | summarize Events=count() by State, EventType);
+_detailed_data
+| summarize TotalStateEvents=sum(Events) by State
+| join (_detailed_data) on State
+| extend EventPercentage = Events*100.0 / TotalStateEvents
+| project State, EventType, EventPercentage, Events
+| top 10 by EventPercentage

@@ -1,0 +1,35 @@
+//------------------------------------------------------------------------------
+// 7_TSQL2Kusto.csl
+// Written by Taiob Ali
+// taiob@sqlworlwide.com
+// https://bsky.app/profile/sqlworldwide.bsky.social
+// https://sqlworldwide.com/
+// https://www.linkedin.com/in/sqlworldwide/
+// 
+// DOES NOT WORK IN AZURE LOG ANALYTICS WORKSPACE 
+//
+//------------------------------------------------------------------------------
+// Go to: https://dataexplorer.azure.com/clusters/help/databases/Samples
+//------------------------------------------------------------------------------
+
+// https://learn.microsoft.com/en-us/kusto/query/t-sql
+
+// Azure Data Explorer offers limited support for T-SQL. 
+// https://learn.microsoft.com/en-us/azure/data-explorer/t-sql#coverage
+
+//To run a T-SQL query, begin the query with an empty T-SQL comment line: --. 
+// The -- syntax tells the query editor to interpret the following query as T-SQL and not KQL.
+
+--
+SELECT * FROM StormEvents
+
+// To get the equivalent KQL for a T-SQL SELECT statement, add the keyword explain before the query. 
+// The output will be the KQL version of the query, which can be useful for understanding the corresponding KQL syntax and concepts.
+--
+explain
+SELECT top(10) *
+FROM StormEvents
+ORDER BY DamageProperty DESC
+
+// SQL to Kusto Query Language cheat sheet
+// https://learn.microsoft.com/en-us/kusto/query/sql-cheat-sheet

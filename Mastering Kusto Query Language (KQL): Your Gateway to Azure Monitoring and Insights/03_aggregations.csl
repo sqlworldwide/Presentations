@@ -1,0 +1,77 @@
+//------------------------------------------------------------------------------
+// 03_aggregations.csl
+// Written by Taiob Ali
+// taiob@sqlworlwide.com
+// https://bsky.app/profile/sqlworldwide.bsky.social
+// https://sqlworldwide.com/
+// https://www.linkedin.com/in/sqlworldwide/
+//------------------------------------------------------------------------------
+// Go to: https://dataexplorer.azure.com/clusters/help/databases/Samples
+// Will mostly use StormEvents table (loosely speaking)
+//------------------------------------------------------------------------------
+
+
+//------------------------------------------------------------------------------
+// arg_max / arg_min
+// https://learn.microsoft.com/en-us/kusto/query/arg-max-aggregation-function
+// https://learn.microsoft.com/en-us/kusto/query/arg-min-aggregation-function
+//------------------------------------------------------------------------------
+
+// arg_max finds the maximum value for the column being summarized on, and 
+// returns the row where that maximum value was found
+// The second parameter indicates which columns to return. * means all.
+// By default it always returns the "by" column and the maximized value.
+
+// The following example finds the maximum latitude of a storm event in each state.
+StormEvents 
+| summarize arg_max(BeginLat, BeginLocation) by State
+
+//------------------------------------------------------------------------------
+// Percentiles (https://learn.microsoft.com/en-us/kusto/query/percentiles-aggregation-function)
+//------------------------------------------------------------------------------
+
+// The following example shows the value of DamageProperty simultaneously calculated using 5, 50 (median) and 95.
+StormEvents 
+| summarize percentiles(DamageProperty, 5, 50, 95) by State
+
+//------------------------------------------------------------------------------
+// countif (https://learn.microsoft.com/en-us/kusto/query/countif-aggregation-function)
+//------------------------------------------------------------------------------
+
+// This example shows the number of storms with damage to crops by state.
+StormEvents
+| summarize TotalCount=count(),TotalWithDamage=countif(DamageCrops >0) by State
+
+//------------------------------------------------------------------------------
+// top-nested (https://learn.microsoft.com/en-us/kusto/query/top-nested-operator)
+//------------------------------------------------------------------------------
+
+// The following query partitions the StormEvents table by the State column and calculates the total property damage for each state. 
+// The query selects the top two states with the largest amount of property damage. 
+// Within these top two states, the query groups the data by EventType and selects the top three event types with the most damage. 
+// Then the query groups the data by EndLocation and selects the EndLocation with the highest damage. 
+// Only one EndLocation value appears in the results, possibly due to the large nature of the storm events or not documenting the end location.
+StormEvents  // Data source.
+| top-nested 2 of State by sum(DamageProperty),       // Top 2 States by total damaged property.
+  top-nested 3 of EventType by sum(DamageProperty),   // Top 3 EventType by total damaged property for each State.
+  top-nested 1 of EndLocation by sum(DamageProperty)  // Top 1 EndLocation by total damaged property for each EventType and State.
+| project State, EventType, EndLocation, StateTotalDamage 
+= aggregated_State, EventTypeTotalDamage = aggregated_EventType, EndLocationDamage = aggregated_EndLocation
+
+// The following example uses the top-nested operator to identify the top five states with the most property damage 
+// and uses the with others clause to group damaged property for all other states.
+// It then visualizes damaged property for the top five states and all other states as a piechart using the render command.
+StormEvents
+| top-nested 5 of State with others="OtherStates" by sum(DamageProperty)
+| render piechart
+
+//------------------------------------------------------------------------------
+// any (https://learn.microsoft.com/en-us/kusto/query/take-any-aggregation-function)
+//------------------------------------------------------------------------------
+
+// Arbitrarily chooses one record for each group in a summarize operator, 
+// and returns the value of one or more expressions over each such record
+
+// Show indeterministic State
+StormEvents
+| summarize take_any(State)

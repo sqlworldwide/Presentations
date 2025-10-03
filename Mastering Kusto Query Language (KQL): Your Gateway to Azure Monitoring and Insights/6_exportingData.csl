@@ -1,0 +1,25 @@
+//------------------------------------------------------------------------------
+// 6_exportingData.csl
+// Written by Taiob Ali
+// taiob@sqlworlwide.com
+// https://bsky.app/profile/sqlworldwide.bsky.social
+// https://sqlworldwide.com/
+// https://www.linkedin.com/in/sqlworldwide/
+//------------------------------------------------------------------------------
+// Go to: https://dataexplorer.azure.com/clusters/help/databases/Samples
+//------------------------------------------------------------------------------
+
+// Run below query and show how to export the data into csv
+// and also export to PowerBI.
+
+
+// It will actually create a TXT file, and put it in clipboard. 
+// Open PowerBI desktop
+// Login with your account (my account taiob@sqlworldwide.onmicrosoft.com)
+// 'Get Data' -> 'Blank Query' -> 'Advanced Query Editor' menu choices.
+// From there, paste in the M query from the clipboard.
+
+StormEvents
+| where isnotempty(EndLocation) 
+| summarize event_count=count() by EndLocation
+| order by event_count

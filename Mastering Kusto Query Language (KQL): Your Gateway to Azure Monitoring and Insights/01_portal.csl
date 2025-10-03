@@ -1,0 +1,52 @@
+//------------------------------------------------------------------------------
+// 01_portal.csl
+// Written by Taiob Ali
+// taiob@sqlworlwide.com
+// https://bsky.app/profile/sqlworldwide.bsky.social
+// https://sqlworldwide.com/
+// https://www.linkedin.com/in/sqlworldwide/
+//------------------------------------------------------------------------------
+// This is what you will see in portal when you go to your workspace
+// 
+// Login to Azure Portal
+// Go to your Log Analytics Workspace logawfdddemo
+// Click on Logs
+// use this query to explore the portal
+// AzureMetrics 
+//
+// AzureMetrics
+// | summarize countByMetricName = count() by MetricName
+// | order by countByMetricName
+//------------------------------------------------------------------------------
+
+// Talk about 
+// Database
+// Table--Pop up window
+// Sample Record Icon
+// Columns
+// Datatypes (https://docs.microsoft.com/en-us/azure/kusto/query/scalar-data-types/)
+//    datetime
+//    numberic
+//    text    
+// Default row number
+// Deafult time frame
+// Filters (there are 2 ways to put filter)
+// Show filter on Resource column
+// Grouping
+// Query Details (Overview, Rawstatistics)
+// Queries hub
+//------------------------------------------------------------------------------
+
+
+// Go to: https://aka.ms/LADemo
+
+// To retrieve data, you can simply enter the table name and hit the
+// Run button at the top, or use SHIFT+ENTER 
+// By Default it will return 1000 records from last 24 hours
+
+AppMetrics
+
+// Visualization 
+AppMetrics
+ | summarize countClientByCity = count() by ClientCity
+ | order by countClientByCity
