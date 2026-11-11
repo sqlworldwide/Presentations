@@ -1,0 +1,5 @@
+.vs/
+DemoFiles.slnx
+DemoFiles.ssmssqlproj
+*.bak
+VSCodeWorkspace/plan.md

@@ -1,0 +1,126 @@
+{
+  "$schema": "https://github.com/Azure/data-api-builder/releases/download/v2.0.12/dab.draft.schema.json",
+  "data-source": {
+    "database-type": "mssql",
+    "connection-string": "@env('MSSQL_CONNECTION_STRING')",
+    "options": {
+      "set-session-context": false
+    }
+  },
+  "runtime": {
+    "rest": {
+      "enabled": true,
+      "path": "/api",
+      "request-body-strict": false
+    },
+    "graphql": {
+      "enabled": true,
+      "path": "/graphql",
+      "allow-introspection": true
+    },
+    "host": {
+      "cors": {
+        "origins": [],
+        "allow-credentials": false
+      },
+      "authentication": {
+        "provider": "Unauthenticated"
+      },
+      "mode": "development"
+    },
+    "mcp": {
+      "enabled": true
+    }
+  },
+  "autoentities": {},
+  "entities": {
+    "Product": {
+      "description": "Products sold, with category and list price.",
+      "source": {
+        "object": "dbo.Product",
+        "type": "table"
+      },
+      "fields": [
+        {
+          "name": "Category",
+          "description": "Product category",
+          "primary-key": false
+        },
+        {
+          "name": "Name",
+          "description": "Product name",
+          "primary-key": false
+        },
+        {
+          "name": "ListPrice",
+          "description": "Retail price",
+          "primary-key": false
+        }
+      ],
+      "graphql": {
+        "enabled": true,
+        "type": {
+          "singular": "Product",
+          "plural": "Products"
+        }
+      },
+      "rest": {
+        "enabled": true
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            {
+              "action": "read"
+            }
+          ]
+        }
+      ]
+    },
+    "SalesOrder": {
+      "description": "Sales orders: which product, how many, when.",
+      "source": {
+        "object": "dbo.SalesOrder",
+        "type": "table"
+      },
+      "fields": [
+        {
+          "name": "ProductId",
+          "description": "Product sold",
+          "primary-key": false
+        },
+        {
+          "name": "Quantity",
+          "description": "Units sold on this order",
+          "primary-key": false
+        },
+        {
+          "name": "OrderDate",
+          "description": "Date of the order",
+          "primary-key": false
+        }
+      ],
+      "graphql": {
+        "enabled": true,
+        "type": {
+          "singular": "SalesOrder",
+          "plural": "SalesOrders"
+        }
+      },
+      "rest": {
+        "enabled": true
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            {
+              "action": "read"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
