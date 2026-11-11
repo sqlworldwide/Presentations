@@ -9,7 +9,7 @@ https://sqlworldwide.com/
 https://www.linkedin.com/in/sqlworldwide/
 
 Last Modified
-November 4, 2026
+November 9, 2026
 
 Run before the session and leave it running. Read it in 012.
 Learn (SSMS troubleshoot): monitor Copilot's queries with Extended Events filtered on client_app_name.
@@ -37,7 +37,7 @@ ADD EVENT sqlserver.rpc_completed (
       sqlserver.session_server_principal_name, sqlserver.username, sqlserver.database_name)
   WHERE (sqlserver.client_app_name = N'Microsoft SQL Server Management Studio - GitHub Copilot'))
 ADD TARGET package0.event_file (SET filename = N'CopilotQueries', max_file_size = 50)
-WITH (MAX_DISPATCH_LATENCY = 5 SECONDS, STARTUP_STATE = OFF);
+WITH (MAX_DISPATCH_LATENCY = 5 SECONDS, STARTUP_STATE = ON);
 GO
 ALTER EVENT SESSION [CopilotQueries] ON SERVER STATE = START;
 GO
